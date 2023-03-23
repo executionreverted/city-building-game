@@ -1,13 +1,25 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
-
+import "hardhat-gas-reporter";
+import "solidity-coverage";
+import "hardhat-contract-sizer";
+import "hardhat-abi-exporter";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  solidity: "0.8.19",
+  abiExporter: {
+    path: "./abi",
+    runOnCompile: true
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false,
+  },
   networks: {
     goerli: {
       url: process.env.GOERLI_URL || "",
