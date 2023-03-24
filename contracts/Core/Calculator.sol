@@ -4,8 +4,9 @@ pragma solidity ^0.8.18;
 
 import {ICalculator} from "./ICalculator.sol";
 import {Coords} from "../World/WorldStructs.sol";
+import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
-contract Calculator is ICalculator {
+contract Calculator is ICalculator, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
 
     function calculateDistance(

@@ -3,7 +3,9 @@ pragma solidity ^0.8.18;
 
 import {ImmutableERC721PermissionedMintable} from "../Utils/ImmutableERC721PermissionedMintable.sol";
 import {ImmutableERC721Base} from "../Utils/ImmutableERC721Base.sol";
+import {Coords} from "../World/WorldStructs.sol";
 import {City} from "./CityStructs.sol";
+import {Race} from "./CityEnums.sol";
 import {ICities} from "./ICity.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
@@ -45,6 +47,34 @@ contract Cities is ICities, ImmutableERC721PermissionedMintable {
         _mintNextToken(to);
         uint id = totalSupply();
         CityList[id] = _city;
+    }
+
+    function updateCityCoords(
+        uint cityId,
+        Coords memory _param
+    ) external onlyRole(MINTER_ROLE) {
+        CityList[cityId].Coords = _param;
+    }
+
+    function updateCityRace(
+        uint cityId,
+        Race _param
+    ) external onlyRole(MINTER_ROLE) {
+        CityList[cityId].Race = _param;
+    }
+
+    function updateCityAlive(
+        uint cityId,
+        bool _param
+    ) external onlyRole(MINTER_ROLE) {
+        CityList[cityId].Alive = _param;
+    }
+
+    function updateCityPopulation(
+        uint cityId,
+        uint _param
+    ) external onlyRole(MINTER_ROLE) {
+        CityList[cityId].Population = _param;
     }
 
     function city(uint cityId) external view returns (City memory) {

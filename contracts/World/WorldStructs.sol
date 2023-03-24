@@ -13,3 +13,7 @@ struct Coords {
     int X;
     int Y;
 }
+
+struct Plot {
+    int Weather;
+}

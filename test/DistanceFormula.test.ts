@@ -1,12 +1,14 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Calculator, Cities, GameWorld } from "../typechain-types";
+import { Calculator, Cities, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
 import { CoordsStruct } from "../typechain-types/contracts/Core/Calculator";
-
+import * as fs from 'fs'
 describe("Distance", function () {
     let contract: Cities;
     let contract2: GameWorld;
     let calculator: Calculator;
+    let perlinNoise: PerlinNoise;
+    let trigonometry: Trigonometry;
     const zerozero: any = { X: 1, Y: 1, __reserve: [0, 0, 0] }
 
     async function deployCityAndWorld() {
@@ -15,6 +17,14 @@ describe("Distance", function () {
         // get owner (first account)
         const [owner] = await ethers.getSigners();
         // deploy Cities contract
+
+        const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
+        perlinNoise = await PerlinNoise.deploy();
+        await perlinNoise.deployed();
+
+        const Trigonometry = await ethers.getContractFactory("Trigonometry");
+        trigonometry = await Trigonometry.deploy();
+        await trigonometry.deployed();
 
         const Cities = await ethers.getContractFactory("Cities");
         contract = await upgrades.deployProxy(
@@ -30,8 +40,10 @@ describe("Distance", function () {
 
 
         const GameWorld = await ethers.getContractFactory("GameWorld");
-        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero]) as any;
+        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, trigonometry.address]) as any;
         await contract2.deployed()
+        console.log(await contract2.PerlinNoise());
+
         // grant owner the minter role
         await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
         await contract2.setCities(contract.address)
@@ -51,6 +63,8 @@ describe("Distance", function () {
         calculator = await Calc.deploy(
         );
         await contract.deployed();
+
+
     }
 
     before(async function () {
@@ -76,6 +90,14 @@ describe("Distance", function () {
 
         console.log(distance);
         expect(distance.toString()).to.equal("18");
+    });
+
+
+    it("sample plot scores", async function () {
+        const perlinResult = await contract2.scanPlots(1025, 1050, 1025, 1050)
+        console.log(perlinResult);
+        fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
+        // expect(distance.toString()).to.equal("18");
     });
 
 

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.18;
 
-import { Resource } from "./ResourceEnums.sol";
+import {Resource} from "./ResourceEnums.sol";
 
 struct ResourceCost {
     uint Gold;
@@ -14,8 +14,8 @@ struct ResourceCost {
 }
 
 struct ClaimableResource {
-    Resource resource;
-    uint256 amount;
-    uint256 claimableAfter;
-    uint256 deadline;
+    Resource Resource;
+    uint256 Amount;
+    uint256 ClaimableAfter;
+    uint256 Deadline;
 }

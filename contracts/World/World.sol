@@ -4,9 +4,11 @@ pragma solidity ^0.8.18;
 
 import {ICities} from "../City/ICity.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
+import {IPerlinNoise} from "../Utils/IPerlinNoise.sol";
+import {ITrigonometry} from "../Utils/ITrigonometry.sol";
 import {City} from "../City/CityStructs.sol";
 import {Race} from "../City/CityEnums.sol";
-import {World, Coords} from "./WorldStructs.sol";
+import {World, Coords, Plot} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import "hardhat/console.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
@@ -16,25 +18,45 @@ contract GameWorld is UpgradeableGameContract {
     // constants
     uint constant DISTANCE_PER_PLOT = 2000;
     uint constant DISTANCE_TIME = 2 minutes;
+    int constant PERLIN_05 = 32768;
+    int constant PERLIN_1 = 32768 * 2;
 
-    ICalculator Calculator;
-    ICities Cities;
+    ICalculator public Calculator;
+    ICities public Cities;
+    IPerlinNoise public PerlinNoise;
+    ITrigonometry public Trigonometry;
+
     World public WorldState;
     mapping(uint => Coords) public CityCoords;
     mapping(int => mapping(int => uint)) public CoordsToCity;
 
-    function initialize(address _cities, address _calc) external initializer {
+    function initialize(
+        address _cities,
+        address _calc,
+        address _perl,
+        address _trig
+    ) external initializer {
         _initialize();
         Cities = ICities(_cities);
         Calculator = ICalculator(_calc);
+        PerlinNoise = IPerlinNoise(_perl);
+        Trigonometry = ITrigonometry(_trig);
     }
 
     function setCities(address _cities) external onlyOwner {
         Cities = ICities(_cities);
     }
 
+    function setPerlinNoise(address _cities) external onlyOwner {
+        PerlinNoise = IPerlinNoise(_cities);
+    }
+
     function setCalculator(address _calc) external onlyOwner {
         Calculator = ICalculator(_calc);
+    }
+
+    function setTrigonometry(address _trig) external onlyOwner {
+        Trigonometry = ITrigonometry(_trig);
     }
 
     function createCity(
@@ -72,7 +94,8 @@ contract GameWorld is UpgradeableGameContract {
                 Explorer: msg.sender,
                 Race: race,
                 Alive: true,
-                CreationDate: block.timestamp
+                CreationDate: block.timestamp,
+                Population: 50
             })
         );
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
@@ -169,6 +192,33 @@ contract GameWorld is UpgradeableGameContract {
                 }
             }
         }
+    }
+
+    function scanPlots(
+        int startX,
+        int endX,
+        int startY,
+        int endY
+    ) external view returns (Plot[] memory) {
+        uint i;
+        uint resultLen = uint(endX - startX) * uint(endY - startY);
+        Plot[] memory resultPlots = new Plot[](resultLen);
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                if (x == 0 && y == 0) continue;
+                uint16 a = uint16((uint(x) * 25) % 65536);
+                uint16 b = uint16((uint(y) * 25) % 65536);
+                resultPlots[i] = Plot({
+                    Weather: PerlinNoise.noise2d(
+                        x < 0 ? Trigonometry.sin(a) * -1 : Trigonometry.sin(a),
+                        y < 0 ? Trigonometry.sin(b) * -1 : Trigonometry.sin(b)
+                    )
+                });
+                i++;
+            }
+        }
+
+        return resultPlots;
     }
 
     function distanceBetweenTwoPoints(
