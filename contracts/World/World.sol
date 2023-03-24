@@ -70,18 +70,18 @@ contract GameWorld is UpgradeableGameContract {
             revert InvalidWorldCoordinates(coords.X, coords.Y);
 
         if (coords.X > 0) {
-            if (coords.X - 10 > WorldState.LastXPositive)
+            if (coords.X - 100 > WorldState.LastXPositive)
                 revert InvalidWorldCoordinates(coords.X, coords.Y);
         } else {
-            if (coords.X + 10 < WorldState.LastXNegative)
+            if (coords.X + 100 < WorldState.LastXNegative)
                 revert InvalidWorldCoordinates(coords.X, coords.Y);
         }
 
         if (coords.Y > 0) {
-            if (coords.Y - 10 > WorldState.LastYPositive)
+            if (coords.Y - 100 > WorldState.LastYPositive)
                 revert InvalidWorldCoordinates(coords.X, coords.Y);
         } else {
-            if (coords.Y + 10 < WorldState.LastYNegative)
+            if (coords.Y + 100 < WorldState.LastYNegative)
                 revert InvalidWorldCoordinates(coords.X, coords.Y);
         }
 
