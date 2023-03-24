@@ -206,8 +206,8 @@ contract GameWorld is UpgradeableGameContract {
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (x == 0 && y == 0) continue;
-                uint16 a = uint16((uint(x) * 25) % 65536);
-                uint16 b = uint16((uint(y) * 25) % 65536);
+                uint16 a = uint16((uint(x) * 20) % 65536);
+                uint16 b = uint16((uint(y) * 20) % 65536);
                 resultPlots[i] = Plot({
                     Weather: PerlinNoise.noise2d(
                         x < 0 ? Trigonometry.sin(a) * -1 : Trigonometry.sin(a),
