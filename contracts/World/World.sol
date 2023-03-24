@@ -3,6 +3,7 @@
 pragma solidity ^0.8.18;
 
 import {ICities} from "../City/ICity.sol";
+import {City} from "../City/CityStructs.sol";
 import {World, Coords} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import "hardhat/console.sol";
@@ -28,7 +29,7 @@ contract GameWorld {
 
         _coords = getNextCity(coords, true);
 
-        Cities.mint(msg.sender, 1);
+        Cities.mintCity(msg.sender);
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
 
         if (_coords.X > 0) {
@@ -81,4 +82,35 @@ contract GameWorld {
     function isPlotEmpty(Coords memory coords) public view returns (bool) {
         return CoordsToCity[coords.X][coords.Y] == 0;
     }
+
+    function scanCitiesBetweenCoords(
+        int startX,
+        int endX,
+        int startY,
+        int endY
+    ) external view returns (City[] memory, uint[] memory) {
+        require(startX < endX && startY < endY, "start must be lower");
+        uint resultLen = uint(endX - startX) * uint(endY - startY);
+        uint i;
+        City[] memory resultCities = new City[](resultLen);
+        uint[] memory resultCityIds = new uint[](resultLen);
+
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                uint cityId = CoordsToCity[x][y];
+                resultCities[i] = Cities.city(cityId);
+                resultCityIds[i] = cityId;
+                i++;
+            }
+        }
+
+        return (resultCities, resultCityIds);
+    }
+
+    function scanPlotsForEmptyPlaces(
+        int startX,
+        int endX,
+        int startY,
+        int endY
+    ) external view returns (Coords memory _coords) {}
 }

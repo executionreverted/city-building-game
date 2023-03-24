@@ -236,4 +236,17 @@ describe("Cities", function () {
 
     expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, __reserve: [0, 0, 0] })).to.equal(false);
   });
+
+  it("Scan and get city infos.", async function () {
+    let result = await contract2.scanCitiesBetweenCoords(0, 10, 0, 10);
+    let cities = result[0];
+    let cityIds = result[1].filter(a => a.gt(0));
+    let cityIdxs = []
+    cityIds.forEach(id => {
+      console.log(`City found with id: ${id}`);
+      cityIdxs.push(result[1].indexOf(id))
+    })
+    console.log(cityIds.length);
+    expect(cityIds.length).to.equal(7);
+  });
 });
