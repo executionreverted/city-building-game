@@ -28,7 +28,7 @@ contract Cities is ICities, ImmutableERC721PermissionedMintable {
         )
     {
         grantRole(MINTER_ROLE, worldManager);
-        _mintNextToken(msg.sender);
+        _mintNextToken(address(this));
     }
 
     function mintCity(

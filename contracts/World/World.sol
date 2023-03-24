@@ -44,6 +44,22 @@ contract GameWorld is OwnableUpgradeable {
         if ((!isEmpty && !pickClosest) || (coords.X == 0 || coords.Y == 0))
             revert InvalidWorldCoordinates(coords.X, coords.Y);
 
+        if (coords.X > 0) {
+            if (coords.X - 10 > WorldState.LastXPositive)
+                revert InvalidWorldCoordinates(coords.X, coords.Y);
+        } else {
+            if (coords.X + 10 < WorldState.LastXNegative)
+                revert InvalidWorldCoordinates(coords.X, coords.Y);
+        }
+
+        if (coords.Y > 0) {
+            if (coords.Y - 10 > WorldState.LastYPositive)
+                revert InvalidWorldCoordinates(coords.X, coords.Y);
+        } else {
+            if (coords.Y + 10 < WorldState.LastYNegative)
+                revert InvalidWorldCoordinates(coords.X, coords.Y);
+        }
+
         _coords = getNextCity(coords, true);
 
         Cities.mintCity(
@@ -157,7 +173,4 @@ contract GameWorld is OwnableUpgradeable {
     ) public view returns (uint) {
         return Calculator.calculateDistance(a, b);
     }
-    
-
-    
 }

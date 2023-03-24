@@ -245,12 +245,32 @@ describe("Cities", function () {
     expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
+  it("Cant mint city more far than 10 plots", async function () {
+    let hasError;
+    try {
+      const tx = await contract2.createCity(
+        { X: 13, Y: 18, }, // desired coords
+        true, // pick closest
+        5
+      )
+      await tx.wait(1);
+    } catch (error) {
+      console.log(error);
+      hasError = true;
+    } finally {
+      console.log("called 'createCity' method for eighth time");
+    }
+
+    expect(hasError).to.equal(true);
+  });
+
+
   it("Scan and get city infos.", async function () {
     let result = await contract2.scanCitiesBetweenCoords(0, 10, 0, 10);
     let cities = result[0];
-    cities.forEach(city => {
+    cities.forEach((city, idx) => {
       if (city.Alive) {
-        console.log(city)
+        console.log(idx, " alive-city-found")
       }
     })
     let cityIds = result[1].filter(a => a.gt(0));
@@ -265,11 +285,8 @@ describe("Cities", function () {
 
   it("Scan and get free plots.", async function () {
     let result = await contract2.scanPlotsForEmptyPlace(0, 10, 0, 10);
-    console.log(result);
-    const isEmpty = await contract2.isPlotEmpty({ X: 3, Y: 5, });
     const isFree = await contract2.isPlotEmpty(result)
-    console.log(isEmpty, isFree);
-
+    console.log(isFree);
     expect(isFree).to.equal(true);
   });
 
@@ -278,6 +295,6 @@ describe("Cities", function () {
 
     console.log(myCities);
 
-    expect(myCities.length).to.equal(8);
+    expect(myCities.length).to.equal(7);
   });
 });
