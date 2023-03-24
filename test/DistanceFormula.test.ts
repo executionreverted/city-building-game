@@ -1,9 +1,9 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 import { Calculator, Cities, GameWorld } from "../typechain-types";
 import { CoordsStruct } from "../typechain-types/contracts/Core/Calculator";
 
-describe("Cities", function () {
+describe("Distance", function () {
     let contract: Cities;
     let contract2: GameWorld;
     let calculator: Calculator;
@@ -17,22 +17,24 @@ describe("Cities", function () {
         // deploy Cities contract
 
         const Cities = await ethers.getContractFactory("Cities");
-        contract = await Cities.deploy(
-            owner.address, // owner
-            "Imaginary Immutable Iguanas", // name
-            "III", // symbol
-            "https://example-base-uri.com/", // baseURI
-            "https://example-contract-uri.com/", // contractURI,
-            ethers.constants.AddressZero
-        );
+        contract = await upgrades.deployProxy(
+            Cities,
+            [owner.address, // owner
+                "Imaginary Immutable Iguanas", // name
+                "III", // symbol
+                "https://example-base-uri.com/", // baseURI
+                "https://example-contract-uri.com/", // contractURI,
+            ethers.constants.AddressZero]
+        ) as any;
         await contract.deployed();
 
 
         const GameWorld = await ethers.getContractFactory("GameWorld");
-        contract2 = await GameWorld.deploy(contract.address);
-
+        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero]) as any;
+        await contract2.deployed()
         // grant owner the minter role
         await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
+        await contract2.setCities(contract.address)
         return {
             contract, contract2
         }

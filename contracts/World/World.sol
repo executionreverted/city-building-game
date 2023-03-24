@@ -9,9 +9,10 @@ import {Race} from "../City/CityEnums.sol";
 import {World, Coords} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import "hardhat/console.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
-contract GameWorld is OwnableUpgradeable {
+contract GameWorld is UpgradeableGameContract {
+    bytes32 constant version = keccak256("0.0.1");
     // constants
     uint constant DISTANCE_PER_PLOT = 2000;
     uint constant DISTANCE_TIME = 2 minutes;
@@ -22,8 +23,10 @@ contract GameWorld is OwnableUpgradeable {
     mapping(uint => Coords) public CityCoords;
     mapping(int => mapping(int => uint)) public CoordsToCity;
 
-    constructor(address _cities) {
+    function initialize(address _cities, address _calc) external initializer {
+        _initialize();
         Cities = ICities(_cities);
+        Calculator = ICalculator(_calc);
     }
 
     function setCities(address _cities) external onlyOwner {
@@ -68,7 +71,8 @@ contract GameWorld is OwnableUpgradeable {
                 Coords: _coords,
                 Explorer: msg.sender,
                 Race: race,
-                Alive: true
+                Alive: true,
+                CreationDate: block.timestamp
             })
         );
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
@@ -139,6 +143,7 @@ contract GameWorld is OwnableUpgradeable {
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 uint cityId = CoordsToCity[x][y];
+                if (cityId == 0) continue;
                 resultCities[i] = Cities.city(cityId);
                 resultCityIds[i] = cityId;
                 i++;
@@ -155,9 +160,8 @@ contract GameWorld is OwnableUpgradeable {
         int endY
     ) external view returns (Coords memory _coords) {
         for (int x = startX; x < endX; x++) {
-            if (x == 0) continue;
             for (int y = startY; y < endY; y++) {
-                if (y == 0) continue;
+                if (x == 0 && y == 0) continue;
                 if (CoordsToCity[x][y] == 0) {
                     _coords.X = x;
                     _coords.Y = y;

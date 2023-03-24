@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.18;
 
-contract PlayerController {
-    bytes32 constant version = keccak256("0.1.4");
+import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
+
+contract PlayerController is UpgradeableGameContract {
+    bytes32 constant version = keccak256("0.0.1");
 }

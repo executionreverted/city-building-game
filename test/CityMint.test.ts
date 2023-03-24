@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 import { Cities, GameWorld } from "../typechain-types";
 
@@ -15,19 +15,20 @@ describe("Cities", function () {
     // deploy Cities contract
 
     const Cities = await ethers.getContractFactory("Cities");
-    contract = await Cities.deploy(
-      owner.address, // owner
-      "Imaginary Immutable Iguanas", // name
-      "III", // symbol
-      "https://example-base-uri.com/", // baseURI
-      "https://example-contract-uri.com/", // contractURI,
-      ethers.constants.AddressZero
-    );
+    contract = await upgrades.deployProxy(
+      Cities,
+      [owner.address, // owner
+        "Imaginary Immutable Iguanas", // name
+        "III", // symbol
+        "https://example-base-uri.com/", // baseURI
+        "https://example-contract-uri.com/", // contractURI,
+      ethers.constants.AddressZero]
+    ) as any;
     await contract.deployed();
 
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await GameWorld.deploy(contract.address);
+    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero]) as any;
 
     // grant owner the minter role
     await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);

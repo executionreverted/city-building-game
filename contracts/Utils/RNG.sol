@@ -5,8 +5,9 @@ pragma solidity ^0.8.18;
 import {UpgradeableGameContract} from "./UpgradeableGameContract.sol";
 
 contract RNG is UpgradeableGameContract {
+    bytes32 constant version = keccak256("0.0.1");
 
-    uint private randomizer; 
+    uint private randomizer;
 
     function d100(uint _input) external view returns (uint) {
         return dn(_input, 100);

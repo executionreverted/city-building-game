@@ -11,6 +11,7 @@ struct City {
     address Explorer;
     Race Race;
     bool Alive;
+    uint CreationDate;
 }
 
 struct Building {

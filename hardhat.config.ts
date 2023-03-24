@@ -6,6 +6,7 @@ import "solidity-coverage";
 import "hardhat-contract-sizer";
 import "hardhat-abi-exporter";
 import * as dotenv from "dotenv";
+import "@openzeppelin/hardhat-upgrades";
 
 dotenv.config();
 

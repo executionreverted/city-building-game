@@ -6,6 +6,8 @@ import {ICalculator} from "./ICalculator.sol";
 import {Coords} from "../World/WorldStructs.sol";
 
 contract Calculator is ICalculator {
+    bytes32 constant version = keccak256("0.0.1");
+
     function calculateDistance(
         Coords memory c1,
         Coords memory c2
