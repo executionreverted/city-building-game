@@ -1,0 +1,2043 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xBaF8770A9AD0810490Fdc74264E3b5F877Ee4731",
+    "txHash": "0xde085a18e94a82ecf2818f51b61ceafe2cff8a9a9a9efec8e789770f4a8734e4"
+  },
+  "proxies": [
+    {
+      "address": "0x54a0b5887f0572C0b69F703db9636b0ac7916f7a",
+      "txHash": "0xa1998297f52614a120bf73b600faa047d59e3852be7838ce3a5aeb9ee61e134e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xCc902b147840716319f3306D7C39b51De3865BA2",
+      "txHash": "0xb866fde7da3a8e7b886514d6eac729776a9fa9fed428b243d225a739e07824ac",
+      "kind": "uups"
+    },
+    {
+      "address": "0x954a0400124553BCD1dbF039B545DF835Ef9eB6C",
+      "txHash": "0xd56a5cb9e40d84e8b6a56d1c4771292f225e3d5a659a397fda629e997c87fa59",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9d13534ff1DF5E856F741c9a0457aE7663175E2a",
+      "txHash": "0x75ec0c9ee60ff16c15456a82d32f3aae4e6589db464b5eb72289e99ebb4963ac",
+      "kind": "uups"
+    },
+    {
+      "address": "0x87f74C4d31A8A6Fee87B1C73DfebA85b150B8838",
+      "txHash": "0x937cf3031c5500c6a83609aaa8a5461ce5c37dadaf9ae0dba7c0c7c639da0643",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x678C89D75C4F14c51A1f57Ae475157ae3becac68",
+      "txHash": "0x773c86af1479d57caef907c7d43c00c6e7284b1e9ef01cc8fd0bc8de92b2a55f",
+      "kind": "uups"
+    },
+    {
+      "address": "0x50DF1F4fdf3ecF78636B660ccf63A4d9c5C64205",
+      "txHash": "0x388dc147c0685046113e412debf173c82ba0490eb874bc96d698f839f5d008d5",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xe9766a0FdDA480b07D8a51a439A2c5E642878DC8",
+      "txHash": "0x18ced9ea4a661436822b30b498ea02f0802fa44874390eb13975b16f13b10376",
+      "kind": "uups"
+    },
+    {
+      "address": "0xD1F1e96490E22AAbbe18AD132fCF9e59d0A08b14",
+      "txHash": "0xf57ee6c2a2ed0ed9d09e7a0dc4a75b460abfd348839966ec02dbd7c9d1771b34",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd63d62D517DeB6efAd845bbFdA08705167818966",
+      "txHash": "0x5578609d85ba428b503f9d0c8335c04bae5ff02e97390b49118fb30969c8cce3",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "6eed3975054434fde7a5885b18f5799bf185c473688d0ff0ff2d5f5a74d5389d": {
+      "address": "0x9d7Da346E901F508243E8C0015Da96Ec68B23ef1",
+      "txHash": "0xbbf70c236781070f589e367dcf04e2e6038483f909365f2970d1315d553c4a76",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\introspection\\ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_name",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_string_storage",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:25"
+          },
+          {
+            "label": "_symbol",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_string_storage",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:28"
+          },
+          {
+            "label": "_owners",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:31"
+          },
+          {
+            "label": "_balances",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:34"
+          },
+          {
+            "label": "_tokenApprovals",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:37"
+          },
+          {
+            "label": "_operatorApprovals",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:40"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_array(t_uint256)44_storage",
+            "contract": "ERC721Upgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol:517"
+          },
+          {
+            "label": "_ownedTokens",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "ERC721EnumerableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol:22"
+          },
+          {
+            "label": "_ownedTokensIndex",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ERC721EnumerableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol:25"
+          },
+          {
+            "label": "_allTokens",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_array(t_uint256)dyn_storage",
+            "contract": "ERC721EnumerableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol:28"
+          },
+          {
+            "label": "_allTokensIndex",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "ERC721EnumerableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol:31"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_array(t_uint256)46_storage",
+            "contract": "ERC721EnumerableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol:171"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC721BurnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721BurnableUpgradeable.sol:38"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "contractURI",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_string_storage",
+            "contract": "ImmutableERC721Base",
+            "src": "contracts\\Utils\\ImmutableERC721Base.sol:34"
+          },
+          {
+            "label": "baseURI",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_string_storage",
+            "contract": "ImmutableERC721Base",
+            "src": "contracts\\Utils\\ImmutableERC721Base.sol:37"
+          },
+          {
+            "label": "nextTokenId",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_struct(Counter)3134_storage",
+            "contract": "ImmutableERC721Base",
+            "src": "contracts\\Utils\\ImmutableERC721Base.sol:40"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "304",
+            "type": "t_address",
+            "contract": "ImmutableERC721Base",
+            "src": "contracts\\Utils\\ImmutableERC721Base.sol:43"
+          },
+          {
+            "label": "CityList",
+            "offset": 0,
+            "slot": "305",
+            "type": "t_mapping(t_uint256,t_struct(City)4714_storage)",
+            "contract": "Cities",
+            "src": "contracts\\City\\City.sol:28"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)44_storage": {
+            "label": "uint256[44]",
+            "numberOfBytes": "1408"
+          },
+          "t_array(t_uint256)46_storage": {
+            "label": "uint256[46]",
+            "numberOfBytes": "1472"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_enum(Race)4683": {
+            "label": "enum Race",
+            "members": [
+              "Human",
+              "Demon",
+              "Elf",
+              "Naga",
+              "Dragon",
+              "Dwarf"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(City)4714_storage)": {
+            "label": "mapping(uint256 => struct City)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(City)4714_storage": {
+            "label": "struct City",
+            "members": [
+              {
+                "label": "Coords",
+                "type": "t_struct(Coords)11348_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Explorer",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "Race",
+                "type": "t_enum(Race)4683",
+                "offset": 20,
+                "slot": "2"
+              },
+              {
+                "label": "Alive",
+                "type": "t_bool",
+                "offset": 21,
+                "slot": "2"
+              },
+              {
+                "label": "CreationDate",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "Population",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(Coords)11348_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Counter)3134_storage": {
+            "label": "struct CountersUpgradeable.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a668453105c212574799daae153c48837ed2bacc503aa9760c63c0181f4ecc4e": {
+      "address": "0xB3e17c2d18AAE2074269bC6F3eAc0abF72157582",
+      "txHash": "0xa427bc5f188eb011841fc0a2db8b0e4619b31da380b27d5754f0ea2049a74511",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)4960",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)4783",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)5146",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)5164",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)11343_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)11348_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)4960": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)4783": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)5146": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)5164": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)11348_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)11348_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)11343_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "dad93971556366c6b8dcda3c030a4600872c8aeeae682bbcf1a3992786da913f": {
+      "address": "0x487b52e87bf86cAf3A5A8A5DD3A6d3e7C7870786",
+      "txHash": "0x5c60ce1277d34801937e0975764a8480ed995f9059ffdae1ba094f931b4ec059",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "3ad3de4f2d919fccb11e29fae935af3c077e621a34d82bcca0c201a90a696073": {
+      "address": "0xd68e60D22A82d5f9eF43092293cb4C96103fA094",
+      "txHash": "0x061b06a9bfc0dacf52d9a571eb145880411671ca3e35a4984fbfb6fc67f484ef",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a7b1b78ed3268d71794f823710db1c50082270ffd6a75d6305ba12010534ac30": {
+      "address": "0xf467c7fE712C039fa72e6d20251E7F8e591D186E",
+      "txHash": "0x061494abfd2298ab9a8381cd52db3f66951f047476fc8f3e6dfe8a3c4fa6dc79",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "c58d8f6fa5d8207e4d4cb1fbc93399aa5ac5ba418747ae4a9b9708406673f327": {
+      "address": "0x9c09EC4F8765b280C5e21f13515E7923cbBB0719",
+      "txHash": "0xe833e5928264bdf82a4ca2ebeb18792cb88039012a36ec805ae3a06a1c18f65d",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "64b6b29ab83ddab8994f2ff8759acddae7bd5cbdd3b1c4fa7fbb8b75be4ee034": {
+      "address": "0xF4a4898c3339c15339FaA9BC3b3672dFC94F9e29",
+      "txHash": "0xc7284730505dd354a1118650d68d0f0601076eb2742dab0f3cef7d84baffa513",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "2c78de7331152122c85ce31d754c12ed921f4d1afc0da7e970eb5876a134be01": {
+      "address": "0xefAd6EDb728b457dc6AE2e0AF8C37839d1B25C01",
+      "txHash": "0xdbf6e485b4b8a098146394117564fd921a9e31cc082a75a9ef95145f7d202563",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:24"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:25"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:26"
+          },
+          {
+            "label": "Trigonometry",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(ITrigonometry)1573",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:27"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)2774_storage",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:29"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)2779_storage)",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:30"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts\\World\\World.sol:31"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ITrigonometry)1573": {
+            "label": "contract ITrigonometry",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)2779_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)2779_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(World)2774_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

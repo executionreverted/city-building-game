@@ -9,7 +9,7 @@ import * as dotenv from "dotenv";
 import "@openzeppelin/hardhat-upgrades";
 
 dotenv.config();
-
+const deploymentAccount = process.env.PRIVATE_KEY
 const config: HardhatUserConfig = {
   solidity: "0.8.19",
   abiExporter: {
@@ -29,6 +29,12 @@ const config: HardhatUserConfig = {
         accountsBalance: '1000000000000000000000000',
         count: 5
       }
+    },
+    fuji: {
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      gasPrice: 25000000000,
+      chainId: 43113,
+      accounts: deploymentAccount ? [deploymentAccount] : []
     },
     goerli: {
       url: process.env.GOERLI_URL || "",
