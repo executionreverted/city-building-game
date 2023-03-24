@@ -39,7 +39,7 @@ describe("Cities", function () {
 
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, calculator.address, perlinNoise.address, trigonometry.address]) as any;
+    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, trigonometry.address]) as any;
 
     // grant owner the minter role
     await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);

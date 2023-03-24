@@ -94,9 +94,9 @@ describe("Distance", function () {
 
 
     it("sample plot scores", async function () {
-        const perlinResult = await contract2.scanPlots(1025, 1050, 1025, 1050)
+        const perlinResult = await contract2.scanPlots("75", "100", "75", "100")
         console.log(perlinResult);
-        fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
+        // fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
         // expect(distance.toString()).to.equal("18");
     });
 

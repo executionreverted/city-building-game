@@ -195,23 +195,31 @@ contract GameWorld is UpgradeableGameContract {
     }
 
     function scanPlots(
-        int startX,
-        int endX,
-        int startY,
-        int endY
+        int256 startX,
+        int256 endX,
+        int256 startY,
+        int256 endY
     ) external view returns (Plot[] memory) {
         uint i;
-        uint resultLen = uint(endX - startX) * uint(endY - startY);
+        int xRange = endX - startX;
+        int yRange = endY - startY;
+        uint resultLen = uint(xRange * yRange);
         Plot[] memory resultPlots = new Plot[](resultLen);
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 if (x == 0 && y == 0) continue;
-                uint16 a = uint16((uint(x) * 20) % 65536);
-                uint16 b = uint16((uint(y) * 20) % 65536);
+                uint256 a = uint256(uint256(x < 0 ? x*-1 : x) * 33);
+                uint256 b = uint256(uint256(y < 0 ? y*-1 : y) * 33);
+                if (a > type(uint16).max) {
+                    a = type(uint16).max;
+                }
+                if (b > type(uint16).max) {
+                    b = type(uint16).max;
+                }
                 resultPlots[i] = Plot({
                     Weather: PerlinNoise.noise2d(
-                        x < 0 ? Trigonometry.sin(a) * -1 : Trigonometry.sin(a),
-                        y < 0 ? Trigonometry.sin(b) * -1 : Trigonometry.sin(b)
+                        Trigonometry.sin(uint16(a % 65536)),
+                        Trigonometry.sin(uint16(b % 65536))
                     )
                 });
                 i++;
