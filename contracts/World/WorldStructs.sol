@@ -12,5 +12,4 @@ struct World {
 struct Coords {
     int X;
     int Y;
-    uint[3] __reserve;
 }

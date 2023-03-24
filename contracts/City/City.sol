@@ -43,4 +43,15 @@ contract Cities is ICities, ImmutableERC721PermissionedMintable {
     function city(uint cityId) external view returns (City memory) {
         return CityList[cityId];
     }
+
+    function citiesOf(address player) external view returns (City[] memory) {
+        City[] memory result = new City[](balanceOf(player));
+        uint[] memory _tokensOfOwner = new uint[](balanceOf(player));
+        uint i;
+        for (i = 0; i < _tokensOfOwner.length; i++) {
+            _tokensOfOwner[i] = tokenOfOwnerByIndex(player, i);
+            result[i] = CityList[_tokensOfOwner[i]];
+        }
+        return result;
+    }
 }

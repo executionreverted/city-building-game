@@ -36,7 +36,8 @@ contract GameWorld is OwnableUpgradeable {
 
     function createCity(
         Coords memory coords,
-        bool pickClosest
+        bool pickClosest,
+        Race race
     ) external returns (Coords memory _coords) {
         uint nextToken = Cities.totalSupply();
         bool isEmpty = isPlotEmpty(coords);
@@ -50,7 +51,7 @@ contract GameWorld is OwnableUpgradeable {
             City({
                 Coords: _coords,
                 Explorer: msg.sender,
-                Race: Race.Human,
+                Race: race,
                 Alive: true
             })
         );
