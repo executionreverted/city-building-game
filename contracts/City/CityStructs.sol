@@ -6,7 +6,7 @@ import {ResourceCost} from "../Resources/ResourceStructs.sol";
 import {Race} from "./CityEnums.sol";
 
 struct City {
-    uint[2] Coords;
+    int[2] Coords;
     address Explorer;
     Race Race;
 }

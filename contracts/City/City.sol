@@ -13,7 +13,8 @@ contract Cities is ImmutableERC721PermissionedMintable {
         string memory name,
         string memory symbol,
         string memory baseURI,
-        string memory contractURI
+        string memory contractURI,
+        address worldManager
     )
         ImmutableERC721PermissionedMintable(
             owner,
@@ -22,5 +23,8 @@ contract Cities is ImmutableERC721PermissionedMintable {
             baseURI,
             contractURI
         )
-    {}
+    {
+        grantRole(MINTER_ROLE, worldManager);
+        _mintNextToken(msg.sender);
+    }
 }

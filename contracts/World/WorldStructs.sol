@@ -3,12 +3,14 @@
 pragma solidity ^0.8.18;
 
 struct World {
-    uint LastX;
-    uint LastY;
-    uint TotalCities;
+    int LastXPositive;
+    int LastXNegative;
+    int LastYPositive;
+    int LastYNegative;
 }
 
-struct PlotInfo {
-    uint X;
-    uint Y;
+struct Coords {
+    int X;
+    int Y;
+    uint[3] __reserve;
 }

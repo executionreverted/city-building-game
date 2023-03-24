@@ -21,6 +21,14 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   networks: {
+    hardhat: {
+      gasPrice: 225000000000,
+      chainId: 1337,
+      accounts: {
+        accountsBalance: '1000000000000000000000000',
+        count: 5
+      }
+    },
     goerli: {
       url: process.env.GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
