@@ -3,13 +3,20 @@
 pragma solidity ^0.8.18;
 
 import {ICities} from "../City/ICity.sol";
+import {ICalculator} from "../Core/ICalculator.sol";
 import {City} from "../City/CityStructs.sol";
 import {Race} from "../City/CityEnums.sol";
 import {World, Coords} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import "hardhat/console.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract GameWorld {
+contract GameWorld is OwnableUpgradeable {
+    // constants
+    uint constant DISTANCE_PER_PLOT = 2000;
+    uint constant DISTANCE_TIME = 2 minutes;
+
+    ICalculator Calculator;
     ICities Cities;
     World public WorldState;
     mapping(uint => Coords) public CityCoords;
@@ -17,6 +24,14 @@ contract GameWorld {
 
     constructor(address _cities) {
         Cities = ICities(_cities);
+    }
+
+    function setCities(address _cities) external onlyOwner {
+        Cities = ICities(_cities);
+    }
+
+    function setCalculator(address _calc) external onlyOwner {
+        Calculator = ICalculator(_calc);
     }
 
     function createCity(
@@ -134,4 +149,14 @@ contract GameWorld {
             }
         }
     }
+
+    function distanceBetweenTwoPoints(
+        Coords memory a,
+        Coords memory b
+    ) public view returns (uint) {
+        return Calculator.calculateDistance(a, b);
+    }
+    
+
+    
 }
