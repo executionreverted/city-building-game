@@ -2,13 +2,15 @@
 
 pragma solidity ^0.8.18;
 
+import {Coords} from "../World/WorldStructs.sol";
 import {ResourceCost} from "../Resources/ResourceStructs.sol";
 import {Race} from "./CityEnums.sol";
 
 struct City {
-    int[2] Coords;
+    Coords Coords;
     address Explorer;
     Race Race;
+    bool Alive;
 }
 
 struct Building {

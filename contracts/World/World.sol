@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 
 import {ICities} from "../City/ICity.sol";
 import {City} from "../City/CityStructs.sol";
+import {Race} from "../City/CityEnums.sol";
 import {World, Coords} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import "hardhat/console.sol";
@@ -29,7 +30,15 @@ contract GameWorld {
 
         _coords = getNextCity(coords, true);
 
-        Cities.mintCity(msg.sender);
+        Cities.mintCity(
+            msg.sender,
+            City({
+                Coords: _coords,
+                Explorer: msg.sender,
+                Race: Race.Human,
+                Alive: true
+            })
+        );
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
 
         if (_coords.X > 0) {
@@ -107,10 +116,22 @@ contract GameWorld {
         return (resultCities, resultCityIds);
     }
 
-    function scanPlotsForEmptyPlaces(
+    function scanPlotsForEmptyPlace(
         int startX,
         int endX,
         int startY,
         int endY
-    ) external view returns (Coords memory _coords) {}
+    ) external view returns (Coords memory _coords) {
+        for (int x = startX; x < endX; x++) {
+            if (x == 0) continue;
+            for (int y = startY; y < endY; y++) {
+                if (y == 0) continue;
+                if (CoordsToCity[x][y] == 0) {
+                    _coords.X = x;
+                    _coords.Y = y;
+                    return _coords;
+                }
+            }
+        }
+    }
 }

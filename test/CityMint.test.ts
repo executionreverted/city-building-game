@@ -240,6 +240,11 @@ describe("Cities", function () {
   it("Scan and get city infos.", async function () {
     let result = await contract2.scanCitiesBetweenCoords(0, 10, 0, 10);
     let cities = result[0];
+    cities.forEach(city => {
+      if (city.Alive) {
+        console.log(city)
+      }
+    })
     let cityIds = result[1].filter(a => a.gt(0));
     let cityIdxs = []
     cityIds.forEach(id => {
@@ -248,5 +253,15 @@ describe("Cities", function () {
     })
     console.log(cityIds.length);
     expect(cityIds.length).to.equal(7);
+  });
+
+  it("Scan and get free plots.", async function () {
+    let result = await contract2.scanPlotsForEmptyPlace(0, 10, 0, 10);
+    console.log(result);
+    const isEmpty = await contract2.isPlotEmpty({ X: 3, Y: 5, __reserve: [0, 0, 0] });
+    const isFree = await contract2.isPlotEmpty(result)
+    console.log(isEmpty, isFree);
+
+    expect(isFree).to.equal(true);
   });
 });

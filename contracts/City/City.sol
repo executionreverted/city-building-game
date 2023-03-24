@@ -32,9 +32,12 @@ contract Cities is ICities, ImmutableERC721PermissionedMintable {
     }
 
     function mintCity(
-        address to
+        address to,
+        City memory _city
     ) external onlyRole(MINTER_ROLE) {
         _mintNextToken(to);
+        uint id = totalSupply();
+        CityList[id] = _city;
     }
 
     function city(uint cityId) external view returns (City memory) {
