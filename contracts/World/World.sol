@@ -257,9 +257,14 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         _plot.IsTaken = CoordsToPlot[x][y].IsTaken;
 
         // todo content
-        uint randomness = generateNumberFromCoordsAndSeed(_coords) %
-            uint(type(PlotContentTypes).max);
-        _plot.Content = PlotContentTypes(randomness);
+        uint randomness = generateNumberFromCoordsAndSeed(_coords);
+        bool hasContent = (randomness % 100) < 5;
+
+        if (hasContent) {
+            uint foundContent = ((randomness / EVENT_MAP_SEED + 1)) %
+                uint(type(PlotContentTypes).max);
+            _plot.Content = PlotContentTypes(randomness);
+        }
         // param 2s
         // use keccak 256 to determine
     }
@@ -268,7 +273,14 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         Coords memory coords
     ) internal view returns (uint) {
         uint random = uint256(
-            keccak256(abi.encodePacked(coords.X, coords.Y, EVENT_MAP_SEED))
+            keccak256(
+                abi.encodePacked(
+                    coords.X,
+                    coords.Y,
+                    address(this),
+                    EVENT_MAP_SEED
+                )
+            )
         );
     }
 }
