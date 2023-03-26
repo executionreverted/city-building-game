@@ -9,35 +9,35 @@ contract RNG is UpgradeableGameContract {
 
     uint private randomizer;
 
-    function d100(uint _input) external view returns (uint) {
+    function d100(uint _input) external returns (uint) {
         return dn(_input, 100);
     }
 
-    function d20(uint _input) external view returns (uint) {
+    function d20(uint _input) external returns (uint) {
         return dn(_input, 20);
     }
 
-    function d12(uint _input) external view returns (uint) {
+    function d12(uint _input) external returns (uint) {
         return dn(_input, 12);
     }
 
-    function d10(uint _input) external view returns (uint) {
+    function d10(uint _input) external returns (uint) {
         return dn(_input, 10);
     }
 
-    function d8(uint _input) external view returns (uint) {
+    function d8(uint _input) external returns (uint) {
         return dn(_input, 8);
     }
 
-    function d6(uint _input) external view returns (uint) {
+    function d6(uint _input) external returns (uint) {
         return dn(_input, 6);
     }
 
-    function d4(uint _input) external view returns (uint) {
+    function d4(uint _input) external returns (uint) {
         return dn(_input, 4);
     }
 
-    function dn(uint _input, uint _number) public view returns (uint) {
+    function dn(uint _input, uint _number) public returns (uint) {
         return _seed(_input) % _number;
     }
 
@@ -45,7 +45,8 @@ contract RNG is UpgradeableGameContract {
         return uint256(keccak256(abi.encodePacked(input)));
     }
 
-    function _seed(uint _input) internal view returns (uint rand) {
+    function _seed(uint _input) internal returns (uint rand) {
+        randomizer++;
         rand = _random(
             string(
                 abi.encodePacked(

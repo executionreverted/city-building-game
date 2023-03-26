@@ -10,3 +10,4 @@ cache
 artifacts
 abi
 perlin-test.json
+flat_**.sol

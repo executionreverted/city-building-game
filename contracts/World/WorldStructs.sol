@@ -15,5 +15,14 @@ struct Coords {
 }
 
 struct Plot {
-    int Weather;
+    int Climate;
+    PlotContentTypes Content;
+    bool IsTaken;
+}
+
+enum PlotContentTypes {
+    RESOURCE,
+    ENEMY,
+    REWARD,
+    CHEST
 }
