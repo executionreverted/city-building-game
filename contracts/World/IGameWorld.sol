@@ -4,10 +4,6 @@ pragma solidity ^0.8.18;
 import {PlotContent, Coords, Plot} from "./WorldStructs.sol";
 
 interface IGameWorld {
-    function Calculator() external view returns (address);
-
-    function Cities() external view returns (address);
-
     function CityCoords(uint256) external view returns (int256 X, int256 Y);
 
     function CoordsToCity(int256, int256) external view returns (uint256);
@@ -24,8 +20,6 @@ interface IGameWorld {
             bool IsTaken,
             uint256 CityId
         );
-
-    function PerlinNoise() external view returns (address);
 
     function WorldState()
         external
@@ -50,19 +44,11 @@ interface IGameWorld {
         Coords memory b
     ) external view returns (uint256);
 
-    function initialize(address _cities, address _calc, address _perl) external;
-
     function isPlotEmpty(Coords memory coords) external view returns (bool);
-
-    function owner() external view returns (address);
 
     function plotProps(
         Coords memory _coords
     ) external view returns (Plot memory _plot);
-
-    function proxiableUUID() external view returns (bytes32);
-
-    function renounceOwnership() external;
 
     function scanCitiesBetweenCoords(
         int256 startX,
@@ -84,6 +70,4 @@ interface IGameWorld {
         int256 startY,
         int256 endY
     ) external view returns (Coords memory _coords);
-
-    function sin(uint16 _angle) external pure returns (int256);
 }

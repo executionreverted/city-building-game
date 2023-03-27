@@ -147,8 +147,10 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     }
 
     function isPlotEmpty(Coords memory coords) public view returns (bool) {
+        Plot memory _plot = plotProps(coords);
         return
-            !CoordsToPlot[coords.X][coords.Y].IsTaken ||
+            (_plot.Content.Type == PlotContentTypes.HABITABLE &&
+                !CoordsToPlot[coords.X][coords.Y].IsTaken) ||
             CoordsToCity[coords.X][coords.Y] == 0;
     }
 
