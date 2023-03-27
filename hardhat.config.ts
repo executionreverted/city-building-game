@@ -7,6 +7,7 @@ import "hardhat-contract-sizer";
 import "hardhat-abi-exporter";
 import * as dotenv from "dotenv";
 import "@openzeppelin/hardhat-upgrades";
+import "hardhat-interface-generator";
 
 dotenv.config();
 const deploymentAccount = process.env.PRIVATE_KEY
