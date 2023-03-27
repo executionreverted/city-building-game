@@ -40,9 +40,9 @@ describe("Distance", function () {
 
 
         const GameWorld = await ethers.getContractFactory("GameWorld");
-        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, trigonometry.address]) as any;
+        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
         await contract2.deployed()
-        console.log(await contract2.PerlinNoise());
+        // console.log(await contract2.PerlinNoise());
 
         // grant owner the minter role
         await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
@@ -95,11 +95,10 @@ describe("Distance", function () {
 
     it("sample plot scores", async function () {
         const perlinResult = await contract2.scanPlots("1", "10", "1", "10")
-        console.log(perlinResult);
+        /* console.log(perlinResult);
         console.log(contract2.address);
         console.log(contract2.address);
-        console.log(contract2.address);
-        
+        console.log(contract2.address); */
         // fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
         // expect(distance.toString()).to.equal("18");
     });

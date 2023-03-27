@@ -21,10 +21,10 @@ describe("Cities", function () {
     perlinNoise = await PerlinNoise.deploy();
     await perlinNoise.deployed();
 
-    const Trigonometry = await ethers.getContractFactory("Trigonometry");
+  /*   const Trigonometry = await ethers.getContractFactory("Trigonometry");
     trigonometry = await Trigonometry.deploy();
     await trigonometry.deployed();
-
+ */
     const Cities = await ethers.getContractFactory("Cities");
     contract = await upgrades.deployProxy(
       Cities,
@@ -39,7 +39,7 @@ describe("Cities", function () {
 
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, trigonometry.address]) as any;
+    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
 
     // grant owner the minter role
     await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
@@ -75,12 +75,14 @@ describe("Cities", function () {
       await tx.wait(1);
     } catch (error) {
       console.log(error);
+      console.log(error);
+      console.log(error);
     } finally {
       console.log("called 'createCity' method");
     }
 
     let coords = await contract2.CityCoords(1)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    console.log(coords.X.toString(), ",", coords.Y.toString(), '"""');
 
     expect(await contract2.isPlotEmpty(zerozero)).to.equal(false);
     console.log('End of city 1 test.');
@@ -135,7 +137,6 @@ describe("Cities", function () {
 
     let coords = await contract2.CityCoords(2)
     console.log(coords.X.toString(), ",", coords.Y.toString());
-
     expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
@@ -257,11 +258,11 @@ describe("Cities", function () {
     expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
-  it("Cant mint city more far than 10 plots", async function () {
+  it("Cant mint city more far than 100 plots", async function () {
     let hasError;
     try {
       const tx = await contract2.createCity(
-        { X: 13, Y: 18, }, // desired coords
+        { X: 200, Y: 200, }, // desired coords
         true, // pick closest
         5
       )
@@ -298,14 +299,11 @@ describe("Cities", function () {
   it("Scan and get free plots.", async function () {
     let result = await contract2.scanPlotsForEmptyPlace(0, 10, 0, 10);
     const isFree = await contract2.isPlotEmpty(result)
-    console.log(isFree);
     expect(isFree).to.equal(true);
   });
 
   it("Get user balance.", async function () {
     const myCities = await contract.citiesOf(await contract.owner())
-
-    console.log(myCities);
 
     expect(myCities.length).to.equal(7);
   });

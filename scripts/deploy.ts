@@ -22,10 +22,10 @@ async function deploy() {
   perlinNoise = await PerlinNoise.deploy();
   await perlinNoise.deployed();
 
-  const Trigonometry = await ethers.getContractFactory("Trigonometry");
-  trigonometry = await Trigonometry.deploy();
-  await trigonometry.deployed();
-
+  /*  const Trigonometry = await ethers.getContractFactory("Trigonometry");
+   trigonometry = await Trigonometry.deploy();
+   await trigonometry.deployed();
+  */
   const Calc = await ethers.getContractFactory("Calculator");
   calculator = await Calc.deploy(
   );
@@ -46,7 +46,7 @@ async function deploy() {
 
   const GameWorld = await ethers.getContractFactory("GameWorld");
   contract2 = await upgrades.deployProxy(GameWorld,
-    [contract.address, calculator.address, perlinNoise.address, trigonometry.address],
+    [contract.address, calculator.address, perlinNoise.address],
     {
       kind: "uups"
     }) as any;

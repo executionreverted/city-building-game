@@ -23,7 +23,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     uint constant DISTANCE_TIME = 2 minutes;
     int constant PERLIN_05 = 32768;
     int constant PERLIN_1 = 32768 * 2;
-    uint EVENT_MAP_SEED = 123456789;
+    uint EVENT_MAP_SEED;
 
     ICalculator public Calculator;
     ICities public Cities;
@@ -43,6 +43,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         Cities = ICities(_cities);
         Calculator = ICalculator(_calc);
         PerlinNoise = IPerlinNoise(_perl);
+        EVENT_MAP_SEED = 123456789;
     }
 
     function setCities(address _cities) external onlyOwner {
@@ -97,7 +98,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             })
         );
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
-        CoordsToPlot[_coords.X][_coords.Y].IsTaken = false;
+        CoordsToPlot[_coords.X][_coords.Y].IsTaken = true;
 
         if (_coords.X > 0) {
             if (WorldState.LastXPositive < _coords.X)
