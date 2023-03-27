@@ -16,8 +16,29 @@ struct Coords {
 
 struct Plot {
     int Climate;
-    PlotContentTypes Content;
+    PlotContent Content;
     bool IsTaken;
+}
+
+struct WorldAction {
+    Coords Target;
+    WorldActionTypes ActionType;
+    uint ActionPayload;
+}
+
+enum WorldActionTypes {
+    PLUNDER,
+    INVADE,
+    COLLECT,
+    EXPLORE
+}
+
+struct PlotContent {
+    PlotContentTypes Type;
+    uint8 Tier; // tier
+    uint Value1; // param type
+    uint Value2; // min
+    uint Value3; // max
 }
 
 enum PlotContentTypes {

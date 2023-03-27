@@ -6,6 +6,6 @@ enum Resource {
     GOLD,
     WOOD,
     STONE,
-    METAL,
-    WHEAT
+    IRON,
+    FOOD
 }

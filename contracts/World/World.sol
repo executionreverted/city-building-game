@@ -6,16 +6,19 @@ import {ICities} from "../City/ICity.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {IPerlinNoise} from "../Utils/IPerlinNoise.sol";
 import {Trigonometry} from "../Utils/Trigonometry.sol";
+import {Resource} from "../Resources/ResourceEnums.sol";
 import {City} from "../City/CityStructs.sol";
 import {Race} from "../City/CityEnums.sol";
 import {World, Coords, Plot, PlotContentTypes} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
-import "hardhat/console.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
 contract GameWorld is Trigonometry, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
     // constants
+    uint constant BASE_PLOT_INTERACTION_COOLDOWN = 15 minutes;
+    uint constant BASE_RESOURCE_SPAWN_AMOUNT = 100;
+    uint constant MAX_PLOT_TIER = 5;
     uint constant DISTANCE_PER_PLOT = 2000;
     uint constant DISTANCE_TIME = 2 minutes;
     int constant PERLIN_05 = 32768;
@@ -255,22 +258,62 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             sin(uint16(b % 65536))
         );
         _plot.IsTaken = CoordsToPlot[x][y].IsTaken;
+        _plot = generatePlotContent(_plot, _coords);
+    }
 
+    function generatePlotContent(
+        Plot memory _plot,
+        Coords memory _coords
+    ) internal view returns (Plot memory) {
         // todo content
-        uint randomness = generateNumberFromCoordsAndSeed(_coords);
-        bool hasContent = (randomness % 100) < 5;
+        uint randomness1 = useRandom(_coords, 3169, 100); // determine if has plot content & what type it is
+        uint randomness2 = useRandom(_coords, 420, 100); // determine plot content type e.g Resource Food
+        uint randomness3 = useRandom(_coords, 69420, 100); // determine plot content content tier @MAX_PLOT_TIER
+        uint randomness4 = useRandom(_coords, 3142069, 100); // determine param1 min value
+        uint randomness5 = useRandom(_coords, 315269420, 100); // determine param2 max value
+
+        // 5%
+        bool hasContent = randomness1 <= 5;
 
         if (hasContent) {
-            uint foundContent = ((randomness / EVENT_MAP_SEED + 1)) %
+            uint foundContent = ((randomness1 / EVENT_MAP_SEED + 1)) %
                 uint(type(PlotContentTypes).max);
-            _plot.Content = PlotContentTypes(randomness);
+            _plot.Content.Type = PlotContentTypes(foundContent);
+
+            // select resource type
+            if (_plot.Content.Type == PlotContentTypes.RESOURCE) {
+                // set resource type in this case.
+                if (randomness2 >= 0 && randomness2 < 20) {
+                    _plot.Content.Value1 = uint(Resource.GOLD);
+                } else if (randomness2 >= 20 && randomness2 < 40) {
+                    _plot.Content.Value1 = uint(Resource.WOOD);
+                } else if (randomness2 >= 40 && randomness2 < 60) {
+                    _plot.Content.Value1 = uint(Resource.STONE);
+                } else if (randomness2 >= 60 && randomness2 < 80) {
+                    _plot.Content.Value1 = uint(Resource.IRON);
+                } else if (randomness2 >= 80 && randomness2 <= 100) {
+                    _plot.Content.Value1 = uint(Resource.FOOD);
+                }
+                _plot.Content.Tier = uint8((randomness3 % MAX_PLOT_TIER) + 1);
+                // Min.
+                _plot.Content.Value2 =
+                    ((BASE_RESOURCE_SPAWN_AMOUNT * _plot.Content.Tier) *
+                        randomness4) /
+                    100;
+                // Max.
+                _plot.Content.Value3 =
+                    _plot.Content.Value2 +
+                    (_plot.Content.Value2 * randomness5) /
+                    100;
+            }
         }
-        // param 2s
-        // use keccak 256 to determine
+
+        return _plot;
     }
 
     function generateNumberFromCoordsAndSeed(
-        Coords memory coords
+        Coords memory coords,
+        uint externalSeed
     ) internal view returns (uint) {
         uint random = uint256(
             keccak256(
@@ -278,9 +321,19 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
                     coords.X,
                     coords.Y,
                     address(this),
-                    EVENT_MAP_SEED
+                    EVENT_MAP_SEED,
+                    externalSeed
                 )
             )
         );
+        return random;
+    }
+
+    function useRandom(
+        Coords memory coords,
+        uint seed,
+        uint modulus
+    ) internal view returns (uint) {
+        return (generateNumberFromCoordsAndSeed(coords, seed) % modulus) + 1;
     }
 }
