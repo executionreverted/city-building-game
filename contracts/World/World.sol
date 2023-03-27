@@ -23,7 +23,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     uint constant DISTANCE_TIME = 2 minutes;
     int constant PERLIN_05 = 32768;
     int constant PERLIN_1 = 32768 * 2;
-    int constant NOISE_AMOUNT = 25;
+    int constant NOISE_AMOUNT = 15;
     uint EVENT_MAP_SEED;
 
     ICalculator public Calculator;
@@ -259,7 +259,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     function generatePlotContent(
         Plot memory _plot,
         Coords memory _coords
-    ) internal view returns (Plot memory) {
+    ) internal  view returns (Plot memory) {
         if (CoordsToPlot[_coords.Y][_coords.Y].IsTaken) {
             _plot.Content.Type = PlotContentTypes.TAKEN;
             return _plot;
@@ -283,14 +283,14 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         );
 
         // todo content
-        uint randomness1 = useRandom(_coords, 3169, 100); // determine if has plot content & what type it is
+        uint randomness1 = useRandom(_coords, 316942069, 100); // determine if has plot content & what type it is
         uint randomness2 = useRandom(_coords, 420, 100); // determine plot content type e.g Resource Food
         uint randomness3 = useRandom(_coords, 69420, 100); // determine plot content content tier @MAX_PLOT_TIER
         uint randomness4 = useRandom(_coords, 3142069, 100); // determine param1 min value
         uint randomness5 = useRandom(_coords, 315269420, 100); // determine param2 max value
         // 5%
         bool inhabitable = randomness1 <= 5 ||
-            (_plot.Climate < 5 || _plot.Climate > 25);
+            (_plot.Climate < 1 || _plot.Climate > 25);
 
         if (inhabitable) {
             _plot.Content.Type = PlotContentTypes.INHABITABLE;
@@ -305,7 +305,9 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             _plot.Content.Type = PlotContentTypes(foundContent + 2);
 
             // select resource type
-            _plot.Content.Tier = uint8((randomness3 % MAX_PLOT_TIER) + 1);
+            _plot.Content.Tier = uint8(
+                ((randomness3 * 1337601) % MAX_PLOT_TIER) + 1
+            );
             if (_plot.Content.Type == PlotContentTypes.RESOURCE) {
                 // set resource type in this case.
                 if (randomness2 >= 0 && randomness2 < 20) {
