@@ -248,7 +248,6 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
 
         if (_coords.X == 0 && _coords.Y == 0) revert("zero");
 
-        _plot.IsTaken = CoordsToPlot[_coords.X][_coords.Y].IsTaken;
         _plot = generatePlotContent(_plot, _coords);
 
         if (_plot.IsTaken) {
@@ -259,11 +258,14 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     function generatePlotContent(
         Plot memory _plot,
         Coords memory _coords
-    ) internal  view returns (Plot memory) {
-        if (CoordsToPlot[_coords.Y][_coords.Y].IsTaken) {
+    ) internal view returns (Plot memory) {
+        _plot.IsTaken = CoordsToPlot[_coords.X][_coords.Y].IsTaken;
+
+        if (CoordsToPlot[_coords.X][_coords.Y].IsTaken) {
             _plot.Content.Type = PlotContentTypes.TAKEN;
             return _plot;
         }
+
         uint256 a = uint256(
             uint256(_coords.X < 0 ? _coords.X * -1 : _coords.X) * 25
         );

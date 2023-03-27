@@ -7111,6 +7111,325 @@
           }
         }
       }
+    },
+    "4ef2879e9d53d182aacb8cfa81c07e507cdce801bf20ff97456c9557c40f2351": {
+      "address": "0x5BC24F9716bd0B205ac0E94E00bF0649b76c4E4A",
+      "txHash": "0x48be9252091888c284b307e02b5b9de1ce10f9f300f7215c10395626e711b47c",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "EVENT_MAP_SEED",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint256",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:27"
+          },
+          {
+            "label": "Calculator",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(ICalculator)1498",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:29"
+          },
+          {
+            "label": "Cities",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(ICities)1471",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:30"
+          },
+          {
+            "label": "PerlinNoise",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(IPerlinNoise)1555",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:31"
+          },
+          {
+            "label": "WorldState",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_struct(World)3329_storage",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:33"
+          },
+          {
+            "label": "CityCoords",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_uint256,t_struct(Coords)3334_storage)",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:34"
+          },
+          {
+            "label": "CoordsToCity",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_uint256))",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:35"
+          },
+          {
+            "label": "CoordsToPlot",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_mapping(t_int256,t_mapping(t_int256,t_struct(Plot)3344_storage))",
+            "contract": "GameWorld",
+            "src": "contracts/World/World.sol:36"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICalculator)1498": {
+            "label": "contract ICalculator",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ICities)1471": {
+            "label": "contract ICities",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPerlinNoise)1555": {
+            "label": "contract IPerlinNoise",
+            "numberOfBytes": "20"
+          },
+          "t_enum(PlotContentTypes)3378": {
+            "label": "enum PlotContentTypes",
+            "members": [
+              "TAKEN",
+              "INHABITABLE",
+              "HABITABLE",
+              "RESOURCE",
+              "ENEMY",
+              "REWARD",
+              "CHEST"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_struct(Plot)3344_storage))": {
+            "label": "mapping(int256 => mapping(int256 => struct Plot))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_mapping(t_int256,t_uint256))": {
+            "label": "mapping(int256 => mapping(int256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_struct(Plot)3344_storage)": {
+            "label": "mapping(int256 => struct Plot)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_int256,t_uint256)": {
+            "label": "mapping(int256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Coords)3334_storage)": {
+            "label": "mapping(uint256 => struct Coords)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Coords)3334_storage": {
+            "label": "struct Coords",
+            "members": [
+              {
+                "label": "X",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Y",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(Plot)3344_storage": {
+            "label": "struct Plot",
+            "members": [
+              {
+                "label": "Climate",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Content",
+                "type": "t_struct(PlotContent)3370_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "IsTaken",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "CityId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_struct(PlotContent)3370_storage": {
+            "label": "struct PlotContent",
+            "members": [
+              {
+                "label": "Type",
+                "type": "t_enum(PlotContentTypes)3378",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "Tier",
+                "type": "t_uint8",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "Value1",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "Value2",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "Value3",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(World)3329_storage": {
+            "label": "struct World",
+            "members": [
+              {
+                "label": "LastXPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "LastXNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "LastYPositive",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "LastYNegative",
+                "type": "t_int256",
+                "offset": 0,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
     }
   }
 }
