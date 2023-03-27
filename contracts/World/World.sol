@@ -23,6 +23,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     uint constant DISTANCE_TIME = 2 minutes;
     int constant PERLIN_05 = 32768;
     int constant PERLIN_1 = 32768 * 2;
+    int constant NOISE_AMOUNT = 25;
     uint EVENT_MAP_SEED;
 
     ICalculator public Calculator;
@@ -220,10 +221,11 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
                 if (b > type(uint16).max) {
                     b = type(uint16).max;
                 }
-                resultPlots[i].Climate = PerlinNoise.noise2d(
-                    sin(uint16(a % 65536)),
-                    sin(uint16(b % 65536))
+                resultPlots[i] = generatePlotContent(
+                    resultPlots[i],
+                    Coords({X: x, Y: y})
                 );
+
                 i++;
             }
         }
@@ -243,28 +245,14 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     ) public view returns (Plot memory _plot) {
         // param 1
         // use cos and noise
-        int x = _coords.X;
-        int y = _coords.Y;
 
-        if (x == 0 && y == 0) revert("zero");
-        uint256 a = uint256(uint256(x < 0 ? x * -1 : x) * 25);
-        uint256 b = uint256(uint256(y < 0 ? y * -1 : y) * 25);
-        if (a > type(uint16).max) {
-            a = type(uint16).max;
-        }
-        if (b > type(uint16).max) {
-            b = type(uint16).max;
-        }
+        if (_coords.X == 0 && _coords.Y == 0) revert("zero");
 
-        _plot.Climate = PerlinNoise.noise2d(
-            sin(uint16(a % 65536)),
-            sin(uint16(b % 65536))
-        );
-        _plot.IsTaken = CoordsToPlot[x][y].IsTaken;
+        _plot.IsTaken = CoordsToPlot[_coords.X][_coords.Y].IsTaken;
         _plot = generatePlotContent(_plot, _coords);
 
         if (_plot.IsTaken) {
-            _plot.CityId = CoordsToCity[x][y];
+            _plot.CityId = CoordsToCity[_coords.X][_coords.Y];
         }
     }
 
@@ -276,6 +264,23 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             _plot.Content.Type = PlotContentTypes.TAKEN;
             return _plot;
         }
+        uint256 a = uint256(
+            uint256(_coords.X < 0 ? _coords.X * -1 : _coords.X) * 25
+        );
+        uint256 b = uint256(
+            uint256(_coords.Y < 0 ? _coords.Y * -1 : _coords.Y) * 25
+        );
+        if (a > type(uint16).max) {
+            a = type(uint16).max;
+        }
+        if (b > type(uint16).max) {
+            b = type(uint16).max;
+        }
+
+        _plot.Climate = PerlinNoise.noise2d(
+            sin(uint16(a % 65536)) * NOISE_AMOUNT,
+            sin(uint16(b % 65536)) * NOISE_AMOUNT
+        );
 
         // todo content
         uint randomness1 = useRandom(_coords, 3169, 100); // determine if has plot content & what type it is
@@ -283,21 +288,21 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         uint randomness3 = useRandom(_coords, 69420, 100); // determine plot content content tier @MAX_PLOT_TIER
         uint randomness4 = useRandom(_coords, 3142069, 100); // determine param1 min value
         uint randomness5 = useRandom(_coords, 315269420, 100); // determine param2 max value
-
         // 5%
-        bool inhabitable = randomness1 <= 5;
+        bool inhabitable = randomness1 <= 5 ||
+            (_plot.Climate < 5 || _plot.Climate > 25);
 
         if (inhabitable) {
             _plot.Content.Type = PlotContentTypes.INHABITABLE;
             return _plot;
         }
 
-        bool hasContent = randomness1 <= 5;
+        bool hasContent = randomness1 <= 15;
 
         if (hasContent) {
-            uint foundContent = ((randomness1 / EVENT_MAP_SEED + 1)) %
-                uint(type(PlotContentTypes).max);
-            _plot.Content.Type = PlotContentTypes(foundContent);
+            uint foundContent = ((randomness1 + 1)) % 5;
+
+            _plot.Content.Type = PlotContentTypes(foundContent + 2);
 
             // select resource type
             if (_plot.Content.Type == PlotContentTypes.RESOURCE) {

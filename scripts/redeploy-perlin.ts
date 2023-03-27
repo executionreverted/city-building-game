@@ -12,20 +12,32 @@ async function deploy() {
     let trigonometry: Trigonometry;
     const [owner] = await ethers.getSigners();
 
+    // check account balance
+    console.log(
+        "Account balance:",
+        ethers.utils.formatEther(await deployer.getBalance())
+    );
 
-    const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await upgrades.upgradeProxy("0xE67f5C77323Dc737c26Ce4F30B6B7Deb2B215078", GameWorld,
-        {
-            kind: "uups"
-        }) as any
-    await contract2.deployed()
+    const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
+    perlinNoise = await PerlinNoise.deploy();
+    await perlinNoise.deployed();
+
+    /*  const Trigonometry = await ethers.getContractFactory("Trigonometry");
+     trigonometry = await Trigonometry.deploy();
+     await trigonometry.deployed();
+    */
+
+
+
+    let GameWorld = await ethers.getContractAt("GameWorld", "0xE67f5C77323Dc737c26Ce4F30B6B7Deb2B215078");
+    // @ts-ignore
 
     // grant owner the minter role
     // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
+    await GameWorld.setPerlinNoise(perlinNoise.address)
     // grant owner the minter role
     // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
     console.log(
-        contract2.address, " this."
     );
 
 }

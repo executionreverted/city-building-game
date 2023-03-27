@@ -8,7 +8,8 @@
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
     "deploy:goerli": "npx hardhat run scripts/deploy.ts --network goerli",
-    "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji"
+    "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji",
+    "upgrade:fuji": "npx hardhat run scripts/upgrade.ts --network fuji"
   },
   "author": "Immutable",
   "license": "MIT",

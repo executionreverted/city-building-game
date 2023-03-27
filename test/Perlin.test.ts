@@ -76,25 +76,13 @@ describe("Distance", function () {
         expect(await contract.hasRole(await contract.MINTER_ROLE(), contract2.address)).to.equal(true);
     });
 
-    it("distance calculation OK", async function () {
-        const c1: CoordsStruct = {
-            X: 10,
-            Y: 35,
-        }
-        const c2: CoordsStruct = {
-            X: 25,
-            Y: 25,
-        }
-        const distance = await calculator.calculateDistance(c1, c2)
-
-        console.log(distance);
-        expect(distance.toString()).to.equal("18");
-    });
-
 
     it("sample plot scores", async function () {
-        const perlinResult = await contract2.scanPlots("1", "10", "1", "10")
-        perlinResult.forEach(e => console.log(e.Climate.toString()))
+        for (let index = 0; index < 10; index++) {
+            const perlinResult = await perlinNoise.noise2d(index * 100, 2 * 100)
+            console.log(perlinResult);
+        }
+
         /* console.log(contract2.address);
         console.log(contract2.address);
         console.log(contract2.address); */

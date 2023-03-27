@@ -31,7 +31,7 @@ contract PerlinNoise {
         int256 c = lerp(u, grad2(a >> 8  , x, y        ), grad2(b >> 8  , x-0x10000, y        ));
         int256 d = lerp(u, grad2(a & 0xff, x, y-0x10000), grad2(b & 0xff, x-0x10000, y-0x10000));
 
-        return (lerp(fade(y), c, d) * 2) / 65536;
+        return (lerp(fade(y), c, d) * 20) / 65536;
     }
 
     /**
