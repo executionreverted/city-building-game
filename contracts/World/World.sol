@@ -305,6 +305,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             _plot.Content.Type = PlotContentTypes(foundContent + 2);
 
             // select resource type
+            _plot.Content.Tier = uint8((randomness3 % MAX_PLOT_TIER) + 1);
             if (_plot.Content.Type == PlotContentTypes.RESOURCE) {
                 // set resource type in this case.
                 if (randomness2 >= 0 && randomness2 < 20) {
@@ -318,7 +319,6 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
                 } else if (randomness2 >= 80 && randomness2 <= 100) {
                     _plot.Content.Value1 = uint(Resource.FOOD);
                 }
-                _plot.Content.Tier = uint8((randomness3 % MAX_PLOT_TIER) + 1);
                 // Min.
                 _plot.Content.Value2 =
                     ((BASE_RESOURCE_SPAWN_AMOUNT * _plot.Content.Tier) *
