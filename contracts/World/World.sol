@@ -259,12 +259,21 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         );
         _plot.IsTaken = CoordsToPlot[x][y].IsTaken;
         _plot = generatePlotContent(_plot, _coords);
+
+        if (_plot.IsTaken) {
+            _plot.CityId = CoordsToCity[x][y];
+        }
     }
 
     function generatePlotContent(
         Plot memory _plot,
         Coords memory _coords
     ) internal view returns (Plot memory) {
+        if (CoordsToPlot[_coords.Y][_coords.Y].IsTaken) {
+            _plot.Content.Type = PlotContentTypes.TAKEN;
+            return _plot;
+        }
+
         // todo content
         uint randomness1 = useRandom(_coords, 3169, 100); // determine if has plot content & what type it is
         uint randomness2 = useRandom(_coords, 420, 100); // determine plot content type e.g Resource Food
@@ -273,6 +282,13 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         uint randomness5 = useRandom(_coords, 315269420, 100); // determine param2 max value
 
         // 5%
+        bool inhabitable = randomness1 <= 5;
+
+        if (inhabitable) {
+            _plot.Content.Type = PlotContentTypes.INHABITABLE;
+            return _plot;
+        }
+
         bool hasContent = randomness1 <= 5;
 
         if (hasContent) {
@@ -306,6 +322,8 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
                     (_plot.Content.Value2 * randomness5) /
                     100;
             }
+        } else {
+            _plot.Content.Type = PlotContentTypes.HABITABLE;
         }
 
         return _plot;

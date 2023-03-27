@@ -18,6 +18,7 @@ struct Plot {
     int Climate;
     PlotContent Content;
     bool IsTaken;
+    uint CityId;
 }
 
 struct WorldAction {
@@ -42,6 +43,9 @@ struct PlotContent {
 }
 
 enum PlotContentTypes {
+    TAKEN,
+    INHABITABLE,
+    HABITABLE,
     RESOURCE,
     ENEMY,
     REWARD,
