@@ -62,8 +62,6 @@ describe("Distance", function () {
         const Calc = await ethers.getContractFactory("Calculator");
         calculator = await Calc.deploy();
         await contract.deployed();
-
-
     }
 
     before(async function () {

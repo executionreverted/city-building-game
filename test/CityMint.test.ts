@@ -1,15 +1,14 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Calculator, Cities, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
 
 describe("Cities", function () {
   let contract: Cities;
   let contract2: GameWorld;
   const zerozero: any = { X: 1, Y: 1, }
 
-  let calculator: Calculator;
   let perlinNoise: PerlinNoise;
-  let trigonometry: Trigonometry;
+  let cityManager: CityManager;
 
   async function deployCityAndWorld() {
     console.log('Deploying contracts...');
@@ -21,28 +20,35 @@ describe("Cities", function () {
     perlinNoise = await PerlinNoise.deploy();
     await perlinNoise.deployed();
 
-  /*   const Trigonometry = await ethers.getContractFactory("Trigonometry");
-    trigonometry = await Trigonometry.deploy();
-    await trigonometry.deployed();
- */
+    /*   const Trigonometry = await ethers.getContractFactory("Trigonometry");
+      trigonometry = await Trigonometry.deploy();
+      await trigonometry.deployed();
+   */
+
+    const CityManager = await ethers.getContractFactory("CityManager");
+    cityManager = await upgrades.deployProxy(CityManager, []) as any;
+    await cityManager.deployed();
+
     const Cities = await ethers.getContractFactory("Cities");
     contract = await upgrades.deployProxy(
       Cities,
-      [owner.address, // owner
+      [
+        owner.address, // owner
         "Imaginary Immutable Iguanas", // name
         "III", // symbol
         "https://example-base-uri.com/", // baseURI
         "https://example-contract-uri.com/", // contractURI,
-      ethers.constants.AddressZero]
+        cityManager.address
+      ]
     ) as any;
     await contract.deployed();
-
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
     contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
 
     // grant owner the minter role
     await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
+    await cityManager.setCities(contract.address);
     return {
       contract, contract2
     }
@@ -306,5 +312,14 @@ describe("Cities", function () {
     const myCities = await contract.citiesOf(await contract.owner())
 
     expect(myCities.length).to.equal(7);
+  });
+
+  it("Buildings initiated.", async function () {
+    let building
+    for (let index = 0; index < 5; index++) {
+      building = await contract.BuildingLevels(1, 1)
+      console.log(building);
+      expect(building.Tier.eq(1)).to.equal(true);
+    }
   });
 });

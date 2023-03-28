@@ -24,6 +24,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     int constant PERLIN_05 = 32768;
     int constant PERLIN_1 = 32768 * 2;
     int constant NOISE_AMOUNT = 15;
+    int constant MAP_SEED = 1;
     uint EVENT_MAP_SEED;
 
     ICalculator public Calculator;
@@ -205,6 +206,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         int256 startY,
         int256 endY
     ) external view returns (Plot[] memory) {
+        require(startX < endX && startY < endY, "invalid input");
         uint i;
         int xRange = endX - startX;
         int yRange = endY - startY;
@@ -246,7 +248,10 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         // param 1
         // use cos and noise
 
-        if (_coords.X == 0 && _coords.Y == 0) revert("zero");
+        if (_coords.X == 0 && _coords.Y == 0) {
+            _plot.Content.Type = PlotContentTypes.INHABITABLE;
+            return _plot;
+        }
 
         _plot = generatePlotContent(_plot, _coords);
 
@@ -259,6 +264,8 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         Plot memory _plot,
         Coords memory _coords
     ) internal view returns (Plot memory) {
+        _plot.Coords.X = _coords.X;
+        _plot.Coords.Y = _coords.Y;
         _plot.IsTaken = CoordsToPlot[_coords.X][_coords.Y].IsTaken;
 
         if (CoordsToPlot[_coords.X][_coords.Y].IsTaken) {
@@ -280,11 +287,10 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         }
 
         _plot.Climate = PerlinNoise.noise2d(
-            sin(uint16(a % 65536)) * NOISE_AMOUNT,
-            sin(uint16(b % 65536)) * NOISE_AMOUNT
+            sin(uint16(a % 65536)) * NOISE_AMOUNT * MAP_SEED,
+            sin(uint16(b % 65536)) * NOISE_AMOUNT * MAP_SEED
         );
 
-        // todo content
         uint randomness1 = useRandom(_coords, 316942069, 100); // determine if has plot content & what type it is
         uint randomness2 = useRandom(_coords, 420, 100); // determine plot content type e.g Resource Food
         uint randomness3 = useRandom(_coords, 69420, 100); // determine plot content content tier @MAX_PLOT_TIER

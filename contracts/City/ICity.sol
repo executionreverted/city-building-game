@@ -12,11 +12,21 @@ interface ICities is IERC721EnumerableUpgradeable {
 
     function city(uint256 id) external view returns (City memory);
 
-    function updateCityCoords(uint cityId, Coords memory _param) external;
+    function updateCityCoords(
+        uint cityId,
+        Coords memory _param
+    ) external returns (bool);
 
-    function updateCityRace(uint cityId, Race _param) external;
+    function updateCityRace(uint cityId, Race _param) external returns (bool);
 
-    function updateCityAlive(uint cityId, bool _param) external;
+    function updateCityAlive(uint cityId, bool _param) external returns (bool);
 
-    function updateCityPopulation(uint cityId, uint _param) external;
+    function updateCityPopulation(
+        uint cityId,
+        uint _newPopulation
+    ) external returns (bool);
+
+    function cityPopulation(uint cityId) external view returns (uint);
+
+    function ownerOf(uint cityId) external view returns (address);
 }

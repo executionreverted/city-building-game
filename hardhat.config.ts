@@ -12,7 +12,9 @@ import "hardhat-interface-generator";
 dotenv.config();
 const deploymentAccount = process.env.PRIVATE_KEY
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
+  solidity: {
+    version: "0.8.19",
+  },
   abiExporter: {
     path: "./abi",
     runOnCompile: true

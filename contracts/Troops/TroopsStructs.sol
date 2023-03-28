@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.18;
 
-import {ResourceCost} from "../Resources/ResourceStructs.sol";
-
 struct Troop {
     uint Atk;
     uint SiegeAtk;
@@ -15,5 +13,5 @@ struct Troop {
 }
 
 struct TroopCost {
-    ResourceCost ResourceCost;
+    uint[100] ResourceCost;
 }

@@ -29,7 +29,7 @@ async function deploy() {
 
 
 
-    let GameWorld = await ethers.getContractAt("GameWorld", "0xE67f5C77323Dc737c26Ce4F30B6B7Deb2B215078");
+    let GameWorld = await ethers.getContractAt("GameWorld", "0x2315C27be0dc7b96C7dC8AEbFF0382c012761707");
     // @ts-ignore
 
     // grant owner the minter role

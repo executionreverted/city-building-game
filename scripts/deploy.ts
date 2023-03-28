@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat";
-import { Calculator, Cities, GameWorld, PerlinNoise, Trigonometry, } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, } from "../typechain-types";
 
 async function deploy() {
   // get deployer
@@ -10,6 +10,8 @@ async function deploy() {
   let calculator: Calculator;
   let perlinNoise: PerlinNoise;
   let trigonometry: Trigonometry;
+  let cityManager: CityManager;
+  let resources: Resources;
   const [owner] = await ethers.getSigners();
 
   // check account balance
@@ -30,6 +32,13 @@ async function deploy() {
   calculator = await Calc.deploy(
   );
   await calculator.deployed();
+  const CityManager = await ethers.getContractFactory("CityManager");
+  cityManager = await upgrades.deployProxy(CityManager) as any;
+  await cityManager.deployed();
+
+  const Resources = await ethers.getContractFactory("Resources");
+  resources = await Resources.deploy();
+  await resources.deployed();
 
   const Cities = await ethers.getContractFactory("Cities");
   contract = await upgrades.deployProxy(
@@ -39,10 +48,9 @@ async function deploy() {
       "III", // symbol
       "https://example-base-uri.com/", // baseURI
       "https://example-contract-uri.com/", // contractURI,
-    ethers.constants.AddressZero],
+    cityManager.address],
   ) as any;
   await contract.deployed();
-
 
   const GameWorld = await ethers.getContractFactory("GameWorld");
   contract2 = await upgrades.deployProxy(GameWorld,
@@ -55,6 +63,7 @@ async function deploy() {
   // grant owner the minter role
   // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
   await contract2.setCities(contract.address)
+  await cityManager.setCities(contract.address)
   // grant owner the minter role
   // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
   console.log(

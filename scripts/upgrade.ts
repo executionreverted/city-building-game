@@ -14,7 +14,7 @@ async function deploy() {
 
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await upgrades.upgradeProxy("0xE67f5C77323Dc737c26Ce4F30B6B7Deb2B215078", GameWorld,
+    contract2 = await upgrades.upgradeProxy("0x2315C27be0dc7b96C7dC8AEbFF0382c012761707", GameWorld,
         {
             kind: "uups"
         }) as any

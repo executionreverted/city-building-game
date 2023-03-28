@@ -19,6 +19,7 @@ struct Plot {
     PlotContent Content;
     bool IsTaken;
     uint CityId;
+    Coords Coords;
 }
 
 struct WorldAction {
