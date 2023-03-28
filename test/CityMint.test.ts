@@ -1,24 +1,33 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
+import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
+import { config } from "hardhat";
 
 describe("Cities", function () {
-  let contract: Cities;
-  let contract2: GameWorld;
   const zerozero: any = { X: 1, Y: 1, }
+  let owner: any
 
+  let nft: Cities;
+  let world: GameWorld;
   let perlinNoise: PerlinNoise;
   let cityManager: CityManager;
+  let buildings: Buildings;
 
   async function deployCityAndWorld() {
     console.log('Deploying contracts...');
+    const signer = await ethers.getSigners();
+    signer.forEach(s => console.log(s.address));
+    owner = signer[0];
+
 
     // get owner (first account)
-    const [owner] = await ethers.getSigners();
     // deploy Cities contract
     const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
     perlinNoise = await PerlinNoise.deploy();
     await perlinNoise.deployed();
+    const Buildings = await ethers.getContractFactory("Buildings");
+    buildings = await upgrades.deployProxy(Buildings, []) as any;
+    await buildings.deployed();
 
     /*   const Trigonometry = await ethers.getContractFactory("Trigonometry");
       trigonometry = await Trigonometry.deploy();
@@ -30,7 +39,7 @@ describe("Cities", function () {
     await cityManager.deployed();
 
     const Cities = await ethers.getContractFactory("Cities");
-    contract = await upgrades.deployProxy(
+    nft = await upgrades.deployProxy(
       Cities,
       [
         owner.address, // owner
@@ -41,16 +50,18 @@ describe("Cities", function () {
         cityManager.address
       ]
     ) as any;
-    await contract.deployed();
+    await nft.deployed();
 
     const GameWorld = await ethers.getContractFactory("GameWorld");
-    contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
+    world = await upgrades.deployProxy(GameWorld, [nft.address, ethers.constants.AddressZero, perlinNoise.address, cityManager.address]) as any;
 
     // grant owner the minter role
-    await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
-    await cityManager.setCities(contract.address);
+    await nft.grantRole(await nft.MINTER_ROLE(), world.address);
+    await nft.grantRole(await nft.MINTER_ROLE(), cityManager.address);
+    await cityManager.setCities(nft.address);
+    await cityManager.setBuilding(buildings.address);
     return {
-      contract, contract2
+      contract: nft, contract2: world
     }
   }
 
@@ -59,24 +70,24 @@ describe("Cities", function () {
   });
 
   it("NFT deployment OK", async function () {
-    expect(await contract.name()).to.equal("Imaginary Immutable Iguanas");
-    expect(await contract.hasRole(await contract.MINTER_ROLE(), contract2.address)).to.equal(true);
+    expect(await nft.name()).to.equal("Imaginary Immutable Iguanas");
+    expect(await nft.hasRole(await nft.MINTER_ROLE(), world.address)).to.equal(true);
   });
 
   it("Plot is empty", async function () {
-    expect(await contract2.isPlotEmpty(zerozero)).to.equal(true);
+    expect(await world.isPlotEmpty(zerozero)).to.equal(true);
 
   });
 
   it("Create city at [1, -1]", async function () {
 
-    expect(await contract2.isPlotEmpty(zerozero)).to.equal(true);
+    expect(await world.isPlotEmpty(zerozero)).to.equal(true);
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         true, // pick closest,
-        2
+        2, { from: owner.address }
       )
       await tx.wait(1);
     } catch (error) {
@@ -87,10 +98,10 @@ describe("Cities", function () {
       console.log("called 'createCity' method");
     }
 
-    let coords = await contract2.CityCoords(1)
+    let coords = await world.CityCoords(1)
     console.log(coords.X.toString(), ",", coords.Y.toString(), '"""');
 
-    expect(await contract2.isPlotEmpty(zerozero)).to.equal(false);
+    expect(await world.isPlotEmpty(zerozero)).to.equal(false);
     console.log('End of city 1 test.');
 
   });
@@ -98,9 +109,9 @@ describe("Cities", function () {
   it("Shouldn't allow re-create city in same coords", async function () {
 
     let hasError = false
-    expect(await contract2.isPlotEmpty(zerozero)).to.equal(false);
+    expect(await world.isPlotEmpty(zerozero)).to.equal(false);
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         false, // pick closest
         1
@@ -114,10 +125,10 @@ describe("Cities", function () {
     }
 
 
-    let coords = await contract2.CityCoords(2);
+    let coords = await world.CityCoords(2);
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty(zerozero)).to.equal(false);
+    expect(await world.isPlotEmpty(zerozero)).to.equal(false);
     expect(hasError).to.equal(true);
   });
 
@@ -126,7 +137,7 @@ describe("Cities", function () {
 
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         true, // pick closest
         3
@@ -137,20 +148,20 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for third time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 2, Y: 1, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 2, Y: 1, });
+    const sup = await nft.totalSupply();
 
 
-    let coords = await contract2.CityCoords(2)
+    let coords = await world.CityCoords(2)
     console.log(coords.X.toString(), ",", coords.Y.toString());
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
 
   it("Create city at [2, 2] by typing 1,1 using closest method", async function () {
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         true, // pick closest
         3
@@ -161,19 +172,19 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for fourth time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 2, Y: 2, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 2, Y: 2, });
+    const sup = await nft.totalSupply();
 
-    let coords = await contract2.CityCoords(3)
+    let coords = await world.CityCoords(3)
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
   it("Create city at [3, 2] by typing 1,1 using closest method", async function () {
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         true, // pick closest
         3
@@ -184,19 +195,19 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for fifth time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 3, Y: 2, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 3, Y: 2, });
+    const sup = await nft.totalSupply();
 
-    let coords = await contract2.CityCoords(4)
+    let coords = await world.CityCoords(4)
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
   it("Create city at [3, 3] by typing 1,1 using closest method", async function () {
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         zerozero, // desired coords
         true, // pick closest
         3
@@ -207,13 +218,13 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for sixth time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 3, Y: 3, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 3, Y: 3, });
+    const sup = await nft.totalSupply();
 
-    let coords = await contract2.CityCoords(5)
+    let coords = await world.CityCoords(5)
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
 
@@ -221,7 +232,7 @@ describe("Cities", function () {
   it("Create city at [6, 7] by typing 1,1 using closest method", async function () {
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         { X: 6, Y: 7, }, // desired coords
         true, // pick closest
         3
@@ -232,19 +243,19 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for seventh time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 6, Y: 7, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 6, Y: 7, });
+    const sup = await nft.totalSupply();
 
-    let coords = await contract2.CityCoords(6)
+    let coords = await world.CityCoords(6)
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
   it("Create city at [7, 7] by typing 6,7 using closest method", async function () {
 
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         { X: 6, Y: 7, }, // desired coords
         true, // pick closest
         3
@@ -255,19 +266,19 @@ describe("Cities", function () {
     } finally {
       console.log("called 'createCity' method for seventh time");
     }
-    const isEmpty = await contract2.isPlotEmpty({ X: 6, Y: 7, });
-    const sup = await contract.totalSupply();
+    const isEmpty = await world.isPlotEmpty({ X: 6, Y: 7, });
+    const sup = await nft.totalSupply();
 
-    let coords = await contract2.CityCoords(7)
+    let coords = await world.CityCoords(7)
     console.log(coords.X.toString(), ",", coords.Y.toString());
 
-    expect(await contract2.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
+    expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
   it("Cant mint city more far than 100 plots", async function () {
     let hasError;
     try {
-      const tx = await contract2.createCity(
+      const tx = await world.createCity(
         { X: 200, Y: 200, }, // desired coords
         true, // pick closest
         5
@@ -285,17 +296,15 @@ describe("Cities", function () {
 
 
   it("Scan and get city infos.", async function () {
-    let result = await contract2.scanCitiesBetweenCoords(0, 10, 0, 10);
+    let result = await world.scanCitiesBetweenCoords(0, 10, 0, 10);
     let cities = result[0];
     cities.forEach((city, idx) => {
       if (city.Alive) {
-        console.log(idx, " alive-city-found")
       }
     })
     let cityIds = result[1].filter(a => a.gt(0));
     let cityIdxs = []
     cityIds.forEach(id => {
-      console.log(`City found with id: ${id}`);
       cityIdxs.push(result[1].indexOf(id))
     })
     console.log(cityIds.length);
@@ -303,13 +312,13 @@ describe("Cities", function () {
   });
 
   it("Scan and get free plots.", async function () {
-    let result = await contract2.scanPlotsForEmptyPlace(0, 10, 0, 10);
-    const isFree = await contract2.isPlotEmpty(result)
+    let result = await world.scanPlotsForEmptyPlace(0, 10, 0, 10);
+    const isFree = await world.isPlotEmpty(result)
     expect(isFree).to.equal(true);
   });
 
   it("Get user balance.", async function () {
-    const myCities = await contract.citiesOf(await contract.owner())
+    const myCities = await cityManager.citiesOf(await nft.owner())
 
     expect(myCities.length).to.equal(7);
   });
@@ -317,9 +326,27 @@ describe("Cities", function () {
   it("Buildings initiated.", async function () {
     let building
     for (let index = 0; index < 5; index++) {
-      building = await contract.BuildingLevels(1, 1)
-      console.log(building);
+      building = await cityManager.BuildingLevels(1, 1)
       expect(building.Tier.eq(1)).to.equal(true);
     }
   });
+
+  it("Should claim population.", async function () {
+
+    await cityManager.recruitPopulation(2, { from: owner.address })
+    expect((await cityManager.city(2)).Population.toNumber()).to.equal(51);
+  });
+
+  it("Should not allow claim population.", async function () {
+    let hasError
+    try {
+      await cityManager.recruitPopulation(2, { from: owner.address })
+    } catch (error) {
+      console.log(error);
+      hasError = true
+    }
+    expect(hasError).to.be.true;
+  });
+
+
 });

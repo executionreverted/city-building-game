@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.18;
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
-import {ICities} from "../City/ICity.sol";
+import {ICities} from "../City/ICities.sol";
 import {Resource} from "./ResourceEnums.sol";
 import {IBuilding} from "../City/IBuilding.sol";
 

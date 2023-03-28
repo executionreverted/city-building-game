@@ -10,7 +10,7 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function buildingInfo(
         uint buildingId
-    ) external pure override returns (Building memory _building) {
+    ) external pure override returns (Building memory) {
         if (buildingId == 0) return Forest();
         if (buildingId == 1) return Farms();
         if (buildingId == 2) return Mines();
@@ -18,14 +18,17 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         if (buildingId == 4) return TownHall();
         if (buildingId == 5) return Warehouse();
         if (buildingId == 6) return Barracks();
-        if (buildingId == 6) return Workshop();
-        if (buildingId == 7) return Housing();
-        if (buildingId == 8) return ResearchCenter();
-        if (buildingId == 9) return DefenseTower();
-        if (buildingId == 10) return TradingPost();
-        if (buildingId == 11) return Hatchery();
-        if (buildingId == 12) return WorldBossPortal();
-        if (buildingId == 13) return Walls();
+        if (buildingId == 7) return Workshop();
+        if (buildingId == 8) return Housing();
+        if (buildingId == 9) return ResearchCenter();
+        if (buildingId == 10) return DefenseTower();
+        if (buildingId == 11) return TradingPost();
+        if (buildingId == 12) return Hatchery();
+        if (buildingId == 13) return WorldBossPortal();
+        if (buildingId == 14) return Walls();
+
+
+        revert("not implemented");
     }
 
     /* [
@@ -39,7 +42,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     /* PRODUCTION BUILDING */
 
     function Forest() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -52,7 +54,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Farms() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -65,7 +66,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Mines() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -78,7 +78,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Quarry() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -92,7 +91,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     /* UTILITY BUILDINGS */
     function TownHall() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -105,7 +103,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Warehouse() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -118,7 +115,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Barracks() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -131,7 +127,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Workshop() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -144,7 +139,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Housing() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -161,7 +155,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         pure
         returns (Building memory _baseBuilding)
     {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -178,7 +171,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         pure
         returns (Building memory _baseBuilding)
     {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -195,7 +187,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         pure
         returns (Building memory _baseBuilding)
     {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -208,7 +199,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Hatchery() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -225,7 +215,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         pure
         returns (Building memory _baseBuilding)
     {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -238,7 +227,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     }
 
     function Walls() internal pure returns (Building memory _baseBuilding) {
-        _baseBuilding.Tier = 1;
         _baseBuilding.MaxTier = 5;
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;

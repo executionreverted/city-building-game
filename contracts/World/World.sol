@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.18;
 
-import {ICities} from "../City/ICity.sol";
+import {ICityManager} from "../City/ICityManager.sol";
+import {ICities} from "../City/ICities.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {IPerlinNoise} from "../Utils/IPerlinNoise.sol";
 import {Trigonometry} from "../Utils/Trigonometry.sol";
@@ -29,6 +30,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
 
     ICalculator public Calculator;
     ICities public Cities;
+    ICityManager public CityManager;
     IPerlinNoise public PerlinNoise;
 
     World public WorldState;
@@ -39,17 +41,23 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     function initialize(
         address _cities,
         address _calc,
-        address _perl
+        address _perl,
+        address _manager
     ) external initializer {
         _initialize();
         Cities = ICities(_cities);
         Calculator = ICalculator(_calc);
         PerlinNoise = IPerlinNoise(_perl);
+        CityManager = ICityManager(_manager);
         EVENT_MAP_SEED = 123456789;
     }
 
     function setCities(address _cities) external onlyOwner {
         Cities = ICities(_cities);
+    }
+
+    function setCityManager(address _manager) external onlyOwner {
+        CityManager = ICityManager(_manager);
     }
 
     function setPerlinNoise(address _cities) external onlyOwner {
@@ -88,17 +96,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
 
         _coords = getNextCity(coords, true);
 
-        Cities.mintCity(
-            msg.sender,
-            City({
-                Coords: _coords,
-                Explorer: msg.sender,
-                Race: race,
-                Alive: true,
-                CreationDate: block.timestamp,
-                Population: 50
-            })
-        );
+        uint token = Cities.mintCity(msg.sender, _coords, race);
         CoordsToCity[_coords.X][_coords.Y] = nextToken;
         CoordsToPlot[_coords.X][_coords.Y].IsTaken = true;
 
@@ -173,7 +171,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
             for (int y = startY; y < endY; y++) {
                 uint cityId = CoordsToCity[x][y];
                 if (cityId == 0) continue;
-                resultCities[i] = Cities.city(cityId);
+                resultCities[i] = CityManager.city(cityId);
                 resultCityIds[i] = cityId;
                 i++;
             }

@@ -1,6 +1,6 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Calculator, Cities, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
 import { CoordsStruct } from "../typechain-types/contracts/Core/Calculator";
 import * as fs from 'fs'
 describe("Distance", function () {
@@ -9,6 +9,7 @@ describe("Distance", function () {
     let calculator: Calculator;
     let perlinNoise: PerlinNoise;
     let trigonometry: Trigonometry;
+    let cityManager: CityManager;
     const zerozero: any = { X: 1, Y: 1, __reserve: [0, 0, 0] }
 
     async function deployCityAndWorld() {
@@ -38,9 +39,12 @@ describe("Distance", function () {
         ) as any;
         await contract.deployed();
 
+        const CityManager = await ethers.getContractFactory("CityManager");
+        cityManager = await upgrades.deployProxy(CityManager, []) as any;
+        await cityManager.deployed();
 
         const GameWorld = await ethers.getContractFactory("GameWorld");
-        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
+        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, cityManager.address]) as any;
         await contract2.deployed()
         // console.log(await contract2.PerlinNoise());
 

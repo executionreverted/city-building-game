@@ -41,7 +41,7 @@ describe("Distance", function () {
 
 
         const GameWorld = await ethers.getContractFactory("GameWorld");
-        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address]) as any;
+        contract2 = await upgrades.deployProxy(GameWorld, [contract.address, ethers.constants.AddressZero, perlinNoise.address, cityManager.address]) as any;
         await contract2.deployed()
 
         // grant owner the minter role
