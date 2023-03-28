@@ -123,6 +123,12 @@ describe("Resources", function () {
         await cityManager.upgradeBuilding(cityId, 0);
         console.log("seconds since last tx: ", await resources.getRoundsSince(cityId));
         await logProduction(cityId)
+
+        for (let index = 0; index < 50; index++) {
+            await time.increase(1);
+            console.log("seconds since last tx: ", await resources.getRoundsSince(cityId));
+            await logProduction(cityId)
+        }
     });
 
 
