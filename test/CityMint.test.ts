@@ -59,7 +59,8 @@ describe("Cities", function () {
     await nft.grantRole(await nft.MINTER_ROLE(), world.address);
     await nft.grantRole(await nft.MINTER_ROLE(), cityManager.address);
     await cityManager.setCities(nft.address);
-    await cityManager.setBuilding(buildings.address);
+    await cityManager.setBuilding(nft.address);
+    await cityManager.setWorld(world.address);
     return {
       contract: nft, contract2: world
     }
@@ -335,6 +336,17 @@ describe("Cities", function () {
 
     await cityManager.recruitPopulation(2, { from: owner.address })
     expect((await cityManager.city(2)).Population.toNumber()).to.equal(51);
+  });
+
+  it("Should not allow claim population.", async function () {
+    let hasError
+    try {
+      await cityManager.recruitPopulation(2, { from: owner.address })
+    } catch (error) {
+      console.log(error);
+      hasError = true
+    }
+    expect(hasError).to.be.true;
   });
 
   it("Should not allow claim population.", async function () {

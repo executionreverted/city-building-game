@@ -13,6 +13,7 @@ import {Race} from "../City/CityEnums.sol";
 import {World, Coords, Plot, PlotContentTypes} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
+import "hardhat/console.sol";
 
 contract GameWorld is Trigonometry, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -73,7 +74,10 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         bool pickClosest,
         Race race
     ) external returns (Coords memory _coords) {
-        uint nextToken = Cities.totalSupply();
+        console.log(msg.sender);
+        console.log(msg.sender);
+        console.log(msg.sender);
+        console.log(msg.sender);
         bool isEmpty = isPlotEmpty(coords);
         if ((!isEmpty && !pickClosest) || (coords.X == 0 || coords.Y == 0))
             revert InvalidWorldCoordinates(coords.X, coords.Y);
@@ -97,7 +101,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         _coords = getNextCity(coords, true);
 
         uint token = Cities.mintCity(msg.sender, _coords, race);
-        CoordsToCity[_coords.X][_coords.Y] = nextToken;
+        CoordsToCity[_coords.X][_coords.Y] = token;
         CoordsToPlot[_coords.X][_coords.Y].IsTaken = true;
 
         if (_coords.X > 0) {
@@ -116,7 +120,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
                 WorldState.LastYNegative = _coords.Y;
         }
 
-        CityCoords[nextToken] = _coords;
+        CityCoords[token] = _coords;
     }
 
     function getNextCity(

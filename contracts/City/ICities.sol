@@ -13,4 +13,5 @@ interface ICities is IERC721EnumerableUpgradeable {
         Coords memory coords,
         Race race
     ) external returns (uint);
+
 }

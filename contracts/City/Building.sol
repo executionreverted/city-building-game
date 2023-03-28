@@ -8,6 +8,10 @@ import {Building} from "./CityStructs.sol";
 contract Buildings is IBuilding, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
 
+    function initialize() external initializer {
+        _initialize();
+    }
+
     function buildingInfo(
         uint buildingId
     ) external pure override returns (Building memory) {
@@ -26,7 +30,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         if (buildingId == 12) return Hatchery();
         if (buildingId == 13) return WorldBossPortal();
         if (buildingId == 14) return Walls();
-
 
         revert("not implemented");
     }

@@ -48,6 +48,7 @@ describe("Distance", function () {
         await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
         await contract2.setCities(contract.address)
         await cityManager.setCities(contract.address)
+        await cityManager.setWorld(contract2.address)
         return {
             contract, contract2
         }

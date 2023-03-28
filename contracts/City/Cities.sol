@@ -48,12 +48,12 @@ contract Cities is ImmutableERC721PermissionedMintable {
         Race _race
     ) external onlyRole(MINTER_ROLE) returns (uint) {
         _mintNextToken(to);
-        uint id = totalSupply() - 1;
+        uint id = totalSupply();
         CityManager.setCity(
             id,
             City({
                 Coords: _coords,
-                Explorer: msg.sender,
+                Explorer: to,
                 Race: _race,
                 Alive: true,
                 CreationDate: block.timestamp,
@@ -72,16 +72,5 @@ contract Cities is ImmutableERC721PermissionedMintable {
             _tokensOfOwner[i] = tokenOfOwnerByIndex(player, i);
         }
         return _tokensOfOwner;
-    }
-
-    function ownerOf(
-        uint cityId
-    )
-        public
-        view
-        override(IERC721Upgradeable, ERC721Upgradeable)
-        returns (address)
-    {
-        return super.ownerOf(cityId);
     }
 }

@@ -19,13 +19,14 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => City) public CityList;
     mapping(uint => Building[50]) public BuildingLevels;
+    address GameWorld;
 
     function initialize() external initializer {
         _initialize();
     }
 
     function setCity(uint cityId, City memory _city) external {
-        require(msg.sender == address(Cities), "!");
+        require(msg.sender == GameWorld || msg.sender == address(Cities), "!");
         CityList[cityId] = _city;
         for (uint i = 0; i < 5; i++) {
             BuildingLevels[cityId][i].Tier = 1;
@@ -40,6 +41,10 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         Buildings = IBuilding(_builds);
     }
 
+    function setWorld(address _world) external onlyOwner {
+        GameWorld = _world;
+    }
+
     modifier onlyCityOwner(uint cityId) {
         require(Cities.ownerOf(cityId) == msg.sender, "unauth");
         _;
@@ -49,6 +54,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint cityId,
         uint buildingId
     ) external onlyCityOwner(cityId) returns (bool) {
+        Building memory _building = Buildings.buildingInfo(buildingId);
+        require(_building.MaxTier > BuildingLevels[cityId][buildingId].Tier);
         BuildingLevels[cityId][buildingId].Tier++;
         return true;
     }
@@ -142,5 +149,9 @@ contract CityManager is ICityManager, UpgradeableGameContract {
             result[i] = CityList[_tokensOfOwner[i]];
         }
         return result;
+    }
+
+    function mintTime(uint cityId) external view returns (uint) {
+        return CityList[cityId].CreationDate;
     }
 }
