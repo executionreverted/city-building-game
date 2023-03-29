@@ -81,6 +81,7 @@ contract Resources is UpgradeableGameContract {
         uint amount = calculateHarvestableResource(cityId, resource);
 
         if (amount > 0) {
+            LastClaims[cityId][uint(resource)] = block.timestamp;
             CityResources[cityId][uint(resource)] += amount;
         } else revert("nothing to claim");
     }
@@ -111,16 +112,22 @@ contract Resources is UpgradeableGameContract {
             buildingLvl = CityManager.buildingLevels(cityId, 3);
         }
 
-        uint rounds = getRoundsSince(cityId);
+        uint rounds = getRoundsSince(cityId, resource);
         if (buildingLvl == 0 || rounds == 0) return 0;
         uint produced = rounds * BaseProductions[uint(resource)];
         return produced + ((produced * (buildingLvl - 1) * 50) / 100);
     }
 
-    function getRoundsSince(uint cityId) public view returns (uint _rounds) {
+    function getRoundsSince(
+        uint cityId,
+        Resource resource
+    ) public view returns (uint _rounds) {
+        uint lastClaim = LastClaims[cityId][uint(resource)];
         uint mintTime = CityManager.mintTime(cityId);
         require(mintTime > 0, "does not exist");
-        uint elapsed = block.timestamp - mintTime;
+        console.log(block.timestamp);
+        uint elapsed = block.timestamp -
+            (lastClaim == 0 ? mintTime : lastClaim);
         _rounds = elapsed / 1 seconds;
     }
 }

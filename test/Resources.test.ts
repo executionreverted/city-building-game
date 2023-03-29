@@ -116,20 +116,55 @@ describe("Resources", function () {
 
         expect((await cityManager.mintTime(cityId)).toNumber(), "minted").to.be.greaterThan(0);
         expect((await cities.ownerOf(cityId)).toLowerCase()).to.be.equal(owner.address.toLowerCase(), "owned")
-        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId));
+        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
         await logProduction(cityId)
         expect((await resources.calculateHarvestableResource(cityId, 1)).toNumber()).to.be.equal(10);
         console.log("Upgrading building...");
         await cityManager.upgradeBuilding(cityId, 0);
-        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId));
+        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
         await logProduction(cityId)
 
-        for (let index = 0; index < 50; index++) {
+        for (let index = 0; index < 5; index++) {
             await time.increase(1);
-            console.log("seconds since last tx: ", await resources.getRoundsSince(cityId));
+            console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
             await logProduction(cityId)
         }
     });
 
+    it("city resource claimed", async function () {
+        console.log((await cities.totalSupply()).toString());
+        const [owner] = await ethers.getSigners()
+        const cityId = 2;
+        const lastClaim = (await resources.LastClaims(cityId, 1)).toNumber()
+        const since = (await resources.getRoundsSince(cityId, 1)).toNumber();
+        console.log("producing since: ", since);
+        let claimable = (await resources.calculateHarvestableResource(cityId, 1)).toNumber();
+        console.log("claimable: ", claimable);
+        await resources.claimResource(cityId, 1)
+
+        // todo put storage building limits
+
+        const cityBalance = (await resources.CityResources(cityId, 1)).toNumber();
+        console.log("balance: ", cityBalance);
+
+        // calculate the timestamp on next tx because claim takes a second extra time to do
+        const since2 = since + 1;
+        console.log({ since2 });
+
+
+        const buildLvl = (await cityManager.buildingLevels(cityId, 0)).toNumber()
+        const produced = 10 * since2;
+        const claimableSupposedToBe = produced + Math.floor((produced * (buildLvl - 1)) / 2);
+
+        expect(cityBalance).is.equal(claimableSupposedToBe, "claim amount is right")
+
+        const claimableNew = (await resources.calculateHarvestableResource(cityId, 1)).toNumber();
+        console.log("new claimable: ", claimableNew);
+        expect(claimableNew).is.lessThan(claimable, "claim amount is reset")
+        const lastClaim2 = (await (resources.LastClaims(cityId, 1))).toNumber()
+        console.log(lastClaim, lastClaim2);
+
+        expect(lastClaim2).is.greaterThan(lastClaim, "claim time is set")
+    });
 
 });
