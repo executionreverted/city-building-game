@@ -112,20 +112,20 @@ describe("Resources", function () {
         }, true, 1)
 
 
-        await time.increase(1);
+        await time.increase(600);
 
         expect((await cityManager.mintTime(cityId)).toNumber(), "minted").to.be.greaterThan(0);
         expect((await cities.ownerOf(cityId)).toLowerCase()).to.be.equal(owner.address.toLowerCase(), "owned")
-        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
+        console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
         await logProduction(cityId)
         expect((await resources.calculateHarvestableResource(cityId, 1)).toNumber()).to.be.equal(10);
         console.log("Upgrading building...");
         await cityManager.upgradeBuilding(cityId, 0);
-        console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
+        console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
         await logProduction(cityId)
 
         for (let index = 0; index < 5; index++) {
-            await time.increase(1);
+            await time.increase(600);
             console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
             await logProduction(cityId)
         }
@@ -148,7 +148,7 @@ describe("Resources", function () {
         console.log("balance: ", cityBalance);
 
         // calculate the timestamp on next tx because claim takes a second extra time to do
-        const since2 = since + 1;
+        const since2 = since;
         console.log({ since2 });
 
 

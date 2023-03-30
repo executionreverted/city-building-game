@@ -128,6 +128,6 @@ contract Resources is UpgradeableGameContract {
         console.log(block.timestamp);
         uint elapsed = block.timestamp -
             (lastClaim == 0 ? mintTime : lastClaim);
-        _rounds = elapsed / 1 seconds;
+        _rounds = elapsed / 10 minutes;
     }
 }

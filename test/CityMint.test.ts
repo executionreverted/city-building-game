@@ -327,7 +327,7 @@ describe("Cities", function () {
   it("Buildings initiated.", async function () {
     let building
     for (let index = 0; index < 5; index++) {
-      building = await cityManager.BuildingLevels(1, 1)
+      building = await cityManager.BuildingLevels(2, 1)
       expect(building.Tier.eq(1)).to.equal(true);
     }
   });
