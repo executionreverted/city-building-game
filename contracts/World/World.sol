@@ -13,7 +13,6 @@ import {Race} from "../City/CityEnums.sol";
 import {World, Coords, Plot, PlotContentTypes} from "./WorldStructs.sol";
 import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
-import "hardhat/console.sol";
 
 contract GameWorld is Trigonometry, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -74,10 +73,6 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         bool pickClosest,
         Race race
     ) external returns (Coords memory _coords) {
-        console.log(msg.sender);
-        console.log(msg.sender);
-        console.log(msg.sender);
-        console.log(msg.sender);
         bool isEmpty = isPlotEmpty(coords);
         if ((!isEmpty && !pickClosest) || (coords.X == 0 || coords.Y == 0))
             revert InvalidWorldCoordinates(coords.X, coords.Y);

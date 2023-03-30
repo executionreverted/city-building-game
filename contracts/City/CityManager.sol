@@ -10,7 +10,6 @@ import {ICities} from "./ICities.sol";
 import {IBuilding} from "../City/IBuilding.sol";
 import {ICityManager} from "./ICityManager.sol";
 import {Coords} from "../World/WorldStructs.sol";
-import "hardhat/console.sol";
 
 contract CityManager is ICityManager, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
