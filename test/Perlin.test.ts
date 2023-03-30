@@ -13,7 +13,7 @@ describe("Distance", function () {
     const zerozero: any = { X: 1, Y: 1, __reserve: [0, 0, 0] }
 
     async function deployCityAndWorld() {
-        console.log('Deploying contracts...');
+        // console.log('Deploying contracts...');
 
         // get owner (first account)
         const [owner] = await ethers.getSigners();
@@ -37,9 +37,9 @@ describe("Distance", function () {
             const perlinResult = await perlinNoise.noise2d(index * 100, 2 * 100)
         }
         expect(true).to.be.true
-        /* console.log(contract2.address);
-        console.log(contract2.address);
-        console.log(contract2.address); */
+        // /* console.log(contract2.address);
+        // console.log(contract2.address);
+        // console.log(contract2.address); */
         // fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
         // expect(distance.toString()).to.equal("18");
     });

@@ -14,9 +14,9 @@ describe("Cities", function () {
   let buildings: Buildings;
 
   async function deployCityAndWorld() {
-    console.log('Deploying contracts...');
+    // console.log('Deploying contracts...');
     const signer = await ethers.getSigners();
-    signer.forEach(s => console.log(s.address));
+    // signer.forEach(s => console.log(s.address));
     owner = signer[0];
 
 
@@ -92,18 +92,18 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
-      console.log(error);
-      console.log(error);
+      // console.log(error);
+      // console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method");
+      // console.log("called 'createCity' method");
     }
 
     let coords = await world.CityCoords(1)
-    console.log(coords.X.toString(), ",", coords.Y.toString(), '"""');
+    // console.log(coords.X.toString(), ",", coords.Y.toString(), '"""');
 
     expect(await world.isPlotEmpty(zerozero)).to.equal(false);
-    console.log('End of city 1 test.');
+    // console.log('End of city 1 test.');
 
   });
 
@@ -119,15 +119,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error: any) {
-      console.log(error?.message || error?.data);
+      // console.log(error?.message || error?.data);
       hasError = true;
     } finally {
-      console.log("called 'createCity' method for second city");
+      // console.log("called 'createCity' method for second city");
     }
 
 
     let coords = await world.CityCoords(2);
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty(zerozero)).to.equal(false);
     expect(hasError).to.equal(true);
@@ -145,16 +145,16 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for third time");
+      // console.log("called 'createCity' method for third time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 2, Y: 1, });
     const sup = await nft.totalSupply();
 
 
     let coords = await world.CityCoords(2)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
 
@@ -169,15 +169,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for fourth time");
+      // console.log("called 'createCity' method for fourth time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 2, Y: 2, });
     const sup = await nft.totalSupply();
 
     let coords = await world.CityCoords(3)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -192,15 +192,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for fifth time");
+      // console.log("called 'createCity' method for fifth time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 3, Y: 2, });
     const sup = await nft.totalSupply();
 
     let coords = await world.CityCoords(4)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -215,15 +215,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for sixth time");
+      // console.log("called 'createCity' method for sixth time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 3, Y: 3, });
     const sup = await nft.totalSupply();
 
     let coords = await world.CityCoords(5)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -240,15 +240,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for seventh time");
+      // console.log("called 'createCity' method for seventh time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 6, Y: 7, });
     const sup = await nft.totalSupply();
 
     let coords = await world.CityCoords(6)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -263,15 +263,15 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
-      console.log("called 'createCity' method for seventh time");
+      // console.log("called 'createCity' method for seventh time");
     }
     const isEmpty = await world.isPlotEmpty({ X: 6, Y: 7, });
     const sup = await nft.totalSupply();
 
     let coords = await world.CityCoords(7)
-    console.log(coords.X.toString(), ",", coords.Y.toString());
+    // console.log(coords.X.toString(), ",", coords.Y.toString());
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -286,10 +286,10 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       hasError = true;
     } finally {
-      console.log("called 'createCity' method for eighth time");
+      // console.log("called 'createCity' method for eighth time");
     }
 
     expect(hasError).to.equal(true);
@@ -308,7 +308,7 @@ describe("Cities", function () {
     cityIds.forEach(id => {
       cityIdxs.push(result[1].indexOf(id))
     })
-    console.log(cityIds.length);
+    // console.log(cityIds.length);
     expect(cityIds.length).to.equal(7);
   });
 
@@ -343,7 +343,7 @@ describe("Cities", function () {
     try {
       await cityManager.recruitPopulation(2, { from: owner.address })
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       hasError = true
     }
     expect(hasError).to.be.true;
@@ -354,7 +354,7 @@ describe("Cities", function () {
     try {
       await cityManager.recruitPopulation(2, { from: owner.address })
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       hasError = true
     }
     expect(hasError).to.be.true;

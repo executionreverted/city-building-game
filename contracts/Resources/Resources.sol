@@ -6,7 +6,6 @@ import {ICityManager} from "../City/ICityManager.sol";
 import {ICities} from "../City/ICities.sol";
 import {Resource} from "./ResourceEnums.sol";
 import {IBuilding} from "../City/IBuilding.sol";
-import "hardhat/console.sol";
 
 contract Resources is UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -149,7 +148,6 @@ contract Resources is UpgradeableGameContract {
         uint lastClaim = LastClaims[cityId][uint(resource)];
         uint mintTime = CityManager.mintTime(cityId);
         require(mintTime > 0, "does not exist");
-        console.log(block.timestamp);
         uint elapsed = block.timestamp -
             (lastClaim == 0 ? mintTime : lastClaim);
         _rounds = elapsed / 10 minutes;

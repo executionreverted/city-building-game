@@ -13,7 +13,7 @@ describe("Distance", function () {
     const zerozero: any = { X: 1, Y: 1, __reserve: [0, 0, 0] }
 
     async function deployCityAndWorld() {
-        console.log('Deploying contracts...');
+        // console.log('Deploying contracts...');
 
         // get owner (first account)
         const [owner] = await ethers.getSigners();
@@ -55,7 +55,7 @@ describe("Distance", function () {
     }
 
     async function deployCalc() {
-        console.log('Deploying contracts...');
+        // console.log('Deploying contracts...');
 
         // get owner (first account)
         const [owner] = await ethers.getSigners();
@@ -89,17 +89,17 @@ describe("Distance", function () {
         }
         const distance = await calculator.calculateDistance(c1, c2)
 
-        console.log(distance);
+        // console.log(distance);
         expect(distance.toString()).to.equal("18");
     });
 
 
     it("sample plot scores", async function () {
         const perlinResult = await contract2.scanPlots("1", "10", "1", "10")
-        perlinResult.forEach(e => console.log(e.Climate.toString()))
-        /* console.log(contract2.address);
-        console.log(contract2.address);
-        console.log(contract2.address); */
+        // perlinResult.forEach(e => console.log(e.Climate.toString()))
+        // /* console.log(contract2.address);
+        // console.log(contract2.address);
+        // console.log(contract2.address); */
         // fs.writeFileSync('./perlin-test.json', JSON.stringify(perlinResult.map(a => a.Weather.toString())))
         // expect(distance.toString()).to.equal("18");
     });

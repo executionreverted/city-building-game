@@ -13,7 +13,7 @@ describe("Resources", function () {
     let buildings: Buildings;
 
     async function deployCityAndWorld() {
-        console.log('Deploying contracts...');
+        // console.log('Deploying contracts...');
 
         // get owner (first account)
         const [owner] = await ethers.getSigners();
@@ -55,7 +55,6 @@ describe("Resources", function () {
         const GameWorld = await ethers.getContractFactory("GameWorld");
         gameWorld = await upgrades.deployProxy(GameWorld, [cities.address, ethers.constants.AddressZero, perlinNoise.address, cityManager.address]) as any;
         await gameWorld.deployed()
-        // console.log(await contract2.PerlinNoise());
 
         // grant owner the minter role
         await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address);
@@ -80,29 +79,29 @@ describe("Resources", function () {
     });
 
 
-    async function logProduction(cityId: any) {
-        console.log('Resource building levels:');
-        console.log((await cityManager.buildingLevels(cityId, 0)).toString());
-        console.log((await cityManager.buildingLevels(cityId, 1)).toString());
-        console.log((await cityManager.buildingLevels(cityId, 2)).toString());
-        console.log((await cityManager.buildingLevels(cityId, 3)).toString());
+   /*  async function logProduction(cityId: any) {
+        // console.log('Resource building levels:');
+        // console.log((await cityManager.buildingLevels(cityId, 0)).toString());
+        // console.log((await cityManager.buildingLevels(cityId, 1)).toString());
+        // console.log((await cityManager.buildingLevels(cityId, 2)).toString());
+        // console.log((await cityManager.buildingLevels(cityId, 3)).toString());
 
-        console.log(
+        // console.log(
             `harvestable wood ${(await resources.calculateHarvestableResource(cityId, 1)).toString()}`
         );
-        console.log(
+        // console.log(
             `harvestable food ${(await resources.calculateHarvestableResource(cityId, 2)).toString()}`
         );
-        console.log(
+        // console.log(
             `harvestable iron ${(await resources.calculateHarvestableResource(cityId, 3)).toString()}`
         );
-        console.log(
+        // console.log(
             `harvestable stone ${(await resources.calculateHarvestableResource(cityId, 4)).toString()}`
         );
-    }
+    } */
 
     it("city resource production starts", async function () {
-        console.log((await cities.totalSupply()).toString());
+        // console.log((await cities.totalSupply()).toString());
         const [owner] = await ethers.getSigners()
 
         const cityId = 2;
@@ -116,40 +115,40 @@ describe("Resources", function () {
 
         expect((await cityManager.mintTime(cityId)).toNumber(), "minted").to.be.greaterThan(0);
         expect((await cities.ownerOf(cityId)).toLowerCase()).to.be.equal(owner.address.toLowerCase(), "owned")
-        console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
-        await logProduction(cityId)
+        // console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
+        // await logProduction(cityId)
         expect((await resources.calculateHarvestableResource(cityId, 1)).toNumber()).to.be.equal(10);
-        console.log("Upgrading building...");
+        // console.log("Upgrading building...");
         await cityManager.upgradeBuilding(cityId, 0);
-        console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
-        await logProduction(cityId)
+        // console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
+        // await logProduction(cityId)
 
         for (let index = 0; index < 5; index++) {
             await time.increase(600);
-            console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
-            await logProduction(cityId)
+            // console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
+            // await logProduction(cityId)
         }
     });
 
     it("city resource claimed", async function () {
-        console.log((await cities.totalSupply()).toString());
+        // console.log((await cities.totalSupply()).toString());
         const [owner] = await ethers.getSigners()
         const cityId = 2;
         const lastClaim = (await resources.LastClaims(cityId, 1)).toNumber()
         const since = (await resources.getRoundsSince(cityId, 1)).toNumber();
-        console.log("producing since: ", since);
+        // console.log("producing since: ", since);
         let claimable = (await resources.calculateHarvestableResource(cityId, 1)).toNumber();
-        console.log("claimable: ", claimable);
+        // console.log("claimable: ", claimable);
         await resources.claimResource(cityId, 1)
 
         // todo put storage building limits
 
         const cityBalance = (await resources.CityResources(cityId, 1)).toNumber();
-        console.log("balance: ", cityBalance);
+        // console.log("balance: ", cityBalance);
 
         // calculate the timestamp on next tx because claim takes a second extra time to do
         const since2 = since;
-        console.log({ since2 });
+        // console.log({ since2 });
 
 
         const buildLvl = (await cityManager.buildingLevels(cityId, 1)).toNumber()
@@ -159,10 +158,10 @@ describe("Resources", function () {
         expect(cityBalance).is.equal(claimableSupposedToBe, "claim amount is right")
 
         const claimableNew = (await resources.calculateHarvestableResource(cityId, 1)).toNumber();
-        console.log("new claimable: ", claimableNew);
+        // console.log("new claimable: ", claimableNew);
         expect(claimableNew).is.lessThan(claimable, "claim amount is reset")
         const lastClaim2 = (await (resources.LastClaims(cityId, 1))).toNumber()
-        console.log(lastClaim, lastClaim2);
+        // console.log(lastClaim, lastClaim2);
 
         expect(lastClaim2).is.greaterThan(lastClaim, "claim time is set")
     });
