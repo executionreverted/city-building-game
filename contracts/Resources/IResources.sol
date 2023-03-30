@@ -30,7 +30,7 @@ interface IResources {
         Resource resource
     ) external view returns (uint256);
 
-    function decreaseModifier(
+    function updateModifier(
         uint256 cityId,
         Resource resource,
         int256 value
@@ -41,11 +41,6 @@ interface IResources {
         Resource resource
     ) external view returns (uint256 _rounds);
 
-    function increaseModifier(
-        uint256 cityId,
-        Resource resource,
-        int256 value
-    ) external returns (int256 _newModifier);
 
     function productionRate(
         uint256 cityId,

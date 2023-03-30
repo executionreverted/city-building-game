@@ -5,7 +5,7 @@ import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 import {ICityManager} from "../City/ICityManager.sol";
 import {ICities} from "../City/ICities.sol";
 import {Resource} from "./ResourceEnums.sol";
-import {IBuilding} from "../City/IBuilding.sol";
+import {IBuilding} from "../City/IBuildings.sol";
 import {IResources} from "./IResources.sol";
 
 contract Resources is UpgradeableGameContract {
@@ -58,35 +58,56 @@ contract Resources is UpgradeableGameContract {
         _;
     }
 
+    modifier onlyCityOwner(uint cityId) {
+        address _owner = Cities.ownerOf(cityId);
+        require(_owner == msg.sender, "unauthorized");
+        _;
+    }
+
     function addResource(
         uint cityId,
         Resource resource,
         uint _amount
     ) external onlyMinter {
-        uint amount = calculateHarvestableResource(cityId, resource);
-
-        if (amount > 0) {
-            CityResources[cityId][uint(resource)] += _amount;
-        } else revert("nothing to claim");
+        CityResources[cityId][uint(resource)] += _amount;
     }
 
-    function wrapResource(uint cityId, Resource resource) external onlyMinter {
+    function wrapResource(
+        uint cityId,
+        Resource resource
+    ) external onlyCityOwner(cityId) {
         // burn resource and wrap it in nft
     }
 
-    function unwrapResource(uint cityId, uint nftId) external onlyMinter {
+    function unwrapResource(
+        uint cityId,
+        uint nftId
+    ) external onlyCityOwner(cityId) {
         // burn nft and unwrap resource
     }
 
-    function claimResource(uint cityId, Resource resource) external {
-        address _owner = Cities.ownerOf(cityId);
-        require(_owner == msg.sender, "unauthorized");
+    function claimResource(
+        uint cityId,
+        Resource resource
+    ) external onlyCityOwner(cityId) {
         uint amount = calculateHarvestableResource(cityId, resource);
 
         if (amount > 0) {
             LastClaims[cityId][uint(resource)] = block.timestamp;
             CityResources[cityId][uint(resource)] += amount;
         } else revert("nothing to claim");
+    }
+
+    function claimAllAvailableResources(
+        uint cityId
+    ) external onlyCityOwner(cityId) {
+        for (uint i = 0; i < 5; i++) {
+            uint amount = calculateHarvestableResource(cityId, Resource(i));
+            if (amount > 0) {
+                LastClaims[cityId][i] = block.timestamp;
+                CityResources[cityId][i] += amount;
+            } else revert("nothing to claim");
+        }
     }
 
     function spendResource(
@@ -114,11 +135,11 @@ contract Resources is UpgradeableGameContract {
         } else if (resource == Resource.STONE) {
             buildingLvl = CityManager.buildingLevels(cityId, 4);
         }
-
+        uint productionAmount = productionRate(cityId, resource);
         uint rounds = getRoundsSince(cityId, resource);
         if (buildingLvl == 0 || rounds == 0) return 0;
-        uint produced = rounds * BaseProductions[uint(resource)];
-        return produced + ((produced * (buildingLvl - 1) * 50) / 100);
+        uint produced = rounds * productionAmount;
+        return produced;
     }
 
     function productionRate(
@@ -138,6 +159,10 @@ contract Resources is UpgradeableGameContract {
         if (buildingLvl == 0) return 0;
         uint production = BaseProductions[uint(resource)] +
             ((BaseProductions[uint(resource)] * (buildingLvl - 1) * 50) / 100);
+
+        if (CityResourceModifiers[cityId][uint(resource)] > int(production)) {
+            return 0;
+        }
         return
             uint(
                 int(production) + CityResourceModifiers[cityId][uint(resource)]
@@ -156,22 +181,12 @@ contract Resources is UpgradeableGameContract {
         _rounds = elapsed / 10 minutes;
     }
 
-    function increaseModifier(
+    function updateModifier(
         uint cityId,
         Resource resource,
         int value
     ) external onlyMinter returns (int _newModifier) {
         CityResourceModifiers[cityId][uint(resource)] += value;
-        return CityResourceModifiers[cityId][uint(resource)];
-    }
-
-    function decreaseModifier(
-        uint cityId,
-        Resource resource,
-        int value
-    ) external onlyMinter returns (int _newModifier) {
-        CityResourceModifiers[cityId][uint(resource)] -= value;
-
         return CityResourceModifiers[cityId][uint(resource)];
     }
 

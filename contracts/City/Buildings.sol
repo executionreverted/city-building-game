@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
-import {IBuilding} from "./IBuilding.sol";
+import {IBuilding} from "./IBuildings.sol";
 import {Building} from "./CityStructs.sol";
 
 contract Buildings is IBuilding, UpgradeableGameContract {

@@ -79,26 +79,26 @@ describe("Resources", function () {
     });
 
 
-   /*  async function logProduction(cityId: any) {
-        // console.log('Resource building levels:');
-        // console.log((await cityManager.buildingLevels(cityId, 0)).toString());
-        // console.log((await cityManager.buildingLevels(cityId, 1)).toString());
-        // console.log((await cityManager.buildingLevels(cityId, 2)).toString());
-        // console.log((await cityManager.buildingLevels(cityId, 3)).toString());
-
-        // console.log(
-            `harvestable wood ${(await resources.calculateHarvestableResource(cityId, 1)).toString()}`
-        );
-        // console.log(
-            `harvestable food ${(await resources.calculateHarvestableResource(cityId, 2)).toString()}`
-        );
-        // console.log(
-            `harvestable iron ${(await resources.calculateHarvestableResource(cityId, 3)).toString()}`
-        );
-        // console.log(
-            `harvestable stone ${(await resources.calculateHarvestableResource(cityId, 4)).toString()}`
-        );
-    } */
+    /*  async function logProduction(cityId: any) {
+         // console.log('Resource building levels:');
+         // console.log((await cityManager.buildingLevels(cityId, 0)).toString());
+         // console.log((await cityManager.buildingLevels(cityId, 1)).toString());
+         // console.log((await cityManager.buildingLevels(cityId, 2)).toString());
+         // console.log((await cityManager.buildingLevels(cityId, 3)).toString());
+ 
+         // console.log(
+             `harvestable wood ${(await resources.calculateHarvestableResource(cityId, 1)).toString()}`
+         );
+         // console.log(
+             `harvestable food ${(await resources.calculateHarvestableResource(cityId, 2)).toString()}`
+         );
+         // console.log(
+             `harvestable iron ${(await resources.calculateHarvestableResource(cityId, 3)).toString()}`
+         );
+         // console.log(
+             `harvestable stone ${(await resources.calculateHarvestableResource(cityId, 4)).toString()}`
+         );
+     } */
 
     it("city resource production starts", async function () {
         // console.log((await cities.totalSupply()).toString());
@@ -181,11 +181,11 @@ describe("Resources", function () {
         expect(prodAmount3).to.equal(10)
         expect(prodAmount4).to.equal(10)
 
-        await resources.decreaseModifier(cityId, 1, 1)
-        await resources.increaseModifier(cityId, 2, 5)
+        await resources.updateModifier(cityId, 1, -1)
+        await resources.updateModifier(cityId, 2, 5)
         let newProdAmt1 = await resources.productionRate(cityId, 1);
         let newProdAmt2 = await resources.productionRate(cityId, 2);
-        expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(9) 
-        expect(newProdAmt2.toNumber(), "does not increase").to.eq(15) 
+        expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(9)
+        expect(newProdAmt2.toNumber(), "does not increase").to.eq(15)
     });
 });

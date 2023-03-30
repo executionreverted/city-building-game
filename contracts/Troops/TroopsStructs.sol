@@ -11,9 +11,9 @@ struct Troop {
     uint Capacity;
     TroopCost Cost;
     uint Population;
-    uint ResourceModifier;
 }
 
 struct TroopCost {
     uint[100] ResourceCost;
+    int ResourceModifier;
 }

@@ -7,7 +7,7 @@ import {Building} from "./CityStructs.sol";
 import {City} from "./CityStructs.sol";
 import {Race} from "./CityEnums.sol";
 import {ICities} from "./ICities.sol";
-import {IBuilding} from "../City/IBuilding.sol";
+import {IBuilding} from "../City/IBuildings.sol";
 import {ICityManager} from "./ICityManager.sol";
 import {Coords} from "../World/WorldStructs.sol";
 
@@ -19,13 +19,19 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     mapping(uint => City) public CityList;
     mapping(uint => Building[50]) public BuildingLevels;
     address GameWorld;
+    address TroopsManager;
 
     function initialize() external initializer {
         _initialize();
     }
 
     function setCity(uint cityId, City memory _city) external {
-        require(msg.sender == GameWorld || msg.sender == address(Cities), "!");
+        require(
+            msg.sender == GameWorld ||
+                msg.sender == address(Cities) ||
+                msg.sender == address(TroopsManager),
+            "!"
+        );
         CityList[cityId] = _city;
         BuildingLevels[cityId][0].Tier = 1;
         BuildingLevels[cityId][1].Tier = 1;
@@ -44,6 +50,10 @@ contract CityManager is ICityManager, UpgradeableGameContract {
 
     function setWorld(address _world) external onlyOwner {
         GameWorld = _world;
+    }
+
+    function setTroopsManager(address _troopsManager) external onlyOwner {
+        TroopsManager = _troopsManager;
     }
 
     modifier onlyCityOwner(uint cityId) {
@@ -88,7 +98,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     function updateCityPopulation(
         uint cityId,
         uint _param
-    ) external onlyCityOwner(cityId) returns (bool) {
+    ) external returns (bool) {
         CityList[cityId].Population = _param;
         return true;
     }
