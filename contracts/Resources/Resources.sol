@@ -26,6 +26,9 @@ contract Resources is UpgradeableGameContract {
     mapping(uint => uint[10]) public LastClaims;
     mapping(uint => uint[10]) public CityResources;
 
+    // modifiers from actions in game to decrease/increase productions
+    mapping(uint => int[10]) public CityResourceModifiers;
+
     function initialize(
         address _cities,
         address _buildings,
@@ -58,12 +61,12 @@ contract Resources is UpgradeableGameContract {
     function addResource(
         uint cityId,
         Resource resource,
-        uint amount
+        uint _amount
     ) external onlyMinter {
         uint amount = calculateHarvestableResource(cityId, resource);
 
         if (amount > 0) {
-            CityResources[cityId][uint(resource)] += amount;
+            CityResources[cityId][uint(resource)] += _amount;
         } else revert("nothing to claim");
     }
 
@@ -103,19 +106,40 @@ contract Resources is UpgradeableGameContract {
         uint buildingLvl;
         // check building lvl, check plot info
         if (resource == Resource.WOOD) {
-            buildingLvl = CityManager.buildingLevels(cityId, 0);
-        } else if (resource == Resource.FOOD) {
             buildingLvl = CityManager.buildingLevels(cityId, 1);
-        } else if (resource == Resource.IRON) {
+        } else if (resource == Resource.FOOD) {
             buildingLvl = CityManager.buildingLevels(cityId, 2);
-        } else if (resource == Resource.STONE) {
+        } else if (resource == Resource.IRON) {
             buildingLvl = CityManager.buildingLevels(cityId, 3);
+        } else if (resource == Resource.STONE) {
+            buildingLvl = CityManager.buildingLevels(cityId, 4);
         }
 
         uint rounds = getRoundsSince(cityId, resource);
         if (buildingLvl == 0 || rounds == 0) return 0;
         uint produced = rounds * BaseProductions[uint(resource)];
         return produced + ((produced * (buildingLvl - 1) * 50) / 100);
+    }
+
+    function productionRate(
+        uint cityId,
+        Resource resource
+    ) public view returns (uint) {
+        uint buildingLvl;
+        if (resource == Resource.WOOD) {
+            buildingLvl = CityManager.buildingLevels(cityId, 1);
+        } else if (resource == Resource.FOOD) {
+            buildingLvl = CityManager.buildingLevels(cityId, 2);
+        } else if (resource == Resource.IRON) {
+            buildingLvl = CityManager.buildingLevels(cityId, 3);
+        } else if (resource == Resource.STONE) {
+            buildingLvl = CityManager.buildingLevels(cityId, 4);
+        }
+        if (buildingLvl == 0) return 0;
+        uint production = BaseProductions[uint(resource)] +
+            ((BaseProductions[uint(resource)] * (buildingLvl - 1) * 50) / 100);
+        return uint(int(production) + CityResourceModifiers[cityId][uint(resource)]);
+            
     }
 
     function getRoundsSince(
@@ -129,5 +153,24 @@ contract Resources is UpgradeableGameContract {
         uint elapsed = block.timestamp -
             (lastClaim == 0 ? mintTime : lastClaim);
         _rounds = elapsed / 10 minutes;
+    }
+
+    function increaseModifier(
+        uint cityId,
+        Resource resource,
+        int value
+    ) external onlyMinter returns (int _newModifier) {
+        CityResourceModifiers[cityId][uint(resource)] += value;
+        return CityResourceModifiers[cityId][uint(resource)];
+    }
+
+    function decreaseModifier(
+        uint cityId,
+        Resource resource,
+        int value
+    ) external onlyMinter returns (int _newModifier) {
+        CityResourceModifiers[cityId][uint(resource)] -= value;
+
+        return CityResourceModifiers[cityId][uint(resource)];
     }
 }

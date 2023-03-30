@@ -28,9 +28,11 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     function setCity(uint cityId, City memory _city) external {
         require(msg.sender == GameWorld || msg.sender == address(Cities), "!");
         CityList[cityId] = _city;
-        for (uint i = 0; i < 5; i++) {
-            BuildingLevels[cityId][i].Tier = 1;
-        }
+        BuildingLevels[cityId][0].Tier = 1;
+        BuildingLevels[cityId][1].Tier = 1;
+        BuildingLevels[cityId][2].Tier = 1;
+        BuildingLevels[cityId][3].Tier = 1;
+        BuildingLevels[cityId][4].Tier = 1;
     }
 
     function setCities(address _cities) external onlyOwner {
@@ -121,8 +123,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint _recruitable;
         require(PopulationClaimDates[cityId] < block.timestamp, "early");
         City memory _city = CityList[cityId];
-        uint _townhallTier = BuildingLevels[cityId][4].Tier;
-        uint _housingsTier = BuildingLevels[cityId][7].Tier;
+        uint _townhallTier = BuildingLevels[cityId][0].Tier;
+        uint _housingsTier = BuildingLevels[cityId][8].Tier;
         require(_city.Alive, "dead");
         // fetch townhall lvl & housing, give bonus daily population, 4 townhall & 7 housing
 

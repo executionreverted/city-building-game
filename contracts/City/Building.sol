@@ -15,11 +15,11 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     function buildingInfo(
         uint buildingId
     ) external pure override returns (Building memory) {
-        if (buildingId == 0) return Forest();
-        if (buildingId == 1) return Farms();
-        if (buildingId == 2) return Mines();
-        if (buildingId == 3) return Quarry();
-        if (buildingId == 4) return TownHall();
+        if (buildingId == 0) return TownHall();
+        if (buildingId == 1) return Forest();
+        if (buildingId == 2) return Farms();
+        if (buildingId == 3) return Mines();
+        if (buildingId == 4) return Quarry();
         if (buildingId == 5) return Warehouse();
         if (buildingId == 6) return Barracks();
         if (buildingId == 7) return Workshop();

@@ -152,7 +152,7 @@ describe("Resources", function () {
         console.log({ since2 });
 
 
-        const buildLvl = (await cityManager.buildingLevels(cityId, 0)).toNumber()
+        const buildLvl = (await cityManager.buildingLevels(cityId, 1)).toNumber()
         const produced = 10 * since2;
         const claimableSupposedToBe = produced + Math.floor((produced * (buildLvl - 1)) / 2);
 
@@ -167,4 +167,26 @@ describe("Resources", function () {
         expect(lastClaim2).is.greaterThan(lastClaim, "claim time is set")
     });
 
+    it("city resource calculations", async function () {
+        const [owner] = await ethers.getSigners()
+        const cityId = 2;
+        await resources.addMinter(owner.address, true)
+
+        const prodAmount = await resources.productionRate(cityId, 1)
+        const prodAmount2 = await resources.productionRate(cityId, 2)
+        const prodAmount3 = await resources.productionRate(cityId, 3)
+        const prodAmount4 = await resources.productionRate(cityId, 4)
+
+        expect(prodAmount).to.equal(10)
+        expect(prodAmount2).to.equal(10)
+        expect(prodAmount3).to.equal(10)
+        expect(prodAmount4).to.equal(10)
+
+        await resources.decreaseModifier(cityId, 1, 1)
+        await resources.increaseModifier(cityId, 2, 5)
+        let newProdAmt1 = await resources.productionRate(cityId, 1);
+        let newProdAmt2 = await resources.productionRate(cityId, 2);
+        expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(9) 
+        expect(newProdAmt2.toNumber(), "does not increase").to.eq(15) 
+    });
 });
