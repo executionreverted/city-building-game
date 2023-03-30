@@ -6,6 +6,7 @@ import {ICityManager} from "../City/ICityManager.sol";
 import {ICities} from "../City/ICities.sol";
 import {Resource} from "./ResourceEnums.sol";
 import {IBuilding} from "../City/IBuilding.sol";
+import {IResources} from "./IResources.sol";
 
 contract Resources is UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -137,8 +138,10 @@ contract Resources is UpgradeableGameContract {
         if (buildingLvl == 0) return 0;
         uint production = BaseProductions[uint(resource)] +
             ((BaseProductions[uint(resource)] * (buildingLvl - 1) * 50) / 100);
-        return uint(int(production) + CityResourceModifiers[cityId][uint(resource)]);
-            
+        return
+            uint(
+                int(production) + CityResourceModifiers[cityId][uint(resource)]
+            );
     }
 
     function getRoundsSince(
@@ -170,5 +173,26 @@ contract Resources is UpgradeableGameContract {
         CityResourceModifiers[cityId][uint(resource)] -= value;
 
         return CityResourceModifiers[cityId][uint(resource)];
+    }
+
+    function cityResourceModifiers(
+        uint256 cityId,
+        Resource resource
+    ) external view returns (int256) {
+        return CityResourceModifiers[cityId][uint(resource)];
+    }
+
+    function cityResources(
+        uint256 cityId,
+        Resource resource
+    ) external view returns (uint256) {
+        return CityResources[cityId][uint(resource)];
+    }
+
+    function lastClaims(
+        uint256 cityId,
+        Resource resource
+    ) external view returns (uint256) {
+        return LastClaims[cityId][uint(resource)];
     }
 }

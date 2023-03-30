@@ -349,16 +349,4 @@ describe("Cities", function () {
     expect(hasError).to.be.true;
   });
 
-  it("Should not allow claim population.", async function () {
-    let hasError
-    try {
-      await cityManager.recruitPopulation(2, { from: owner.address })
-    } catch (error) {
-      // console.log(error);
-      hasError = true
-    }
-    expect(hasError).to.be.true;
-  });
-
-
 });

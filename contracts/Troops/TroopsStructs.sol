@@ -10,6 +10,8 @@ struct Troop {
     uint Hp;
     uint Capacity;
     TroopCost Cost;
+    uint Population;
+    uint ResourceModifier;
 }
 
 struct TroopCost {
