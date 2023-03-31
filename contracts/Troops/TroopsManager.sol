@@ -9,6 +9,7 @@ import {IResources} from "../Resources/IResources.sol";
 import {IBuilding} from "../City/IBuildings.sol";
 import {ITroops} from "./ITroops.sol";
 import {Troop} from "./TroopsStructs.sol";
+import "hardhat/console.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -56,7 +57,7 @@ contract TroopsManager is UpgradeableGameContract {
         require(amount > 0, "0");
         // check requirements, burn and set resource modifier
         Troop memory _troop = Troops.troopInfo(troopId);
-        int _modifier;
+        // int _modifier;
         uint _cityPopulation = CityManager.cityPopulation(cityId);
         uint _population;
 
@@ -67,15 +68,83 @@ contract TroopsManager is UpgradeableGameContract {
                 Resource(i),
                 _troop.Cost.ResourceCost[i] * amount
             );
-            _modifier += _troop.Cost.ResourceModifier * int(amount);
-            Resources.updateModifier(cityId, Resource(i), _modifier);
+            // _modifier += _troop.Cost.ResourceModifier * int(amount);
+            // Resources.updateModifier(cityId, Resource(i), _modifier);
         }
 
-        _population += _troop.Population;
+        _population += _troop.Population * amount;
 
-        require(_cityPopulation > _population, "low population");
+        require(_cityPopulation >= _population, "low population");
         CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
         CityTroops[cityId][troopId] += amount;
+    }
+
+    function recruitTroops(
+        uint cityId,
+        uint[] calldata troopIds,
+        uint[] calldata amounts
+    ) external onlyCityOwner(cityId) {
+        require(troopIds.length == amounts.length, "mismatch");
+        uint _population;
+        for (uint i = 0; i < amounts.length; ) {
+            uint amount = amounts[i];
+            uint troopId = troopIds[i];
+            require(amount > 0, "0");
+            // check requirements, burn and set resource modifier
+            Troop memory _troop = Troops.troopInfo(troopId);
+            // int _modifier;
+            // check population
+            for (uint j = 0; j < 5; j++) {
+                Resources.spendResource(
+                    cityId,
+                    Resource(j),
+                    _troop.Cost.ResourceCost[j] * amount
+                );
+                //   _modifier += _troop.Cost.ResourceModifier * int(amount);
+                //   Resources.updateModifier(cityId, Resource(i), _modifier);
+            }
+
+            _population += _troop.Population * amount;
+            CityTroops[cityId][troopId] += amount;
+            unchecked {
+                i++;
+            }
+        }
+
+        uint _cityPopulation = CityManager.cityPopulation(cityId);
+        require(_cityPopulation >= _population, "low population");
+        CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
+    }
+
+    function _releaseTroop(
+        uint cityId,
+        uint troopId,
+        uint amount
+    ) internal returns (uint) {
+        require(amount > 0, "0");
+        require(CityTroops[cityId][troopId] >= amount, "not enough");
+        CityTroops[cityId][troopId] -= amount;
+        uint _population;
+        Troop memory _troop = Troops.troopInfo(troopId);
+        _population += _troop.Population * amount;
+        return _population;
+    }
+
+    function releaseTroops(
+        uint cityId,
+        uint[] calldata troopIds,
+        uint[] calldata amounts
+    ) external {
+        require(troopIds.length == amounts.length, "mismatch");
+        uint population;
+
+        for (uint i = 0; i < troopIds.length; i++) {
+            population += _releaseTroop(cityId, troopIds[i], amounts[i]);
+        }
+
+        uint _cityPopulation = CityManager.cityPopulation(cityId);
+
+        CityManager.updateCityPopulation(cityId, _cityPopulation + population);
     }
 
     function cityTroops(

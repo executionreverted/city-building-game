@@ -130,11 +130,29 @@ describe("Troops", function () {
         expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(40)
     });
 
-    it("Update production modifiers", async function () {
-        const [owner] = await ethers.getSigners();
+    it("Recruit 2 troops", async function () {
+        await troopsManager.recruitTroops(cityId, [0, 0], [1, 1])
+    });
+
+    it("Burn proper resources on multiple recruits", async function () {
         for (let i = 0; i < 5; i++) {
-            expect((await resources.cityResourceModifiers(cityId, 0)).eq(-1))
+            expect((await resources.cityResources(cityId, i)).toNumber()).to.eq(700)
         }
     });
 
+    it("Reduce population by 20", async function () {
+        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(20)
+    });
+
+    it("Update production modifiers again", async function () {
+        for (let i = 0; i < 5; i++) {
+            const modifier = await resources.cityResourceModifiers(cityId, 0)
+            expect(modifier.toNumber()).to.equal(0)
+        }
+    });
+
+    it("Release troops", async function () {
+        await troopsManager.releaseTroops(cityId, [0], [3])
+        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(50)
+    });
 });
