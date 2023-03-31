@@ -4,7 +4,7 @@ import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Tri
 import { CoordsStruct } from "../typechain-types/contracts/Core/Calculator";
 import * as fs from 'fs'
 import { Buildings } from "../typechain-types/contracts/City/Building.sol";
-describe("Distance",
+describe("Calculator",
     function () {
         let cities: Cities;
         let gameWorld: GameWorld;
@@ -19,6 +19,10 @@ describe("Distance",
 
         let city1 = 2;
         let city2 = 3;
+        // simulation
+        const atkArmyPower = [1000, 1500, 2000, 3500, 4000];
+        const defArmyPower = [500, 1000, 2000, 5000, 6000];
+
         async function deployAll() {
             // console.log('Deploying contracts...');
 
@@ -95,13 +99,39 @@ describe("Distance",
             await deployAll()
         });
 
-        it("Calculate attacker win chance", async function () {
-            const atkArmyPower = 1000;
-            const defArmyPower = 4000;
+        it("Calculate chances", async function () {
 
-            const attackerWinChance = await calculator.attackerVictoryChance(atkArmyPower, defArmyPower);
-            const defenderWinChance = await calculator.defenderVictoryChance(atkArmyPower, defArmyPower);
-            console.log({ attackerWinChance, defenderWinChance });
-            expect(defenderWinChance.add(attackerWinChance).eq(1000)).to.be.true
+            for (let index = 0; index < atkArmyPower.length; index++) {
+                const attackerWinChance = await calculator.attackerVictoryChance(atkArmyPower[index], defArmyPower[index]);
+                const defenderWinChance = await calculator.defenderVictoryChance(atkArmyPower[index], defArmyPower[index]);
+                console.log(`__________________`);
+
+                console.log(`ATK: ${atkArmyPower[index]} DEF: ${defArmyPower[index]}`);
+
+                console.log(`Attacker win chance: ${attackerWinChance.toNumber() / 10}%`);
+                console.log(`Defender win chance: ${defenderWinChance.toNumber() / 10}%`);
+                const attackerPlunderAmount = await calculator.plunderAmountPercentage(atkArmyPower[index], defArmyPower[index]);
+                console.log(`Max. Plunder resource percentage if attacker win: ${attackerPlunderAmount.toNumber() / 10}% of all resources`)
+
+                const attackerCasualtiesIfWin = await calculator.attackerCasualties(atkArmyPower[index], defArmyPower[index], true, false)
+                console.log(`Attacker Casualties if attacker win: ${attackerCasualtiesIfWin.toNumber() / 10}%`);
+                const attackerCasualtiesIfLose = await calculator.attackerCasualties(atkArmyPower[index], defArmyPower[index], false, false)
+                console.log(`Attacker Casualties if attacker lose: ${attackerCasualtiesIfLose.toNumber() / 10}%`);
+                const attackerCasualtiesIfDraw = await calculator.attackerCasualties(atkArmyPower[index], defArmyPower[index], false, true)
+                console.log(`Attacker Casualties if draw: ${attackerCasualtiesIfDraw.toNumber() / 10}%`);
+
+                
+
+                const defenderCasualtiesIfWin = await calculator.defenderCasualties(atkArmyPower[index], defArmyPower[index], true, false)
+                console.log(`Defender Casualties if attacker win: ${defenderCasualtiesIfWin.toNumber() / 10}%`);
+                const defenderCasualtiesIfLose = await calculator.defenderCasualties(atkArmyPower[index], defArmyPower[index], false, false)
+                console.log(`Defender Casualties if attacker lose: ${defenderCasualtiesIfLose.toNumber() / 10}%`);
+                const defenderCasualtiesIfDraw = await calculator.defenderCasualties(atkArmyPower[index], defArmyPower[index], false, true)
+                console.log(`Defender Casualties if draw: ${defenderCasualtiesIfDraw.toNumber() / 10}%`);
+           
+                console.log(`__________________`);
+
+                expect(defenderWinChance.add(attackerWinChance).eq(1000)).to.be.true
+            }
         });
     });

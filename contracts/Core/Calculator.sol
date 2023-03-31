@@ -12,6 +12,7 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
     uint constant Precision = 3;
     uint constant Absolute = 10 ** Precision;
+    uint constant MaxPlunderPercentage = 400;
 
     ITroops Troops;
     ITroopsManager TroopsManager;
@@ -44,11 +45,12 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     {
         (uint[] memory troops, uint[] memory amounts) = TroopsManager
             .troopsOfCity(cityId);
+        // add morale bonus
         return Troops.armyPower(troops, amounts);
     }
 
     /* 
-        Attacker victory chance = (Attacker army power / Defender army power) * 100
+        Attacker victory chance
     */
 
     function attackerVictoryChance(
@@ -56,19 +58,21 @@ contract Calculator is ICalculator, UpgradeableGameContract {
         uint defArmyPower
     ) public pure returns (uint) {
         // todo add defender bonus etc.
-        if (atkArmyPower < defArmyPower) {
+        if (atkArmyPower <= defArmyPower) {
             uint p = divide(atkArmyPower, defArmyPower) / 1e15;
             if (p > Absolute) return Absolute;
-            return p;
+            return p / 2;
         } else {
-            uint p = percent(atkArmyPower, defArmyPower, Precision);
-            if (p > Absolute) return Absolute;
+            uint p = Absolute -
+                (percent(defArmyPower, atkArmyPower, 3) * 80) /
+                100;
+            if (p >= Absolute) return Absolute;
             return p;
         }
     }
 
     /* 
-        Defender victory chance = 1000 - Attacker victory chance
+        Defender victory chance
     */
     function defenderVictoryChance(
         uint atkArmyPower,
@@ -78,9 +82,19 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     }
 
     /* 
-        Plunder amount percentage = Attacker army power / Defender army power
+        Plunder amount percentage
     */
-    function plunderAmountPercentage() public view returns (uint) {}
+    function plunderAmountPercentage(
+        uint atkArmyPower,
+        uint defArmyPower
+    ) public view returns (uint) {
+        if (atkArmyPower < defArmyPower) {
+            return percent(atkArmyPower, defArmyPower, Precision) / 10;
+        }
+
+        uint chance = attackerVictoryChance(atkArmyPower, defArmyPower) / 3;
+        return chance > MaxPlunderPercentage ? MaxPlunderPercentage : chance;
+    }
 
     /* 
         Plundered resources = (Percentage of plundered resources * Defender's total resources) * Plunder efficiency factor
@@ -90,12 +104,52 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     /* 
         Attacker casualties = (Attacker army power / Defender army power) * Defender casualties
     */
-    function attackerCasualties() public view returns (uint) {}
+    function attackerCasualties(
+        uint atkArmyPower,
+        uint defArmyPower,
+        bool atkHasWon,
+        bool draw
+    ) public pure returns (uint) {
+        uint amount;
+        if (atkArmyPower < defArmyPower) {
+            amount = percent(defArmyPower, atkArmyPower, Precision) / 10;
+        } else {
+            amount = percent(atkArmyPower, defArmyPower, Precision) / 10;
+        }
+        if (draw) return (amount * 75) / 100;
+
+        if (atkHasWon) {
+            amount = amount / 2;
+        }
+        return amount;
+    }
 
     /* 
     Defender casualties = (Defender army power / Attacker army power) * Attacker casualties 
     */
-    function defenderCasualties() public view returns (uint) {}
+    function defenderCasualties(
+        uint atkArmyPower,
+        uint defArmyPower,
+        bool atkHasWon,
+        bool draw
+    ) public view returns (uint) {
+        uint amount;
+        if (atkArmyPower > defArmyPower) {
+            amount = percent(defArmyPower, atkArmyPower, Precision);
+        } else {
+            amount = percent(atkArmyPower, defArmyPower, Precision);
+        }
+        amount /= 15;
+        if (draw) return amount * 2;
+
+        if (atkHasWon) {
+            amount *= 2;
+            if (percent(defArmyPower, atkArmyPower, Precision) > 300) {
+                amount *= 2;
+            }
+        }
+        return amount;
+    }
 
     function calculateDistance(
         Coords memory c1,
