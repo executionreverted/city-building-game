@@ -4,11 +4,53 @@ pragma solidity ^0.8.18;
 
 import {ICalculator} from "./ICalculator.sol";
 import {Coords} from "../World/WorldStructs.sol";
+import {ITroops} from "../Troops/ITroops.sol";
+import {ITroopsManager} from "../Troops/ITroopsManager.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
 contract Calculator is ICalculator, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
+    ITroops Troops;
+    ITroopsManager TroopsManager;
 
+    function initialize(
+        address _troopCodex,
+        address _troopManager
+    ) external initializer {
+        _initialize();
+        Troops = ITroops(_troopCodex);
+        TroopsManager = ITroopsManager(_troopManager);
+    }
+
+    /*     
+        Army power = (Number of soldiers * Attack power * Defense power * Health) * Morale bonus
+    */
+    function armyPower(
+        uint cityId
+    )
+        external
+        view
+        returns (
+            uint Atk,
+            uint SiegeAtk,
+            uint Def,
+            uint SiegeDef,
+            uint Hp,
+            uint Capacity
+        )
+    {
+        (uint[] memory troops, uint[] memory amounts) = TroopsManager
+            .troopsOfCity(cityId);
+        return Troops.armyPower(troops, amounts);
+    }
+
+    /* 
+        Attacker victory chance = (Attacker army power / Defender army power) * 100
+        Defender victory chance = 100 - Attacker victory chance
+        Plunder amount percentage = Attacker army power / Defender army power
+        Plundered resources = (Percentage of plundered resources * Defender's total resources) * Plunder efficiency factor
+        Attacker casualties = (Attacker army power / Defender army power) * Defender casualties
+        Defender casualties = (Defender army power / Attacker army power) * Attacker casualties */
     function calculateDistance(
         Coords memory c1,
         Coords memory c2

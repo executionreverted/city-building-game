@@ -11,7 +11,7 @@ contract Troops is UpgradeableGameContract {
         _initialize();
     }
 
-    function troopInfo(uint troopId) external pure returns (Troop memory) {
+    function troopInfo(uint troopId) public pure returns (Troop memory) {
         if (troopId == 0) return Soldier();
         revert("not implemented");
     }
@@ -25,6 +25,33 @@ contract Troops is UpgradeableGameContract {
     ] */
 
     /* PRODUCTION troop */
+
+    function armyPower(
+        uint[] memory troopIds,
+        uint[] memory amounts
+    )
+        external
+        pure
+        returns (
+            uint Atk,
+            uint SiegeAtk,
+            uint Def,
+            uint SiegeDef,
+            uint Hp,
+            uint Capacity
+        )
+    {
+        require(troopIds.length == amounts.length, "mismatch");
+        for (uint i = 0; i < troopIds.length; i++) {
+            Troop memory _troop = troopInfo(troopIds[i]);
+            Atk += _troop.Atk * amounts[i];
+            SiegeAtk += _troop.SiegeAtk * amounts[i];
+            Def += _troop.Def * amounts[i];
+            SiegeDef += _troop.SiegeDef * amounts[i];
+            Hp += _troop.Hp * amounts[i];
+            Capacity += _troop.Capacity * amounts[i];
+        }
+    }
 
     function Soldier() internal pure returns (Troop memory _baseTroop) {
         _baseTroop.Atk = 10;

@@ -165,4 +165,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     function mintTime(uint cityId) external view returns (uint) {
         return CityList[cityId].CreationDate;
     }
+
+    function race(uint cityId) external view returns (Race) {
+        return CityList[cityId].Race;
+    }
 }

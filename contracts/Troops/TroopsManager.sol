@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 import {ICityManager} from "../City/ICityManager.sol";
 import {ICities} from "../City/ICities.sol";
+import {Race} from "../City/CityEnums.sol";
 import {Resource} from "../Resources/ResourceEnums.sol";
 import {IResources} from "../Resources/IResources.sol";
 import {IBuilding} from "../City/IBuildings.sol";
@@ -47,6 +48,31 @@ contract TroopsManager is UpgradeableGameContract {
         CityManager = ICityManager(_cityManager);
         Resources = IResources(_resources);
         Troops = ITroops(_troops);
+    }
+
+    function troopsOfCity(
+        uint cityId
+    ) external view returns (uint[] memory, uint[] memory) {
+        Race race = CityManager.race(cityId);
+
+        // race stuff... determine ids of troops by race
+        uint i;
+        uint startTroop = 0;
+        uint endTroop = 1;
+
+        uint[] memory troopIds = new uint[](endTroop - startTroop);
+        uint[] memory amounts = new uint[](endTroop - startTroop);
+
+        for (startTroop; startTroop < endTroop; ) {
+            troopIds[i] = startTroop;
+            amounts[i] = CityTroops[cityId][startTroop];
+            unchecked {
+                i++;
+                startTroop++;
+            }
+        }
+
+        return (troopIds, amounts);
     }
 
     function recruitTroop(

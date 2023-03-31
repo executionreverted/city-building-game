@@ -35,6 +35,8 @@ interface ICityManager {
 
     function cityPopulation(uint cityId) external view returns (uint);
 
+    function race(uint cityId) external view returns (Race);
+
     function mintTime(uint cityId) external view returns (uint);
 
     function buildingLevels(
