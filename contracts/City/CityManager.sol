@@ -18,6 +18,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => City) public CityList;
     mapping(uint => Building[50]) public BuildingLevels;
+    uint[20] public RacePopulation;
     address GameWorld;
     address TroopsManager;
 
@@ -33,6 +34,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
             "!"
         );
         CityList[cityId] = _city;
+        RacePopulation[uint(_city.Race)]++;
         BuildingLevels[cityId][0].Tier = 1;
         BuildingLevels[cityId][1].Tier = 1;
         BuildingLevels[cityId][2].Tier = 1;
@@ -84,6 +86,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         Race _param
     ) external onlyCityOwner(cityId) returns (bool) {
         CityList[cityId].Race = _param;
+        RacePopulation[uint(CityList[cityId].Race)]--;
+        RacePopulation[uint(_param)]--;
         return true;
     }
 

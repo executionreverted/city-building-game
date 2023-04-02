@@ -294,8 +294,8 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         uint randomness4 = useRandom(_coords, 3142069, 100); // determine param1 min value
         uint randomness5 = useRandom(_coords, 315269420, 100); // determine param2 max value
         // 5%
-        bool inhabitable = randomness1 <= 5 ||
-            (_plot.Climate < 1 || _plot.Climate > 25);
+        bool inhabitable = randomness1 <= 8 ||
+            (_plot.Climate < -11 || _plot.Climate > 15);
 
         if (inhabitable) {
             _plot.Content.Type = PlotContentTypes.INHABITABLE;

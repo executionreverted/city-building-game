@@ -99,6 +99,8 @@ describe("Cities", function () {
       // console.log("called 'createCity' method");
     }
 
+    expect(await cityManager.RacePopulation(2)).to.be.equal(1);
+
     let coords = await world.CityCoords(1)
     // console.log(coords.X.toString(), ",", coords.Y.toString(), '"""');
 
@@ -145,6 +147,8 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
+      console.log(error);
+      
       // console.log(error);
     } finally {
       // console.log("called 'createCity' method for third time");
@@ -152,6 +156,7 @@ describe("Cities", function () {
     const isEmpty = await world.isPlotEmpty({ X: 2, Y: 1, });
     const sup = await nft.totalSupply();
 
+    expect(await cityManager.RacePopulation(3)).to.be.equal(1);
 
     let coords = await world.CityCoords(2)
     // console.log(coords.X.toString(), ",", coords.Y.toString());
@@ -178,6 +183,7 @@ describe("Cities", function () {
 
     let coords = await world.CityCoords(3)
     // console.log(coords.X.toString(), ",", coords.Y.toString());
+    expect(await cityManager.RacePopulation(3)).to.be.equal(2);
 
     expect(await world.isPlotEmpty({ X: coords.X, Y: coords.Y, })).to.equal(false);
   });
@@ -192,6 +198,8 @@ describe("Cities", function () {
       )
       await tx.wait(1);
     } catch (error) {
+      console.log(error);
+
       // console.log(error);
     } finally {
       // console.log("called 'createCity' method for fifth time");

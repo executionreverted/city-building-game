@@ -1,76 +1,126 @@
 import { ethers, upgrades } from "hardhat";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, } from "../typechain-types";
-
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager } from "../typechain-types";
+import * as fs from "fs"
+const done = "____ \n deployment done \n ____";
 async function deploy() {
-  // get deployer
-  const [deployer] = await ethers.getSigners();
-  console.log("Deploying contracts with the account:", deployer.address);
-  let contract: Cities;
-  let contract2: GameWorld;
+  let cities: Cities;
   let calculator: Calculator;
+  let gameWorld: GameWorld;
   let perlinNoise: PerlinNoise;
   let trigonometry: Trigonometry;
   let cityManager: CityManager;
   let resources: Resources;
-  const [owner] = await ethers.getSigners();
+  let buildings: Buildings;
+  let troops: Troops;
+  let troopsManager: TroopsManager;
+  // console.log('Deploying contracts...');
 
-  // check account balance
-  console.log(
-    "Account balance:",
-    ethers.utils.formatEther(await deployer.getBalance())
-  );
+  // get owner (first account)
+  const [owner] = await ethers.getSigners();
+  // deploy Cities contract
 
   const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
   perlinNoise = await PerlinNoise.deploy();
   await perlinNoise.deployed();
 
-  /*  const Trigonometry = await ethers.getContractFactory("Trigonometry");
-   trigonometry = await Trigonometry.deploy();
-   await trigonometry.deployed();
-  */
-  const Calc = await ethers.getContractFactory("Calculator");
-  calculator = await Calc.deploy(
-  );
-  await calculator.deployed();
+  console.log({ perlinNoise: perlinNoise.address });
+
+  const Buildings = await ethers.getContractFactory("Buildings");
+  buildings = await upgrades.deployProxy(Buildings, []) as any;
+  await buildings.deployed();
+
+  console.log({ buildings: buildings.address });
+
+  const Trigonometry = await ethers.getContractFactory("Trigonometry");
+  trigonometry = await Trigonometry.deploy();
+  await trigonometry.deployed();
+
+  console.log({ trigonometry: trigonometry.address });
+
   const CityManager = await ethers.getContractFactory("CityManager");
-  cityManager = await upgrades.deployProxy(CityManager) as any;
+  cityManager = await upgrades.deployProxy(CityManager, []) as any;
   await cityManager.deployed();
 
-  const Resources = await ethers.getContractFactory("Resources");
-  resources = await Resources.deploy();
-  await resources.deployed();
+  console.log({ cityManager: cityManager.address });
 
   const Cities = await ethers.getContractFactory("Cities");
-  contract = await upgrades.deployProxy(
+  cities = await upgrades.deployProxy(
     Cities,
     [owner.address, // owner
       "Imaginary Immutable Iguanas", // name
       "III", // symbol
       "https://example-base-uri.com/", // baseURI
       "https://example-contract-uri.com/", // contractURI,
-    cityManager.address],
+    cityManager.address]
   ) as any;
-  await contract.deployed();
+  await cities.deployed();
+
+  console.log({ cities: cities.address });
+
+  const Resources = await ethers.getContractFactory("Resources");
+  resources = await upgrades.deployProxy(Resources, [cities.address, buildings.address,
+  cityManager.address]) as any;
+  await resources.deployed();
+
+  console.log({ resources: resources.address });
+
 
   const GameWorld = await ethers.getContractFactory("GameWorld");
-  contract2 = await upgrades.deployProxy(GameWorld,
-    [contract.address, calculator.address, perlinNoise.address],
-    {
-      kind: "uups"
-    }) as any;
-  await contract2.deployed()
+  gameWorld = await upgrades.deployProxy(GameWorld, [cities.address, ethers.constants.AddressZero, perlinNoise.address, cityManager.address]) as any;
+  await gameWorld.deployed()
+
+  console.log({ gameWorld: gameWorld.address });
+
+  const Troops = await ethers.getContractFactory("Troops");
+  troops = await upgrades.deployProxy(Troops, []) as any;
+  await troops.deployed();
+
+  console.log({ troops: troops.address });
+
+  const TroopsManager = await ethers.getContractFactory("TroopsManager");
+  troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address]) as any;
+  await troopsManager.deployed();
+
+  console.log({ troopsManager: troopsManager.address });
+
+
+  const Calculator = await ethers.getContractFactory("Calculator");
+  calculator = await upgrades.deployProxy(Calculator, [troops.address, troopsManager.address]) as any;
+  await calculator.deployed();
+
+  console.log({ calculator: calculator.address });
+
+  console.log('Giving permissions.');
+
 
   // grant owner the minter role
-  // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
-  await contract2.setCities(contract.address)
-  await cityManager.setCities(contract.address)
-  // grant owner the minter role
-  // await contract.grantRole(await contract.MINTER_ROLE(), contract2.address);
-  console.log(
-    contract.address,
-    contract2.address, " this."
-  );
+  let tx = await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address);
+  await tx.wait(1)
+  tx = await gameWorld.setCities(cities.address)
+  await tx.wait(1)
+  tx = await gameWorld.setCityManager(cityManager.address)
+  await tx.wait(1)
+  tx = await gameWorld.setPerlinNoise(perlinNoise.address)
+  await tx.wait(1)
+  tx = await cityManager.setWorld(gameWorld.address)
+  await tx.wait(1)
+  tx = await cityManager.setCities(cities.address)
+  await tx.wait(1)
+  tx = await cityManager.setBuilding(buildings.address)
+  await tx.wait(1)
 
+  fs.writeFileSync("./deployed.json", JSON.stringify({
+    PerlinNoise: perlinNoise.address,
+    Buildings: buildings.address,
+    Trigonometry: trigonometry.address,
+    CityManager: cityManager.address,
+    Cities: cities.address,
+    Resources: resources.address,
+    GameWorld: gameWorld.address,
+    Troops: troops.address,
+    TroopsManager: troopsManager.address,
+    Calculator: calculator.address,
+  }))
 }
 
 deploy().catch((error) => {
