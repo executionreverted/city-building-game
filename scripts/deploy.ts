@@ -118,55 +118,60 @@ async function deploy() {
     resources = await ethers.getContractAt("Resources", deployed.Resources, owner)
    */
   // grant owner the minter role
-  let tx = await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address, { gasLimit: 5000000 });
+  let tx = await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address, { gasLimit: 7000000 });
   await tx.wait(1)
   console.log(1);
 
-  tx = await gameWorld.setCities(cities.address, { gasLimit: 5000000 })
+  tx = await gameWorld.setCities(cities.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(2);
 
-  // tx = await gameWorld.setCityManager(cityManager.address, { gasLimit: 5000000 })
+  // tx = await gameWorld.setCityManager(cityManager.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(3);
 
-  // tx = await gameWorld.setPerlinNoise(deployed.PerlinNoise, { gasLimit: 5000000 })
-  tx = await gameWorld.setPerlinNoise(perlinNoise.address, { gasLimit: 5000000 })
+  // tx = await gameWorld.setPerlinNoise(deployed.PerlinNoise, { gasLimit: 7000000 })
+  tx = await gameWorld.setPerlinNoise(perlinNoise.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(4);
 
-  tx = await gameWorld.setCalculator(calculator.address, { gasLimit: 5000000 })
-  // tx = await gameWorld.setCalculator(deployed.Calculator, { gasLimit: 5000000 })
+  tx = await gameWorld.setCalculator(calculator.address, { gasLimit: 7000000 })
+  // tx = await gameWorld.setCalculator(deployed.Calculator, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(5);
 
-  tx = await cityManager.setWorld(gameWorld.address, { gasLimit: 5000000 })
+  tx = await cityManager.setWorld(gameWorld.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(6);
 
-  tx = await cityManager.setCities(cities.address, { gasLimit: 5000000 })
+  tx = await cityManager.setCities(cities.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(7);
 
-  tx = await cityManager.setBuilding(buildings.address, { gasLimit: 5000000 })
-  // tx = await cityManager.setBuilding(deployed.Buildings, { gasLimit: 5000000 })
+  tx = await cityManager.setBuilding(buildings.address, { gasLimit: 7000000 })
+  // tx = await cityManager.setBuilding(deployed.Buildings, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(8);
 
-  tx = await cityManager.setResources(resources.address, { gasLimit: 5000000 })
-  // tx = await cityManager.setResources(deployed.Resources, { gasLimit: 5000000 })
+  tx = await cityManager.setResources(resources.address, { gasLimit: 7000000 })
+  // tx = await cityManager.setResources(deployed.Resources, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(9);
 
-  tx = await cityManager.setTroopsManager(troopsManager.address, { gasLimit: 5000000 })
-  // tx = await cityManager.setTroopsManager(deployed.TroopsManager, { gasLimit: 5000000 })
+  tx = await cityManager.setTroopsManager(troopsManager.address, { gasLimit: 7000000 })
+  // tx = await cityManager.setTroopsManager(deployed.TroopsManager, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(10);
 
 
-  tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 5000000 })
+  // tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 7000000 })
+  tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 7000000 })
   await tx.wait(1)
-  console.log(11);
+  console.log(11);  
+
+  tx = await resources.addMinter(cityManager.address, true, { gasLimit: 7000000 })
+  await tx.wait(1)
+  console.log(12);
   console.log(done);
 }
 
