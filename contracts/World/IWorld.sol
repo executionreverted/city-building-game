@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import {PlotContent, Coords, Plot} from "./WorldStructs.sol";
 
 interface IGameWorld {
-    function CityCoords(uint256) external view returns (int256 X, int256 Y);
+    function CityCoords(uint256) external view returns (Coords memory);
 
     function CoordsToCity(int256, int256) external view returns (uint256);
 
@@ -30,8 +30,6 @@ interface IGameWorld {
             int256 LastYPositive,
             int256 LastYNegative
         );
-
-    function cos(uint16 _angle) external pure returns (int256);
 
     function createCity(
         Coords memory coords,

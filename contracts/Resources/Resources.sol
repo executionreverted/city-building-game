@@ -177,6 +177,16 @@ contract Resources is UpgradeableGameContract {
         }
     }
 
+    function spendResource(
+        uint cityId,
+        uint amount,
+        Resource resource
+    ) external onlyMinter {
+        if (amount > CityResources[cityId][amount]) revert("exceeds");
+
+        CityResources[cityId][uint(resource)] -= amount;
+    }
+
     function calculateHarvestableResource(
         uint cityId,
         Resource resource

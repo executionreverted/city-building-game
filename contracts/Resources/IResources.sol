@@ -46,9 +46,12 @@ interface IResources {
         Resource resource
     ) external view returns (uint256);
 
-    function spendResources(
+    function spendResources(uint cityId, uint[] calldata amounts) external;
+
+    function spendResource(
         uint cityId,
-        uint[] calldata amounts
+        uint amount,
+        Resource resource
     ) external;
 
     function wrapResource(uint256 cityId, Resource resource) external;
