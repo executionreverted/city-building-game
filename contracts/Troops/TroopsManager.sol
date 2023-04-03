@@ -29,6 +29,7 @@ contract TroopsManager is UpgradeableGameContract {
     IGameWorld World;
     uint constant MAX_MATERIAL_ID = 5;
     uint constant FOOD_PER_MINUTE = 5;
+    uint constant MAX_SQUADS_ON_PLOT = 10;
 
     mapping(uint => uint[100]) CityTroops;
     // movement stuff
@@ -45,6 +46,10 @@ contract TroopsManager is UpgradeableGameContract {
         Buildings = IBuilding(_builds);
     }
 
+    function setCalculator(address _calc) external onlyOwner {
+        Calculator = ICalculator(_calc);
+    }
+
     modifier onlyCityOwner(uint cityId) {
         require(Cities.ownerOf(cityId) == msg.sender, "unauth");
         _;
@@ -56,7 +61,6 @@ contract TroopsManager is UpgradeableGameContract {
         address _cityManager,
         address _resources,
         address _troops,
-        address _calc,
         address _world
     ) external initializer {
         _initialize();
@@ -65,7 +69,6 @@ contract TroopsManager is UpgradeableGameContract {
         CityManager = ICityManager(_cityManager);
         Resources = IResources(_resources);
         Troops = ITroops(_troops);
-        Calculator = ICalculator(_calc);
         World = IGameWorld(_world);
     }
 
@@ -204,6 +207,9 @@ contract TroopsManager is UpgradeableGameContract {
     ) external onlyCityOwner(cityId) {
         require(!hasDupes(troopIds), "has dupes");
         require(troopIds.length == troopAmounts.length, "mismatch");
+        require(SquadsIdOnWorld[coords.X][coords.Y].length() <= MAX_SQUADS_ON_PLOT, "plot capacity reached");
+        // limit squads on a coordinate point
+
         checkTroops(cityId, troopIds, troopAmounts);
         reduceTroopsInTown(cityId, troopIds, troopAmounts);
         Coords memory cityCoords = World.CityCoords(cityId);
@@ -239,7 +245,13 @@ contract TroopsManager is UpgradeableGameContract {
         uint squadId
     ) external onlyCityOwner(cityId) {
         require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
-        // todo check other stuff
+        // todo check other stuff like return half road etc.
+
+        for (uint i = 0; i < SquadsById[squadId].troopIds.length; i++) {
+            CityTroops[cityId][SquadsById[squadId].troopIds[i]] += SquadsById[
+                squadId
+            ].troopAmounts[i];
+        }
 
         SquadsIdOnWorld[SquadsById[squadId].position.X][
             SquadsById[squadId].position.Y
@@ -267,11 +279,33 @@ contract TroopsManager is UpgradeableGameContract {
         uint[] memory troopAmounts
     ) internal {
         for (uint i = 0; i < troopIds.length; ) {
-            require(CityTroops[cityId][troopIds[i]] > troopAmounts[i]);
+            require(
+                CityTroops[cityId][troopIds[i]] >= troopAmounts[i],
+                "not enough"
+            );
             unchecked {
                 i++;
             }
         }
+    }
+
+    function squadsById(uint squadId) external view returns (Squad memory) {
+        Squad memory squad = SquadsById[squadId];
+        if (squad.activeAfter != 0 && block.timestamp > squad.activeAfter)
+            squad.active = true;
+        return squad;
+    }
+
+    function squadsIdOnWorld(
+        Coords memory coords
+    ) external view returns (uint[] memory) {
+        return SquadsIdOnWorld[coords.X][coords.Y].values();
+    }
+
+    function cityActiveSquads(
+        uint cityId
+    ) external view returns (uint[] memory) {
+        return CityActiveSquads[cityId].values();
     }
 
     function hasDupes(uint[] memory arr) internal pure returns (bool) {

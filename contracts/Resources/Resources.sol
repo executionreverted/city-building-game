@@ -182,7 +182,7 @@ contract Resources is UpgradeableGameContract {
         uint amount,
         Resource resource
     ) external onlyMinter {
-        if (amount > CityResources[cityId][amount]) revert("exceeds");
+        if (amount >= CityResources[cityId][uint(resource)]) revert("exceeds");
 
         CityResources[cityId][uint(resource)] -= amount;
     }

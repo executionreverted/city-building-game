@@ -78,7 +78,7 @@ async function deploy() {
   console.log({ troops: troops.address });
 
   const TroopsManager = await ethers.getContractFactory("TroopsManager");
-  troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address]) as any;
+  troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address, gameWorld.address]) as any;
   await troopsManager.deployed();
 
   console.log({ troopsManager: troopsManager.address });
@@ -167,11 +167,15 @@ async function deploy() {
   // tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 7000000 })
   tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 7000000 })
   await tx.wait(1)
-  console.log(11);  
+  console.log(11);
 
   tx = await resources.addMinter(cityManager.address, true, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(12);
+
+  tx = await troopsManager.setCalculator(calculator.address, { gasLimit: 7000000 })
+  await tx.wait(1)
+  console.log(13);
   console.log(done);
 }
 
