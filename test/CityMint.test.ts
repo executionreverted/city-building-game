@@ -148,7 +148,7 @@ describe("Cities", function () {
       await tx.wait(1);
     } catch (error) {
       console.log(error);
-      
+
       // console.log(error);
     } finally {
       // console.log("called 'createCity' method for third time");

@@ -41,16 +41,14 @@ interface IResources {
         Resource resource
     ) external view returns (uint256 _rounds);
 
-
     function productionRate(
         uint256 cityId,
         Resource resource
     ) external view returns (uint256);
 
-    function spendResource(
-        uint256 cityId,
-        Resource resource,
-        uint256 amount
+    function spendResources(
+        uint cityId,
+        uint[] calldata amounts
     ) external;
 
     function wrapResource(uint256 cityId, Resource resource) external;

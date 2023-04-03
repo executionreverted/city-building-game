@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager, Cities__factory } from "../typechain-types";
 import * as fs from "fs"
 const done = "____ \n deployment done \n ____";
 async function deploy() {
@@ -90,24 +90,8 @@ async function deploy() {
 
   console.log({ calculator: calculator.address });
 
-  console.log('Giving permissions.');
 
-
-  // grant owner the minter role
-  let tx = await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address);
-  await tx.wait(1)
-  tx = await gameWorld.setCities(cities.address)
-  await tx.wait(1)
-  tx = await gameWorld.setCityManager(cityManager.address)
-  await tx.wait(1)
-  tx = await gameWorld.setPerlinNoise(perlinNoise.address)
-  await tx.wait(1)
-  tx = await cityManager.setWorld(gameWorld.address)
-  await tx.wait(1)
-  tx = await cityManager.setCities(cities.address)
-  await tx.wait(1)
-  tx = await cityManager.setBuilding(buildings.address)
-  await tx.wait(1)
+  console.log('saved deployed.json');
 
   fs.writeFileSync("./deployed.json", JSON.stringify({
     PerlinNoise: perlinNoise.address,
@@ -121,6 +105,69 @@ async function deploy() {
     TroopsManager: troopsManager.address,
     Calculator: calculator.address,
   }))
+
+  console.log('Giving permissions.');
+  /*  const deployed = { "PerlinNoise": "0x50c23c60631dfFDD3e270a654eCD16b853B930b4", "Buildings": "0x8959d23085aFb7720948af3DD9ACCE9F17141083", "Trigonometry": "0x0f7E4a70726b501cf62b929901081640ADC0F3FC", "CityManager": "0x9a2b30bbF92fb53054Fd8fd26e242939E0E8e551", "Cities": "0x19870070c991c983413979E294C10D162680Cc4c", "Resources": "0x84282DB8b1EBc9790709c7954DC421128dD92857", "GameWorld": "0x425AB9e9C28938DC38b3521455CEEC7cda135351", "Troops": "0xB482982FB5790C8A9A29fAD91571Cec5B1Adf84d", "TroopsManager": "0x865E2F154a608a205b7896E93b9a6544AD8602a1", "Calculator": "0x6a73e80468Ef8ecD8D8283C83f2C40518044c569" }
+   console.log("Balance: ") */
+  // console.log(await owner.getBalance());
+
+
+  /*   cities = (await ethers.getContractAt("Cities", deployed.Cities, owner))
+    gameWorld = await ethers.getContractAt("GameWorld", deployed.GameWorld, owner)
+    cityManager = await ethers.getContractAt("CityManager", deployed.CityManager, owner)
+    resources = await ethers.getContractAt("Resources", deployed.Resources, owner)
+   */
+  // grant owner the minter role
+  let tx = await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address, { gasLimit: 5000000 });
+  await tx.wait(1)
+  console.log(1);
+
+  tx = await gameWorld.setCities(cities.address, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(2);
+
+  // tx = await gameWorld.setCityManager(cityManager.address, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(3);
+
+  // tx = await gameWorld.setPerlinNoise(deployed.PerlinNoise, { gasLimit: 5000000 })
+  tx = await gameWorld.setPerlinNoise(perlinNoise.address, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(4);
+
+  tx = await gameWorld.setCalculator(calculator.address, { gasLimit: 5000000 })
+  // tx = await gameWorld.setCalculator(deployed.Calculator, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(5);
+
+  tx = await cityManager.setWorld(gameWorld.address, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(6);
+
+  tx = await cityManager.setCities(cities.address, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(7);
+
+  tx = await cityManager.setBuilding(buildings.address, { gasLimit: 5000000 })
+  // tx = await cityManager.setBuilding(deployed.Buildings, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(8);
+
+  tx = await cityManager.setResources(resources.address, { gasLimit: 5000000 })
+  // tx = await cityManager.setResources(deployed.Resources, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(9);
+
+  tx = await cityManager.setTroopsManager(troopsManager.address, { gasLimit: 5000000 })
+  // tx = await cityManager.setTroopsManager(deployed.TroopsManager, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(10);
+
+
+  tx = await resources.addMinter(gameWorld.address, true, { gasLimit: 5000000 })
+  await tx.wait(1)
+  console.log(11);
+  console.log(done);
 }
 
 deploy().catch((error) => {

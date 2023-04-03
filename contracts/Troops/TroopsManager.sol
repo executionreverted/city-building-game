@@ -19,6 +19,7 @@ contract TroopsManager is UpgradeableGameContract {
     ICityManager CityManager;
     IResources Resources;
     ITroops Troops;
+    uint constant MAX_MATERIAL_ID = 5;
 
     mapping(uint => uint[100]) CityTroops;
 
@@ -57,8 +58,8 @@ contract TroopsManager is UpgradeableGameContract {
 
         // race stuff... determine ids of troops by race
         uint i;
-        uint startTroop = 0;
-        uint endTroop = 1;
+        uint startTroop = 0 * uint(race);
+        uint endTroop = 1 * uint(race);
 
         uint[] memory troopIds = new uint[](endTroop - startTroop);
         uint[] memory amounts = new uint[](endTroop - startTroop);
@@ -88,15 +89,14 @@ contract TroopsManager is UpgradeableGameContract {
         uint _population;
 
         // check population
-        for (uint i = 0; i < 5; i++) {
-            Resources.spendResource(
-                cityId,
-                Resource(i),
-                _troop.Cost.ResourceCost[i] * amount
-            );
-            // _modifier += _troop.Cost.ResourceModifier * int(amount);
-            // Resources.updateModifier(cityId, Resource(i), _modifier);
+        uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
+        for (uint i = 0; i < MAX_MATERIAL_ID; i++) {
+            _costs[i] = _troop.Cost.ResourceCost[i] * amount;
         }
+
+        Resources.spendResources(cityId, _costs);
+        // _modifier += _troop.Cost.ResourceModifier * int(amount);
+        // Resources.updateModifier(cityId, Resource(i), _modifier);
 
         _population += _troop.Population * amount;
 
@@ -112,6 +112,7 @@ contract TroopsManager is UpgradeableGameContract {
     ) external onlyCityOwner(cityId) {
         require(troopIds.length == amounts.length, "mismatch");
         uint _population;
+        uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
         for (uint i = 0; i < amounts.length; ) {
             uint amount = amounts[i];
             uint troopId = troopIds[i];
@@ -120,14 +121,9 @@ contract TroopsManager is UpgradeableGameContract {
             Troop memory _troop = Troops.troopInfo(troopId);
             // int _modifier;
             // check population
-            for (uint j = 0; j < 5; j++) {
-                Resources.spendResource(
-                    cityId,
-                    Resource(j),
-                    _troop.Cost.ResourceCost[j] * amount
-                );
-                //   _modifier += _troop.Cost.ResourceModifier * int(amount);
-                //   Resources.updateModifier(cityId, Resource(i), _modifier);
+
+            for (uint y = 0; y < MAX_MATERIAL_ID; y++) {
+                _costs[y] += _troop.Cost.ResourceCost[y] * amount;
             }
 
             _population += _troop.Population * amount;
@@ -139,6 +135,7 @@ contract TroopsManager is UpgradeableGameContract {
 
         uint _cityPopulation = CityManager.cityPopulation(cityId);
         require(_cityPopulation >= _population, "low population");
+        Resources.spendResources(cityId, _costs);
         CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
     }
 

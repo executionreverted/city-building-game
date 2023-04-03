@@ -7,6 +7,8 @@ import {Building} from "./CityStructs.sol";
 import {City} from "./CityStructs.sol";
 import {Race} from "./CityEnums.sol";
 import {ICities} from "./ICities.sol";
+import {Resource} from "../Resources/ResourceStructs.sol";
+import {IResources} from "../Resources/IResources.sol";
 import {IBuilding} from "../City/IBuildings.sol";
 import {ICityManager} from "./ICityManager.sol";
 import {Coords} from "../World/WorldStructs.sol";
@@ -15,12 +17,14 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
     IBuilding Buildings;
+    IResources Resources;
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => City) public CityList;
     mapping(uint => Building[50]) public BuildingLevels;
     uint[20] public RacePopulation;
     address GameWorld;
     address TroopsManager;
+    uint constant MAX_MATERIAL_ID = 5;
 
     function initialize() external initializer {
         _initialize();
@@ -54,6 +58,10 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         GameWorld = _world;
     }
 
+    function setResources(address _reso) external onlyOwner {
+        Resources = IResources(_reso);
+    }
+
     function setTroopsManager(address _troopsManager) external onlyOwner {
         TroopsManager = _troopsManager;
     }
@@ -69,6 +77,15 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     ) external onlyCityOwner(cityId) returns (bool) {
         Building memory _building = Buildings.buildingInfo(buildingId);
         require(_building.MaxTier > BuildingLevels[cityId][buildingId].Tier);
+
+        // calculate resources
+        uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
+        for (uint i = 0; i < MAX_MATERIAL_ID; i++) {
+            _costs[i] = _building.Cost[i];
+        }
+
+        Resources.spendResources(cityId, _costs);
+
         BuildingLevels[cityId][buildingId].Tier++;
         return true;
     }
@@ -115,11 +132,17 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         return CityList[cityId].Population;
     }
 
-    function buildingLevels(
+    function buildingLevel(
         uint cityId,
         uint buildingId
     ) external view returns (uint) {
         return BuildingLevels[cityId][buildingId].Tier;
+    }
+
+    function buildingLevels(
+        uint cityId
+    ) external view returns (Building[50] memory) {
+        return BuildingLevels[cityId];
     }
 
     function claimResource(

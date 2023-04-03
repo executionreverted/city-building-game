@@ -12,9 +12,18 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         _initialize();
     }
 
+    function allBuildings() external pure returns (Building[] memory) {
+        Building[] memory _result = new Building[](15);
+        for (uint i = 0; i < 15; i++) {
+            _result[i] = buildingInfo(i);
+        }
+
+        return _result;
+    }
+
     function buildingInfo(
         uint buildingId
-    ) external pure override returns (Building memory) {
+    ) public pure override returns (Building memory) {
         if (buildingId == 0) return TownHall();
         if (buildingId == 1) return Forest();
         if (buildingId == 2) return Farms();

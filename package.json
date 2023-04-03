@@ -7,6 +7,7 @@
     "clean": "npx hardhat clean",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
+    "deploy:nova": "npx hardhat run scripts/deploy.ts --network arbitrumNova",
     "deploy:goerli": "npx hardhat run scripts/deploy.ts --network goerli",
     "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji",
     "upgrade:fuji": "npx hardhat run scripts/upgrade.ts --network fuji"
@@ -34,6 +35,7 @@
     "@typechain/hardhat": "^6.1.5",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
+    "arb-shared-dependencies": "^1.0.0",
     "chai": "^4.3.7",
     "ethers": "^5.7.2",
     "hardhat-abi-exporter": "^2.10.1",

@@ -6,12 +6,14 @@ import {ICityManager} from "../City/ICityManager.sol";
 import {ICities} from "../City/ICities.sol";
 import {Resource} from "./ResourceEnums.sol";
 import {IBuilding} from "../City/IBuildings.sol";
+import {Building} from "../City/CityStructs.sol";
 import {IResources} from "./IResources.sol";
+import "hardhat/console.sol";
 
 contract Resources is UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
-    IBuilding Building;
+    IBuilding Buildings;
     ICityManager CityManager;
     /* 
     [
@@ -28,6 +30,15 @@ contract Resources is UpgradeableGameContract {
 
     // modifiers from actions in game to decrease/increase productions
     mapping(uint => int[10]) public CityResourceModifiers;
+    uint constant MAX_RESOURCE_ID = 5;
+    uint constant PROD_CYCLE = 1 minutes; // todo fix in prod
+    uint constant WAREHOUSE_ID = 5;
+    uint constant WAREHOUSE_STORAGE_PER_TIER = 250;
+    uint constant BASE_GOLD_MAX = 300;
+    uint constant BASE_WOOD_MAX = 300;
+    uint constant BASE_STONE_MAX = 300;
+    uint constant BASE_IRON_MAX = 300;
+    uint constant BASE_FOOD_MAX = 300;
 
     function initialize(
         address _cities,
@@ -36,17 +47,17 @@ contract Resources is UpgradeableGameContract {
     ) external initializer {
         _initialize();
         Cities = ICities(_cities);
-        Building = IBuilding(_buildings);
+        Buildings = IBuilding(_buildings);
         CityManager = ICityManager(_manager);
         setBaseProductions();
     }
 
     function setBaseProductions() public onlyOwner {
-        BaseProductions[0] = 10;
-        BaseProductions[1] = 10;
-        BaseProductions[2] = 10;
-        BaseProductions[3] = 10;
-        BaseProductions[4] = 10;
+        BaseProductions[0] = 100;
+        BaseProductions[1] = 100;
+        BaseProductions[2] = 100;
+        BaseProductions[3] = 100;
+        BaseProductions[4] = 100;
     }
 
     function addMinter(address _address, bool val) external onlyOwner {
@@ -86,38 +97,84 @@ contract Resources is UpgradeableGameContract {
         // burn nft and unwrap resource
     }
 
+    function claimDailyTax(uint cityId) external onlyCityOwner(cityId) {
+        require(block.timestamp > LastClaims[cityId][0] + 23 hours, "early");
+        uint amount = claimableGold(cityId);
+
+        LastClaims[cityId][uint(0)] = block.timestamp;
+        CityResources[cityId][uint(0)] += amount;
+    }
+
+    function claimableGold(uint cityId) public view returns (uint) {
+        if (block.timestamp < LastClaims[cityId][0] + 23 hours) return 0;
+        return CityManager.cityPopulation(cityId) * BaseProductions[0];
+    }
+
     function claimResource(
         uint cityId,
         Resource resource
     ) external onlyCityOwner(cityId) {
-        uint amount = calculateHarvestableResource(cityId, resource);
+        uint[] memory limits = getCityStorage(cityId);
 
-        if (amount > 0) {
-            LastClaims[cityId][uint(resource)] = block.timestamp;
-            CityResources[cityId][uint(resource)] += amount;
-        } else revert("nothing to claim");
+        _claimSingle(cityId, resource, limits[uint(resource)]);
     }
 
-    function claimAllAvailableResources(
-        uint cityId
-    ) external onlyCityOwner(cityId) {
-        for (uint i = 0; i < 5; i++) {
-            uint amount = calculateHarvestableResource(cityId, Resource(i));
-            if (amount > 0) {
-                LastClaims[cityId][i] = block.timestamp;
-                CityResources[cityId][i] += amount;
-            } else revert("nothing to claim");
+    function _claimCityGold(uint cityId) internal {
+        uint _claimableGold = claimableGold(cityId);
+        if (_claimableGold > 0) {
+            LastClaims[cityId][uint(0)] = block.timestamp;
+            CityResources[cityId][uint(0)] += _claimableGold;
         }
     }
 
-    function spendResource(
+    function claimAllResources(uint cityId) external onlyCityOwner(cityId) {
+        uint[] memory limits = getCityStorage(cityId);
+        _claimCityGold(cityId);
+        for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
+            _claimSingle(cityId, Resource(i), limits[uint(i)]);
+        }
+    }
+
+    function _claimSingle(uint cityId, Resource resource, uint limit) internal {
+        uint amount = calculateHarvestableResource(cityId, resource);
+        if (amount > 0) {
+            if (amount > limit) amount = limit;
+            LastClaims[cityId][uint(resource)] = block.timestamp;
+            CityResources[cityId][uint(resource)] += amount;
+        } else return;
+    }
+
+    function getCityStorage(uint cityId) public view returns (uint[] memory) {
+        uint[] memory result = new uint[](5);
+        uint tier = CityManager.buildingLevel(cityId, WAREHOUSE_ID);
+
+        result[0] = BASE_GOLD_MAX + (WAREHOUSE_STORAGE_PER_TIER * tier);
+        result[1] = BASE_WOOD_MAX + (WAREHOUSE_STORAGE_PER_TIER * tier);
+        result[2] = BASE_STONE_MAX + (WAREHOUSE_STORAGE_PER_TIER * tier);
+        result[3] = BASE_IRON_MAX + (WAREHOUSE_STORAGE_PER_TIER * tier);
+        result[4] = BASE_FOOD_MAX + (WAREHOUSE_STORAGE_PER_TIER * tier);
+
+        return (result);
+    }
+
+    function spendResources(
         uint cityId,
-        Resource resource,
-        uint amount
+        uint[] calldata amounts
     ) external onlyMinter {
-        if (amount == 0) revert("nothing to burn");
-        if (amount > CityResources[cityId][uint(resource)]) revert("exceeds");
-        CityResources[cityId][uint(resource)] -= amount;
+        uint[] memory limits = getCityStorage(cityId);
+        _claimCityGold(cityId);
+        for (uint i = 0; i < MAX_RESOURCE_ID; ) {
+            _claimSingle(cityId, Resource(i), limits[uint(i)]);
+
+            if (amounts[i] == 0) continue;
+            if (amounts[i] > CityResources[cityId][uint(i)]) revert("exceeds");
+
+            CityResources[cityId][uint(i)] -= amounts[i];
+
+            unchecked {
+                i++;
+            }
+        }
     }
 
     function calculateHarvestableResource(
@@ -127,13 +184,13 @@ contract Resources is UpgradeableGameContract {
         uint buildingLvl;
         // check building lvl, check plot info
         if (resource == Resource.WOOD) {
-            buildingLvl = CityManager.buildingLevels(cityId, 1);
+            buildingLvl = CityManager.buildingLevel(cityId, 1);
         } else if (resource == Resource.FOOD) {
-            buildingLvl = CityManager.buildingLevels(cityId, 2);
+            buildingLvl = CityManager.buildingLevel(cityId, 2);
         } else if (resource == Resource.IRON) {
-            buildingLvl = CityManager.buildingLevels(cityId, 3);
+            buildingLvl = CityManager.buildingLevel(cityId, 3);
         } else if (resource == Resource.STONE) {
-            buildingLvl = CityManager.buildingLevels(cityId, 4);
+            buildingLvl = CityManager.buildingLevel(cityId, 4);
         }
         uint productionAmount = productionRate(cityId, resource);
         uint rounds = getRoundsSince(cityId, resource);
@@ -148,13 +205,13 @@ contract Resources is UpgradeableGameContract {
     ) public view returns (uint) {
         uint buildingLvl;
         if (resource == Resource.WOOD) {
-            buildingLvl = CityManager.buildingLevels(cityId, 1);
+            buildingLvl = CityManager.buildingLevel(cityId, 1);
         } else if (resource == Resource.FOOD) {
-            buildingLvl = CityManager.buildingLevels(cityId, 2);
+            buildingLvl = CityManager.buildingLevel(cityId, 2);
         } else if (resource == Resource.IRON) {
-            buildingLvl = CityManager.buildingLevels(cityId, 3);
+            buildingLvl = CityManager.buildingLevel(cityId, 3);
         } else if (resource == Resource.STONE) {
-            buildingLvl = CityManager.buildingLevels(cityId, 4);
+            buildingLvl = CityManager.buildingLevel(cityId, 4);
         }
         if (buildingLvl == 0) return 0;
         uint production = BaseProductions[uint(resource)] +
@@ -178,7 +235,7 @@ contract Resources is UpgradeableGameContract {
         require(mintTime > 0, "does not exist");
         uint elapsed = block.timestamp -
             (lastClaim == 0 ? mintTime : lastClaim);
-        _rounds = elapsed / 10 minutes;
+        _rounds = elapsed / PROD_CYCLE;
     }
 
     function updateModifier(

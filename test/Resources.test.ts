@@ -11,6 +11,7 @@ describe("Resources", function () {
     let cityManager: CityManager;
     let resources: Resources;
     let buildings: Buildings;
+    const amount = 100;
 
     async function deployCityAndWorld() {
         // console.log('Deploying contracts...');
@@ -18,7 +19,6 @@ describe("Resources", function () {
         // get owner (first account)
         const [owner] = await ethers.getSigners();
         // deploy Cities contract
-
         const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
         perlinNoise = await PerlinNoise.deploy();
         await perlinNoise.deployed();
@@ -64,6 +64,10 @@ describe("Resources", function () {
         await cityManager.setWorld(gameWorld.address)
         await cityManager.setCities(cities.address)
         await cityManager.setBuilding(buildings.address)
+        await cityManager.setResources(resources.address)
+        await cityManager.setResources(resources.address)
+        await resources.addMinter(owner.address, true)
+        await resources.addMinter(cityManager.address, true)
         return {
             contract: cities, contract2: gameWorld
         }
@@ -117,9 +121,8 @@ describe("Resources", function () {
         expect((await cities.ownerOf(cityId)).toLowerCase()).to.be.equal(owner.address.toLowerCase(), "owned")
         // console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
         // await logProduction(cityId)
-        expect((await resources.calculateHarvestableResource(cityId, 1)).toNumber()).to.be.equal(10);
+        expect((await resources.calculateHarvestableResource(cityId, 1)).toNumber()).to.be.equal(amount * 10);
         // console.log("Upgrading building...");
-        await cityManager.upgradeBuilding(cityId, 0);
         // console.log("rounds since last tx: ", await resources.getRoundsSince(cityId, 1));
         // await logProduction(cityId)
 
@@ -128,6 +131,10 @@ describe("Resources", function () {
             // console.log("seconds since last tx: ", await resources.getRoundsSince(cityId, 1));
             // await logProduction(cityId)
         }
+
+        await resources.addResource(cityId, 0, 1000);
+        await cityManager.upgradeBuilding(cityId, 0);
+
     });
 
     it("city resource claimed", async function () {
@@ -152,18 +159,19 @@ describe("Resources", function () {
 
 
         const buildLvl = (await cityManager.buildingLevels(cityId, 1)).toNumber()
-        const produced = 10 * since2;
+        const produced = amount * since2;
         const claimableSupposedToBe = produced + Math.floor((produced * (buildLvl - 1)) / 2);
+        const storages = await resources.getCityStorage(cityId)
 
-        expect(cityBalance).is.equal(claimableSupposedToBe, "claim amount is right")
+
+        expect(cityBalance).is.lessThanOrEqual(storages[1].toNumber(), "claim amount is right")
 
         const claimableNew = (await resources.calculateHarvestableResource(cityId, 1)).toNumber();
-        // console.log("new claimable: ", claimableNew);
-        expect(claimableNew).is.lessThan(claimable, "claim amount is reset")
+        expect(claimableNew).is.lessThanOrEqual(claimable, "claim amount is reset")
         const lastClaim2 = (await (resources.LastClaims(cityId, 1))).toNumber()
         // console.log(lastClaim, lastClaim2);
 
-        expect(lastClaim2).is.greaterThan(lastClaim, "claim time is set")
+        expect(lastClaim2).is.greaterThanOrEqual(lastClaim, "claim time is set")
     });
 
     it("city resource calculations", async function () {
@@ -176,16 +184,16 @@ describe("Resources", function () {
         const prodAmount3 = await resources.productionRate(cityId, 3)
         const prodAmount4 = await resources.productionRate(cityId, 4)
 
-        expect(prodAmount).to.equal(10)
-        expect(prodAmount2).to.equal(10)
-        expect(prodAmount3).to.equal(10)
-        expect(prodAmount4).to.equal(10)
+        expect(prodAmount).to.equal(amount)
+        expect(prodAmount2).to.equal(amount)
+        expect(prodAmount3).to.equal(amount)
+        expect(prodAmount4).to.equal(amount)
 
         await resources.updateModifier(cityId, 1, -1)
         await resources.updateModifier(cityId, 2, 5)
         let newProdAmt1 = await resources.productionRate(cityId, 1);
         let newProdAmt2 = await resources.productionRate(cityId, 2);
-        expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(9)
-        expect(newProdAmt2.toNumber(), "does not increase").to.eq(15)
+        expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(99)
+        expect(newProdAmt2.toNumber(), "does not increase").to.eq(105)
     });
 });

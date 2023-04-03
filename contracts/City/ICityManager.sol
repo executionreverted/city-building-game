@@ -1,5 +1,6 @@
 import {City, Race} from "./CityStructs.sol";
 import {Coords} from "../World/WorldStructs.sol";
+import {Building} from "../City/CityStructs.sol";
 // SPDX-License-Identifier: GPL3.0
 pragma solidity ^0.8.18;
 
@@ -39,8 +40,12 @@ interface ICityManager {
 
     function mintTime(uint cityId) external view returns (uint);
 
-    function buildingLevels(
+    function buildingLevel(
         uint cityId,
         uint buildingId
     ) external view returns (uint);
+
+    function buildingLevels(
+        uint cityId
+    ) external view returns (Building[50] memory);
 }

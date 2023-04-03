@@ -8,7 +8,8 @@ import "hardhat-abi-exporter";
 import * as dotenv from "dotenv";
 import "@openzeppelin/hardhat-upgrades";
 import "hardhat-interface-generator";
-
+import "arb-shared-dependencies"
+import { BigNumber } from "ethers";
 dotenv.config();
 const deploymentAccount = process.env.PRIVATE_KEY
 const config: HardhatUserConfig = {
@@ -46,6 +47,11 @@ const config: HardhatUserConfig = {
     immutableZkevmTestnet: {
       url: process.env.IMMUTABLE_ZKEVM_URL || "",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+    },
+    arbitrumNova: {
+      url: process.env.ARBITRUM_NOVA_URL || "",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gas: 3000000,
     },
   },
   etherscan: {

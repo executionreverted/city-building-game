@@ -74,7 +74,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
         Race race
     ) external returns (Coords memory _coords) {
         bool isEmpty = isPlotEmpty(coords);
-        if ((!isEmpty && !pickClosest) || (coords.X == 0 || coords.Y == 0))
+        if ((!isEmpty && !pickClosest) || ((coords.X == 0 && coords.Y == 0)))
             revert InvalidWorldCoordinates(coords.X, coords.Y);
 
         if (coords.X > 0) {
@@ -267,6 +267,7 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
 
         if (CoordsToPlot[_coords.X][_coords.Y].IsTaken) {
             _plot.Content.Type = PlotContentTypes.TAKEN;
+            _plot.CityId = CoordsToCity[_coords.X][_coords.Y];
             return _plot;
         }
 

@@ -83,6 +83,7 @@ describe("Troops", function () {
         await cityManager.setWorld(gameWorld.address)
         await cityManager.setCities(cities.address)
         await cityManager.setBuilding(buildings.address)
+        await cityManager.setResources(resources.address)
         return {
             contract: cities, contract2: gameWorld
         }
