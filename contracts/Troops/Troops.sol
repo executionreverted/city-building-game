@@ -67,6 +67,7 @@ contract Troops is UpgradeableGameContract {
         _baseTroop.Cost.ResourceCost[3] = 100; // IRON
         _baseTroop.Cost.ResourceCost[4] = 100; // FOOD
         _baseTroop.Cost.ResourceModifier = -1;
+        _baseTroop.Cost.MinBarracksLevel = 1;
         _baseTroop.Population = 10;
 
         return _baseTroop;

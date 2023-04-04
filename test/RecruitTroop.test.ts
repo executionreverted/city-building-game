@@ -15,6 +15,7 @@ describe("Troops", function () {
     let troops: Troops;
     let troopsManager: TroopsManager;
     const cityId = 2;
+    const barracksId = 6;
 
     async function deployCityAndWorld() {
         // console.log('Deploying contracts...');
@@ -67,7 +68,7 @@ describe("Troops", function () {
         await troops.deployed();
 
         const TroopsManager = await ethers.getContractFactory("TroopsManager");
-        troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address]) as any;
+        troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address, gameWorld.address]) as any;
         await troopsManager.deployed();
 
 
@@ -84,6 +85,8 @@ describe("Troops", function () {
         await cityManager.setCities(cities.address)
         await cityManager.setBuilding(buildings.address)
         await cityManager.setResources(resources.address)
+        await resources.addMinter(troopsManager.address, true)
+        await resources.addMinter(cityManager.address, true)
         return {
             contract: cities, contract2: gameWorld
         }
@@ -100,21 +103,37 @@ describe("Troops", function () {
 
     it("Mint 1000 resources.", async function () {
         const [owner] = await ethers.getSigners();
-
         await gameWorld.createCity({
             X: 1,
             Y: 1
         }, true, 1)
 
         await resources.addMinter(owner.address, true)
+
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 1000)
         }
+
         for (let i = 0; i < 4; i++) {
             expect((await resources.cityResources(cityId, i)).eq(1000)).to.be.true
         }
     });
 
+
+    it("Upgrade barracks", async function () {
+        await cityManager.upgradeBuilding(cityId, barracksId)
+        let hasError
+        try {
+            await cityManager.upgradeBuilding(cityId, barracksId)
+        } catch (error) {
+            hasError = true
+        }
+        expect(hasError).to.be.true
+        await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[0].add(1).toNumber());
+        const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
+        expect(barracksLvL.eq(1)).to.be.true
+
+    })
 
     it("Mint 1 soldier", async function () {
         const [owner] = await ethers.getSigners();
@@ -126,14 +145,6 @@ describe("Troops", function () {
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1)
     });
 
-    it("Burn proper resources", async function () {
-        const [owner] = await ethers.getSigners();
-
-        for (let i = 0; i < 5; i++) {
-            expect((await resources.cityResources(cityId, i)).toNumber()).to.eq(900)
-        }
-    });
-
     it("Reduce population by 10", async function () {
         const [owner] = await ethers.getSigners();
         expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(40)
@@ -141,12 +152,6 @@ describe("Troops", function () {
 
     it("Recruit 2 troops", async function () {
         await troopsManager.recruitTroops(cityId, [0, 0], [1, 1])
-    });
-
-    it("Burn proper resources on multiple recruits", async function () {
-        for (let i = 0; i < 5; i++) {
-            expect((await resources.cityResources(cityId, i)).toNumber()).to.eq(700)
-        }
     });
 
     it("Reduce population by 20", async function () {

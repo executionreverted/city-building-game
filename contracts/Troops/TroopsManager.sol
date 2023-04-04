@@ -30,6 +30,7 @@ contract TroopsManager is UpgradeableGameContract {
     uint constant MAX_MATERIAL_ID = 5;
     uint constant FOOD_PER_MINUTE = 5;
     uint constant MAX_SQUADS_ON_PLOT = 10;
+    uint constant BARRACKS_ID = 6;
 
     mapping(uint => uint[100]) CityTroops;
     // movement stuff
@@ -109,6 +110,9 @@ contract TroopsManager is UpgradeableGameContract {
         uint _cityPopulation = CityManager.cityPopulation(cityId);
         uint _population;
 
+        // MinBarracksLevel
+        uint barracksLevel = CityManager.buildingLevel(cityId, BARRACKS_ID);
+        require(barracksLevel >= _troop.Cost.MinBarracksLevel, "low tier");
         // check population
         uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
         for (uint i = 0; i < MAX_MATERIAL_ID; i++) {
@@ -207,7 +211,10 @@ contract TroopsManager is UpgradeableGameContract {
     ) external onlyCityOwner(cityId) {
         require(!hasDupes(troopIds), "has dupes");
         require(troopIds.length == troopAmounts.length, "mismatch");
-        require(SquadsIdOnWorld[coords.X][coords.Y].length() <= MAX_SQUADS_ON_PLOT, "plot capacity reached");
+        require(
+            SquadsIdOnWorld[coords.X][coords.Y].length() <= MAX_SQUADS_ON_PLOT,
+            "plot capacity reached"
+        );
         // limit squads on a coordinate point
 
         checkTroops(cityId, troopIds, troopAmounts);

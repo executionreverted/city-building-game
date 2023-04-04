@@ -15,6 +15,7 @@ describe("Troops", function () {
     let troops: Troops;
     let troopsManager: TroopsManager;
     const cityId = 2;
+    const barracksId = 6;
     const cityCoords = {
         X: 1,
         Y: 1
@@ -89,6 +90,8 @@ describe("Troops", function () {
         await cityManager.setBuilding(buildings.address)
         await cityManager.setResources(resources.address)
         await troopsManager.setCalculator(calculator.address)
+        await resources.addMinter(troopsManager.address, true)
+        await resources.addMinter(cityManager.address, true)
         return {
             contract: cities, contract2: gameWorld
         }
@@ -117,6 +120,20 @@ describe("Troops", function () {
         }
     });
 
+    it("Upgrade barracks", async function () {
+        await cityManager.upgradeBuilding(cityId, barracksId)
+        let hasError
+        try {
+            await cityManager.upgradeBuilding(cityId, barracksId)
+        } catch (error) {
+            hasError = true
+        }
+        expect(hasError).to.be.true
+        await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[0].add(1).toNumber());
+        const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
+        expect(barracksLvL.eq(1)).to.be.true
+
+    })
 
     it("Mint 1 soldier", async function () {
         const [owner] = await ethers.getSigners();

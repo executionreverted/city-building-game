@@ -74,9 +74,8 @@ describe("Calculator",
             await troops.deployed();
 
             const TroopsManager = await ethers.getContractFactory("TroopsManager");
-            troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address]) as any;
+            troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address, gameWorld.address]) as any;
             await troopsManager.deployed();
-
 
             const Calculator = await ethers.getContractFactory("Calculator");
             calculator = await upgrades.deployProxy(Calculator, [troops.address, troopsManager.address]) as any;
@@ -120,7 +119,7 @@ describe("Calculator",
                 const attackerCasualtiesIfDraw = await calculator.attackerCasualties(atkArmyPower[index], defArmyPower[index], false, true)
                 console.log(`Attacker Casualties if draw: ${attackerCasualtiesIfDraw.toNumber() / 10}%`);
 
-                
+
 
                 const defenderCasualtiesIfWin = await calculator.defenderCasualties(atkArmyPower[index], defArmyPower[index], true, false)
                 console.log(`Defender Casualties if attacker win: ${defenderCasualtiesIfWin.toNumber() / 10}%`);
@@ -128,7 +127,7 @@ describe("Calculator",
                 console.log(`Defender Casualties if attacker lose: ${defenderCasualtiesIfLose.toNumber() / 10}%`);
                 const defenderCasualtiesIfDraw = await calculator.defenderCasualties(atkArmyPower[index], defArmyPower[index], false, true)
                 console.log(`Defender Casualties if draw: ${defenderCasualtiesIfDraw.toNumber() / 10}%`);
-           
+
                 console.log(`__________________`);
 
                 expect(defenderWinChance.add(attackerWinChance).eq(1000)).to.be.true

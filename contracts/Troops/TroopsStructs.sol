@@ -23,6 +23,7 @@ struct Troop {
 struct TroopCost {
     uint[100] ResourceCost;
     int ResourceModifier;
+    uint MinBarracksLevel;
 }
 
 struct Squad {
