@@ -27,10 +27,17 @@ struct TroopCost {
 }
 
 struct Squad {
+    uint ControlledBy;
     uint[] TroopIds;
     uint[] TroopAmounts;
     Coords Position;
     Purpose Purpose;
     uint ActiveAfter;
     bool Active;
+}
+
+enum Target {
+    SQUAD,
+    CITY,
+    PLOT_CONTENT
 }

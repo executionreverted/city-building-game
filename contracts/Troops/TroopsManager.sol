@@ -238,7 +238,8 @@ contract TroopsManager is UpgradeableGameContract {
             Position: coords,
             Purpose: purpose,
             ActiveAfter: block.timestamp + timeBetweenCoords,
-            Active: false
+            Active: false,
+            ControlledBy: cityId
         });
 
         SquadsById[squadNonces] = newSquad;
@@ -265,6 +266,47 @@ contract TroopsManager is UpgradeableGameContract {
         ].remove(squadId);
         CityActiveSquads[cityId].remove(squadId);
         delete SquadsById[squadId];
+    }
+
+    function repositionSquad(
+        uint cityId,
+        uint squadId,
+        Coords memory newCoords
+    ) external onlyCityOwner(cityId) {
+        require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
+        require(
+            block.timestamp >= SquadsById[squadId].ActiveAfter,
+            "not arrived yet"
+        );
+        require(
+            SquadsIdOnWorld[newCoords.X][newCoords.Y].length() <=
+                MAX_SQUADS_ON_PLOT,
+            "plot capacity reached"
+        );
+        uint timeBetweenCoords = Calculator.timeBetweenTwoPoints(
+            SquadsById[squadId].Position,
+            newCoords
+        );
+
+        // burn food
+        Resources.spendResource(
+            cityId,
+            FOOD_PER_MINUTE + (timeBetweenCoords * FOOD_PER_MINUTE),
+            Resource.FOOD
+        );
+
+        SquadsById[squadId].Position = newCoords;
+        SquadsById[squadId].ActiveAfter = block.timestamp + timeBetweenCoords;
+        // SquadsById[squadId].ActiveAfter = SquadsById[squadId].ActiveAfter + timeBetweenCoords;
+    }
+
+    function changePurpose(
+        uint cityId,
+        uint squadId,
+        Purpose newPurpose
+    ) external onlyCityOwner(cityId) {
+        require(SquadsById[squadId].ControlledBy == cityId, "???");
+        SquadsById[squadId].Purpose = newPurpose;
     }
 
     function reduceTroopsInTown(
@@ -307,6 +349,18 @@ contract TroopsManager is UpgradeableGameContract {
         Coords memory coords
     ) external view returns (uint[] memory) {
         return SquadsIdOnWorld[coords.X][coords.Y].values();
+    }
+
+    function squadsOnPlot(
+        Coords memory coords
+    ) public view returns (Squad[] memory) {
+        uint[] memory squadIds = SquadsIdOnWorld[coords.X][coords.Y].values();
+        Squad[] memory result = new Squad[](squadIds.length);
+
+        for (uint i = 0; i < squadIds.length; i++) {
+            result[i] = SquadsById[squadIds[i]];
+        }
+        return result;
     }
 
     function cityActiveSquads(

@@ -16,6 +16,7 @@ describe("Troops", function () {
     let troopsManager: TroopsManager;
     const cityId = 2;
     const barracksId = 6;
+
     const cityCoords = {
         X: 1,
         Y: 1
