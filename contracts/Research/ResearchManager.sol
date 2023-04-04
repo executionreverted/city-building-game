@@ -24,6 +24,7 @@ contract ResearchManager is UpgradeableGameContract {
     ICalculator Calculator;
     IGameWorld World;
     IResearchs Researchs;
+    uint constant RESEARCH_CENTER_ID = 9;
     uint constant MAX_RESOURCE_ID = 5;
     mapping(uint => uint[100]) CityResearchesValidAfter;
 
@@ -75,8 +76,17 @@ contract ResearchManager is UpgradeableGameContract {
             CityResearchesValidAfter[cityId][researchId] == 0,
             "already on"
         );
+
         // burn resources
         Research memory _research = Researchs.researchInfo(researchId);
+        uint researchCenterTier = CityManager.buildingLevel(
+            cityId,
+            RESEARCH_CENTER_ID
+        );
+        require(
+            researchCenterTier >= _research.MinResearchCenterLevel,
+            "low tier"
+        );
         uint[] memory toBeBurn = new uint[](MAX_RESOURCE_ID);
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
             toBeBurn[i] = _research.Cost[i];
@@ -84,10 +94,15 @@ contract ResearchManager is UpgradeableGameContract {
         Resources.spendResources(cityId, toBeBurn);
         // set completion time
 
-        CityResearchesValidAfter[cityId][researchId] = block.timestamp + _research.TimeRequired;
+        CityResearchesValidAfter[cityId][researchId] =
+            block.timestamp +
+            _research.TimeRequired;
     }
 
-    function researchTime(uint cityId, uint resId) external view returns(uint) {
+    function researchTime(
+        uint cityId,
+        uint resId
+    ) external view returns (uint) {
         return CityResearchesValidAfter[cityId][resId];
     }
 

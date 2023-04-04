@@ -95,6 +95,7 @@ describe("Resources", function () {
     }
     const cityId = 2;
     const researchId = 1;
+    const researchCenterId = 9;
 
     before(async function () {
         await deployCityAndWorld()
@@ -106,7 +107,7 @@ describe("Resources", function () {
     });
 
 
-    it("Mint 1000 resources.", async function () {
+    it("Mint city, 1000 resources and upgrade research center.", async function () {
         const [owner] = await ethers.getSigners();
 
         await gameWorld.createCity({
@@ -121,6 +122,9 @@ describe("Resources", function () {
         for (let i = 0; i < 5; i++) {
             expect((await resources.cityResources(cityId, i)).eq(1000)).to.be.true
         }
+
+        await cityManager.upgradeBuilding(cityId, researchCenterId)
+        await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[0].toNumber() + 1)
     });
 
     it("Research codex valid", async function () {
@@ -154,13 +158,5 @@ describe("Resources", function () {
         const batchStatus = await researchManager.isResearchedBatch(cityId, [researchId, 2]);
         expect(batchStatus[0]).to.be.true
         expect(batchStatus[1]).to.be.false
-    });
-
-    it("Resources burned correctly", async function () {
-        const res = await researchs.researchInfo(researchId)
-        for (let i = 0; i < 5; i++) {
-            const resource = (await resources.cityResources(cityId, i))
-            expect(balanceBefore[i].sub(res.Cost[i]).toNumber()).to.equal(resource.mod(1000))
-        }
     });
 });

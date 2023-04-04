@@ -114,7 +114,6 @@ describe("Resources", function () {
             Y: 1
         }, true, 1)
 
-
         await time.increase(600);
 
         expect((await cityManager.mintTime(cityId)).toNumber(), "minted").to.be.greaterThan(0);
@@ -158,7 +157,7 @@ describe("Resources", function () {
         // console.log({ since2 });
 
 
-        const buildLvl = (await cityManager.buildingLevels(cityId, 1)).toNumber()
+        const buildLvl = (await cityManager.buildingLevel(cityId, 1)).toNumber()
         const produced = amount * since2;
         const claimableSupposedToBe = produced + Math.floor((produced * (buildLvl - 1)) / 2);
         const storages = await resources.getCityStorage(cityId)

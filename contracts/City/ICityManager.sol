@@ -47,5 +47,5 @@ interface ICityManager {
 
     function buildingLevels(
         uint cityId
-    ) external view returns (Building[50] memory);
+    ) external view returns (Building[] memory);
 }

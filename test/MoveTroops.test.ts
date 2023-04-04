@@ -141,7 +141,7 @@ describe("Troops", function () {
         const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
 
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0, "soldier sent")
-        expect(squad.active).to.be.false
+        expect(squad.Active).to.be.false
         expect(activeSquadsOfCity.length).to.equal(1)
         expect(squadsInPosition.length).to.equal(1)
         expect(squadsInPosition[0].eq(0)).to.be.true;
@@ -149,11 +149,11 @@ describe("Troops", function () {
         // console.log("Distance in seconds: ", distance.toNumber());
         expect(resourceBalance.sub(resourceAfter).eq(distance.mul(5)))
         resourceBalance = await resources.CityResources(cityId, foodId)
-        expect(squad.position.X.eq(coordsToSend.X)).to.be.true
-        expect(squad.position.Y.eq(coordsToSend.Y)).to.be.true
+        expect(squad.Position.X.eq(coordsToSend.X)).to.be.true
+        expect(squad.Position.Y.eq(coordsToSend.Y)).to.be.true
         await time.increase(distance.toNumber() + 1)
         squad = await troopsManager.squadsById(0)
-        expect(squad.active).to.be.true
+        expect(squad.Active).to.be.true
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0)
     });
 
@@ -168,10 +168,10 @@ describe("Troops", function () {
         expect(activeSquadsOfCity.length).to.equal(0)
         expect(squadsInPosition.length).to.equal(0)
         // console.log("Distance in seconds: ", distance.toNumber());
-        expect(squad.position.X.eq(0)).to.be.true
-        expect(squad.position.Y.eq(0)).to.be.true
+        expect(squad.Position.X.eq(0)).to.be.true
+        expect(squad.Position.Y.eq(0)).to.be.true
         squad = await troopsManager.squadsById(0)
-        expect(!squad.active).to.be.true
+        expect(!squad.Active).to.be.true
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1)
     });
 });

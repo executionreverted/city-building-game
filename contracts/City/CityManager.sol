@@ -20,11 +20,13 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     IResources Resources;
     mapping(uint => uint) PopulationClaimDates;
     mapping(uint => City) public CityList;
-    mapping(uint => Building[50]) public BuildingLevels;
+    mapping(uint => Building[50]) BuildingLevels;
+    mapping(uint => uint[50]) BuildingLevelActivationTime;
     uint[20] public RacePopulation;
     address GameWorld;
     address TroopsManager;
     uint constant MAX_MATERIAL_ID = 5;
+    uint constant MAX_BUILDING_ID = 50;
 
     function initialize() external initializer {
         _initialize();
@@ -40,10 +42,15 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         CityList[cityId] = _city;
         RacePopulation[uint(_city.Race)]++;
         BuildingLevels[cityId][0].Tier = 1;
+        BuildingLevelActivationTime[cityId][0] = block.timestamp;
         BuildingLevels[cityId][1].Tier = 1;
+        BuildingLevelActivationTime[cityId][1] = block.timestamp;
         BuildingLevels[cityId][2].Tier = 1;
+        BuildingLevelActivationTime[cityId][2] = block.timestamp;
         BuildingLevels[cityId][3].Tier = 1;
+        BuildingLevelActivationTime[cityId][3] = block.timestamp;
         BuildingLevels[cityId][4].Tier = 1;
+        BuildingLevelActivationTime[cityId][4] = block.timestamp;
     }
 
     function setCities(address _cities) external onlyOwner {
@@ -75,6 +82,12 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint cityId,
         uint buildingId
     ) external onlyCityOwner(cityId) returns (bool) {
+        require(
+            block.timestamp >= BuildingLevelActivationTime[cityId][buildingId],
+            "upgrade in progress"
+        );
+
+        uint currentTier = BuildingLevels[cityId][buildingId].Tier;
         Building memory _building = Buildings.buildingInfo(buildingId);
         require(_building.MaxTier > BuildingLevels[cityId][buildingId].Tier);
 
@@ -85,8 +98,9 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         }
 
         Resources.spendResources(cityId, _costs);
-
         BuildingLevels[cityId][buildingId].Tier++;
+        uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];
+        BuildingLevelActivationTime[cityId][buildingId] = Deadline;
         return true;
     }
 
@@ -135,14 +149,28 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     function buildingLevel(
         uint cityId,
         uint buildingId
-    ) external view returns (uint) {
-        return BuildingLevels[cityId][buildingId].Tier;
+    ) external view returns (uint result) {
+        result = BuildingLevels[cityId][buildingId].Tier;
+        if (block.timestamp < BuildingLevelActivationTime[cityId][buildingId]) {
+            result -= 1;
+        }
+        return result;
     }
 
     function buildingLevels(
         uint cityId
-    ) external view returns (Building[50] memory) {
-        return BuildingLevels[cityId];
+    ) external view returns (Building[] memory) {
+        Building[] memory result = new Building[](MAX_BUILDING_ID);
+        for (uint i = 0; i < MAX_BUILDING_ID; ) {
+            result[i] = BuildingLevels[cityId][i];
+            if (block.timestamp < BuildingLevelActivationTime[cityId][i]) {
+                result[i].Tier -= 1;
+            }
+            unchecked {
+                i++;
+            }
+        }
+        return result;
     }
 
     function claimResource(

@@ -2,6 +2,7 @@ import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Trigonometry } from "../typechain-types";
 import { config } from "hardhat";
+import { BuildingStructOutput } from "../typechain-types/contracts/City/Buildings";
 
 describe("Cities", function () {
   const zerozero: any = { X: 1, Y: 1, }
@@ -333,10 +334,9 @@ describe("Cities", function () {
   });
 
   it("Buildings initiated.", async function () {
-    let building
+    let buildings = await cityManager.buildingLevels(2)
     for (let index = 0; index < 5; index++) {
-      building = await cityManager.BuildingLevels(2, 1)
-      expect(building.Tier.eq(1)).to.equal(true);
+      expect(buildings[index].Tier.eq(1)).to.equal(true);
     }
   });
 

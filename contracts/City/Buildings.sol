@@ -55,6 +55,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Forest() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -67,6 +74,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Farms() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -79,6 +93,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Mines() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -91,6 +112,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Quarry() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -104,6 +132,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     /* UTILITY BUILDINGS */
     function TownHall() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -116,6 +151,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Warehouse() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -128,6 +170,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Barracks() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -140,6 +189,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Workshop() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -152,6 +208,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Housing() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -168,6 +231,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -184,6 +254,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -200,6 +277,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -212,6 +296,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Hatchery() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -228,6 +319,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -240,6 +338,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Walls() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        uint[] memory timeRequired = new uint[](5);
+        timeRequired[0] = 2 minutes;
+        timeRequired[1] = 30 minutes;
+        timeRequired[2] = 3 hours;
+        timeRequired[3] = 8 hours;
+        timeRequired[4] = 24 hours;
+        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
         _baseBuilding.Cost[1] = 100;
@@ -255,4 +360,17 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         pure
         returns (uint[100] memory _return)
     {}
+
+    function generateTimeArray(
+        uint[] memory timeRequiredByTiers
+    ) internal pure returns (uint[] memory) {
+        uint[] memory _return = new uint[](timeRequiredByTiers.length);
+        for (uint i = 0; i < timeRequiredByTiers.length; ) {
+            _return[i] = timeRequiredByTiers[i];
+            unchecked {
+                i++;
+            }
+        }
+        return _return;
+    }
 }
