@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager, Cities__factory } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager, Cities__factory, Researchs, ResearchManager } from "../typechain-types";
 import * as fs from "fs"
 const done = "____ \n deployment done \n ____";
 async function deploy() {
@@ -13,6 +13,8 @@ async function deploy() {
   let buildings: Buildings;
   let troops: Troops;
   let troopsManager: TroopsManager;
+  let researchs: Researchs;
+  let researchManager: ResearchManager;
   // console.log('Deploying contracts...');
 
   // get owner (first account)
@@ -90,6 +92,21 @@ async function deploy() {
 
   console.log({ calculator: calculator.address });
 
+  const Researchs = await ethers.getContractFactory("Researchs");
+  researchs = await upgrades.deployProxy(Researchs, []) as any;
+  await researchs.deployed();
+
+  console.log({ researchs: researchs.address });
+
+  const ResearchManager = await ethers.getContractFactory("ResearchManager");
+  researchManager = await upgrades.deployProxy(ResearchManager, [
+    cities.address, cityManager.address, resources.address, gameWorld.address,
+    researchs.address
+  ]) as any;
+  await researchManager.deployed();
+
+  console.log({ researchManager: researchManager.address });
+
 
   console.log('saved deployed.json');
 
@@ -104,6 +121,8 @@ async function deploy() {
     Troops: troops.address,
     TroopsManager: troopsManager.address,
     Calculator: calculator.address,
+    Researchs: researchs.address,
+    ResearchManager: researchManager.address,
   }))
 
   console.log('Giving permissions.');
@@ -176,6 +195,15 @@ async function deploy() {
   tx = await troopsManager.setCalculator(calculator.address, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(13);
+
+  tx = await troopsManager.setCalculator(calculator.address, { gasLimit: 7000000 })
+  await tx.wait(1)
+  console.log(14);
+
+  tx = await resources.addMinter(researchManager.address, true, { gasLimit: 7000000 })
+  await tx.wait(1)
+  console.log(15);
+
   console.log(done);
 }
 

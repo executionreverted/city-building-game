@@ -23,21 +23,20 @@ contract Researchs is UpgradeableGameContract {
     function researchInfo(
         uint researchId
     ) public pure returns (Research memory) {
-        if (researchId == 0) return Research1();
-
+        if (researchId == 1) return Research1();
         revert("not implemented");
     }
 
     function Research1() internal pure returns (Research memory _baseResearch) {
+        _baseResearch.ID = 1; // no requirements.
         _baseResearch.RequiredResearchId = 0; // no requirements.
-
 
         // if its default unlocked, uncomment that line.
         // _baseResearch.IsUnlocked = true; // no requirements.
 
         _baseResearch.TimeRequired = 1 hours;
         _baseResearch.MinResearchCenterLevel = 1;
-        
+
         _baseResearch.Cost = generateCostArray();
         _baseResearch.Cost[0] = 100;
         _baseResearch.Cost[1] = 100;
