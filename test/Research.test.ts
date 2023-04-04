@@ -124,7 +124,9 @@ describe("Resources", function () {
         }
 
         await cityManager.upgradeBuilding(cityId, researchCenterId)
+        expect(await cityManager.buildingLevel(cityId, researchCenterId)).to.equal(0)
         await time.increase(await (await buildings.buildingInfo(researchCenterId)).UpgradeTime[0].toNumber() + 1)
+        expect(await cityManager.buildingLevel(cityId, researchCenterId)).to.equal(1)
     });
 
     it("Research codex valid", async function () {
