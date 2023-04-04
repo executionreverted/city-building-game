@@ -2,6 +2,7 @@ import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
 import { Buildings, Cities, CityManager, GameWorld, PerlinNoise, ResearchManager, Researchs, Resources, Trigonometry } from "../typechain-types";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { BigNumber } from "ethers";
 
 describe("Resources", function () {
     let cities: Cities;
@@ -117,7 +118,7 @@ describe("Resources", function () {
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 1000)
         }
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 5; i++) {
             expect((await resources.cityResources(cityId, i)).eq(1000)).to.be.true
         }
     });
@@ -131,8 +132,16 @@ describe("Resources", function () {
 
     });
 
+    let balanceBefore: any = {
+
+    };
+
     it("Finish first research", async function () {
         const res = await researchs.researchInfo(researchId)
+        for (let i = 0; i < 5; i++) {
+            const resource = (await resources.cityResources(cityId, i))
+            balanceBefore[i] = resource
+        }
         const tx = await researchManager.beginResearch(cityId, researchId)
         const completiontime = await researchManager.researchTime(cityId, researchId);
         const blockTime = await time.latest()
@@ -142,9 +151,16 @@ describe("Resources", function () {
         await time.increase(res.TimeRequired.add(1));
         const newstatus = await researchManager.isResearched(cityId, researchId);
         expect(newstatus).to.be.true
-
         const batchStatus = await researchManager.isResearchedBatch(cityId, [researchId, 2]);
         expect(batchStatus[0]).to.be.true
         expect(batchStatus[1]).to.be.false
+    });
+
+    it("Resources burned correctly", async function () {
+        const res = await researchs.researchInfo(researchId)
+        for (let i = 0; i < 5; i++) {
+            const resource = (await resources.cityResources(cityId, i))
+            expect(balanceBefore[i].sub(res.Cost[i]).toNumber()).to.equal(resource.mod(1000))
+        }
     });
 });
