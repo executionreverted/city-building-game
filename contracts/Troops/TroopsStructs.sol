@@ -16,24 +16,23 @@ struct Troop {
     uint SiegeDef;
     uint Hp;
     uint Capacity;
-    TroopCost Cost;
     uint Population;
+    TroopCost Cost;
 }
 
 struct TroopCost {
     uint[100] ResourceCost;
-    int ResourceModifier;
     uint MinBarracksLevel;
 }
 
 struct Squad {
+    uint8[] TroopIds;
     uint ControlledBy;
-    uint[] TroopIds;
     uint[] TroopAmounts;
-    Coords Position;
-    Purpose Purpose;
     uint ActiveAfter;
     bool Active;
+    Coords Position;
+    Purpose Purpose;
 }
 
 enum Target {

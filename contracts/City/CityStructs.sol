@@ -7,16 +7,16 @@ import {Race} from "./CityEnums.sol";
 
 struct City {
     Coords Coords;
-    address Explorer;
     Race Race;
-    bool Alive;
+    address Explorer;
     uint CreationDate;
     uint Population;
+    bool Alive;
 }
 
 struct Building {
-    uint[] UpgradeTime;
     uint Tier;
     uint MaxTier;
+    uint[] UpgradeTime;
     uint[100] Cost;
 }

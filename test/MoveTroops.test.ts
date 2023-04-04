@@ -174,6 +174,42 @@ describe("Troops", function () {
         expect(squad.Active).to.be.true
         expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0)
     });
+    it("Reposition squad to coords", async function () {
+        const oldCoords = { X: 1, Y: 2 }
+        const coordsToSend = { X: 1, Y: 3 }
+        const foodId = 4;
+        let resourceBalance = await resources.cityResources(cityId, foodId)
+
+        await troopsManager.repositionSquad(cityId, 0, coordsToSend)
+
+        let resourceAfter = await resources.cityResources(cityId, foodId)
+
+        let squad = await troopsManager.squadsById(0)
+        const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
+        const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
+        const squadsInOldPosition = await troopsManager.squadsIdOnWorld(oldCoords)
+
+
+
+
+
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0, "soldier sent")
+        expect(squad.Active).to.be.false
+        expect(activeSquadsOfCity.length).to.equal(1)
+        expect(squadsInOldPosition.length).to.equal(0)
+        expect(squadsInPosition.length).to.equal(1)
+        expect(squadsInPosition[0].eq(0)).to.be.true;
+        const distance = await calculator.timeBetweenTwoPoints(cityCoords, coordsToSend)
+        // console.log("Distance in seconds: ", distance.toNumber());
+        expect(resourceBalance.sub(resourceAfter).eq(distance.mul(5)))
+        resourceBalance = await resources.CityResources(cityId, foodId)
+        expect(squad.Position.X.eq(coordsToSend.X)).to.be.true
+        expect(squad.Position.Y.eq(coordsToSend.Y)).to.be.true
+        await time.increase(distance.toNumber() + 1)
+        squad = await troopsManager.squadsById(0)
+        expect(squad.Active).to.be.true
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0)
+    });
 
     it("Get squad to city back", async function () {
         const coordsToSend = { X: 1, Y: 2 }

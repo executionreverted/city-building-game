@@ -13,12 +13,10 @@ import {IBuilding} from "../City/IBuildings.sol";
 import {ITroops} from "./ITroops.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {Troop, Squad, Purpose} from "./TroopsStructs.sol";
-import "hardhat/console.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
-
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
     IBuilding Buildings;
@@ -27,10 +25,10 @@ contract TroopsManager is UpgradeableGameContract {
     ITroops Troops;
     ICalculator Calculator;
     IGameWorld World;
-    uint constant MAX_MATERIAL_ID = 5;
-    uint constant FOOD_PER_MINUTE = 5;
-    uint constant MAX_SQUADS_ON_PLOT = 10;
-    uint constant BARRACKS_ID = 6;
+    uint8 constant MAX_MATERIAL_ID = 5;
+    uint8 constant FOOD_PER_MINUTE = 5;
+    uint8 constant MAX_SQUADS_ON_PLOT = 10;
+    uint8 constant BARRACKS_ID = 6;
 
     mapping(uint => uint[100]) CityTroops;
     // movement stuff
@@ -77,7 +75,6 @@ contract TroopsManager is UpgradeableGameContract {
         uint cityId
     ) external view returns (uint[] memory, uint[] memory) {
         Race race = CityManager.race(cityId);
-
         // race stuff... determine ids of troops by race
         uint i;
         uint startTroop = 0 * uint(race);
@@ -132,7 +129,7 @@ contract TroopsManager is UpgradeableGameContract {
 
     function recruitTroops(
         uint cityId,
-        uint[] calldata troopIds,
+        uint8[] calldata troopIds,
         uint[] calldata amounts
     ) external onlyCityOwner(cityId) {
         require(troopIds.length == amounts.length, "mismatch");
@@ -205,7 +202,7 @@ contract TroopsManager is UpgradeableGameContract {
     function sendSquadTo(
         uint cityId,
         Coords memory coords,
-        uint[] memory troopIds,
+        uint8[] memory troopIds,
         uint[] memory troopAmounts,
         Purpose purpose
     ) external onlyCityOwner(cityId) {
@@ -216,7 +213,6 @@ contract TroopsManager is UpgradeableGameContract {
             "plot capacity reached"
         );
         // limit squads on a coordinate point
-
         checkTroops(cityId, troopIds, troopAmounts);
         reduceTroopsInTown(cityId, troopIds, troopAmounts);
         Coords memory cityCoords = World.CityCoords(cityId);
@@ -228,7 +224,8 @@ contract TroopsManager is UpgradeableGameContract {
         // burn food
         Resources.spendResource(
             cityId,
-            FOOD_PER_MINUTE + (timeBetweenCoords * FOOD_PER_MINUTE),
+            (FOOD_PER_MINUTE) +
+                ((timeBetweenCoords / 1 minutes) * FOOD_PER_MINUTE),
             Resource.FOOD
         );
 
@@ -273,29 +270,31 @@ contract TroopsManager is UpgradeableGameContract {
         uint squadId,
         Coords memory newCoords
     ) external onlyCityOwner(cityId) {
+        Squad memory squad = SquadsById[squadId];
+
         require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
-        require(
-            block.timestamp >= SquadsById[squadId].ActiveAfter,
-            "not arrived yet"
-        );
+        require(block.timestamp >= squad.ActiveAfter, "not arrived yet");
         require(
             SquadsIdOnWorld[newCoords.X][newCoords.Y].length() <=
                 MAX_SQUADS_ON_PLOT,
             "plot capacity reached"
         );
         uint timeBetweenCoords = Calculator.timeBetweenTwoPoints(
-            SquadsById[squadId].Position,
+            squad.Position,
             newCoords
         );
 
         // burn food
         Resources.spendResource(
             cityId,
-            FOOD_PER_MINUTE + (timeBetweenCoords * FOOD_PER_MINUTE),
+            (timeBetweenCoords / 1 minutes) * FOOD_PER_MINUTE,
             Resource.FOOD
         );
 
+        SquadsIdOnWorld[squad.Position.X][squad.Position.Y].remove(squadId);
+
         SquadsById[squadId].Position = newCoords;
+        SquadsIdOnWorld[newCoords.X][newCoords.Y].add(squadId);
         SquadsById[squadId].ActiveAfter = block.timestamp + timeBetweenCoords;
         // SquadsById[squadId].ActiveAfter = SquadsById[squadId].ActiveAfter + timeBetweenCoords;
     }
@@ -311,7 +310,7 @@ contract TroopsManager is UpgradeableGameContract {
 
     function reduceTroopsInTown(
         uint cityId,
-        uint[] memory troopIds,
+        uint8[] memory troopIds,
         uint[] memory troopAmounts
     ) internal {
         for (uint i = 0; i < troopIds.length; ) {
@@ -324,9 +323,9 @@ contract TroopsManager is UpgradeableGameContract {
 
     function checkTroops(
         uint cityId,
-        uint[] memory troopIds,
+        uint8[] memory troopIds,
         uint[] memory troopAmounts
-    ) internal {
+    ) internal view {
         for (uint i = 0; i < troopIds.length; ) {
             require(
                 CityTroops[cityId][troopIds[i]] >= troopAmounts[i],
@@ -369,8 +368,7 @@ contract TroopsManager is UpgradeableGameContract {
         return CityActiveSquads[cityId].values();
     }
 
-    function hasDupes(uint[] memory arr) internal pure returns (bool) {
-        bool hasDupe;
+    function hasDupes(uint8[] memory arr) internal pure returns (bool) {
         uint temp;
         for (uint i = 0; i < arr.length; i++) {
             temp = arr[i];

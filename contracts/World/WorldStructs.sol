@@ -16,9 +16,9 @@ struct Coords {
 
 struct Plot {
     int Climate;
-    PlotContent Content;
     bool IsTaken;
     uint CityId;
+    PlotContent Content;
     Coords Coords;
 }
 
