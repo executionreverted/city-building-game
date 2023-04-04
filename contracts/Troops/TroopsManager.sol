@@ -226,12 +226,12 @@ contract TroopsManager is UpgradeableGameContract {
         );
 
         Squad memory newSquad = Squad({
-            troopIds: troopIds,
-            troopAmounts: troopAmounts,
-            position: coords,
-            purpose: purpose,
-            activeAfter: block.timestamp + timeBetweenCoords,
-            active: false
+            TroopIds: troopIds,
+            TroopAmounts: troopAmounts,
+            Position: coords,
+            Purpose: purpose,
+            ActiveAfter: block.timestamp + timeBetweenCoords,
+            Active: false
         });
 
         SquadsById[squadNonces] = newSquad;
@@ -247,14 +247,14 @@ contract TroopsManager is UpgradeableGameContract {
         require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
         // todo check other stuff like return half road etc.
 
-        for (uint i = 0; i < SquadsById[squadId].troopIds.length; i++) {
-            CityTroops[cityId][SquadsById[squadId].troopIds[i]] += SquadsById[
+        for (uint i = 0; i < SquadsById[squadId].TroopIds.length; i++) {
+            CityTroops[cityId][SquadsById[squadId].TroopIds[i]] += SquadsById[
                 squadId
-            ].troopAmounts[i];
+            ].TroopAmounts[i];
         }
 
-        SquadsIdOnWorld[SquadsById[squadId].position.X][
-            SquadsById[squadId].position.Y
+        SquadsIdOnWorld[SquadsById[squadId].Position.X][
+            SquadsById[squadId].Position.Y
         ].remove(squadId);
         CityActiveSquads[cityId].remove(squadId);
         delete SquadsById[squadId];
@@ -291,8 +291,8 @@ contract TroopsManager is UpgradeableGameContract {
 
     function squadsById(uint squadId) external view returns (Squad memory) {
         Squad memory squad = SquadsById[squadId];
-        if (squad.activeAfter != 0 && block.timestamp > squad.activeAfter)
-            squad.active = true;
+        if (squad.ActiveAfter != 0 && block.timestamp > squad.ActiveAfter)
+            squad.Active = true;
         return squad;
     }
 

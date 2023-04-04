@@ -4,6 +4,8 @@ pragma solidity ^0.8.18;
 
 struct Research {
     uint ID;
+    uint TimeRequired;
     bool IsUnlocked;
-    uint MinLevel;
+    uint MinResearchCenterLevel;
+    uint[100] Cost;
 }
