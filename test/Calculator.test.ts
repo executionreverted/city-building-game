@@ -99,7 +99,6 @@ describe("Calculator",
         });
 
         it("Calculate chances", async function () {
-
             for (let index = 0; index < atkArmyPower.length; index++) {
                 const attackerWinChance = await calculator.attackerVictoryChance(atkArmyPower[index], defArmyPower[index]);
                 const defenderWinChance = await calculator.defenderVictoryChance(atkArmyPower[index], defArmyPower[index]);

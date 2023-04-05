@@ -35,6 +35,26 @@ contract TroopCommands is UpgradeableGameContract {
         RNG = IRNG(_rng);
     }
 
+    function setCities(address _cities) external onlyOwner {
+        Cities = ICities(_cities);
+    }
+
+    function setRNG(address _rng) external onlyOwner {
+        RNG = IRNG(_rng);
+    }
+
+    function setCalculator(address _calc) external onlyOwner {
+        Calculator = ICalculator(_calc);
+    }
+
+    function setTroops(address _troops) external onlyOwner {
+        Troops = ITroops(_troops);
+    }
+
+    function setTroopManager(address _trmanager) external onlyOwner {
+        TroopsManager = ITroopsManager(_trmanager);
+    }
+
     function attack(uint squadId, Target target, uint targetSquadId) external {
         Squad memory squad = TroopsManager.squadsById(squadId);
         require(squad.Active, "cannot attack yet");

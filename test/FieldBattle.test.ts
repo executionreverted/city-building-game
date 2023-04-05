@@ -83,8 +83,6 @@ describe("Troops", function () {
         rng = await upgrades.deployProxy(RNG, []) as any;
         await rng.deployed();
 
-
-
         const Calculator = await ethers.getContractFactory("Calculator");
         calculator = await upgrades.deployProxy(Calculator, [troops.address, troopsManager.address]) as any;
         await calculator.deployed();
@@ -194,7 +192,7 @@ describe("Troops", function () {
 
 
     it("Send squad 2 to coords", async function () {
-        const coordsToSend = { X: 1, Y: 3}
+        const coordsToSend = { X: 1, Y: 3 }
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
         await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [50], 0)

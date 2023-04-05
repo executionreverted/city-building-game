@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager, Cities__factory, Researchs, ResearchManager } from "../typechain-types";
+import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Buildings, Troops, TroopsManager, Cities__factory, Researchs, ResearchManager, RNG, TroopCommands } from "../typechain-types";
 import * as fs from "fs"
 const done = "____ \n deployment done \n ____";
 async function deploy() {
@@ -15,6 +15,8 @@ async function deploy() {
   let troopsManager: TroopsManager;
   let researchs: Researchs;
   let researchManager: ResearchManager;
+  let rng: RNG;
+  let troopCommands: TroopCommands;
   // console.log('Deploying contracts...');
 
   // get owner (first account)
@@ -24,6 +26,10 @@ async function deploy() {
   const PerlinNoise = await ethers.getContractFactory("PerlinNoise");
   perlinNoise = await PerlinNoise.deploy();
   await perlinNoise.deployed();
+
+  const RNG = await ethers.getContractFactory("RNG");
+  rng = await upgrades.deployProxy(RNG, []) as any;
+  await rng.deployed();
 
   console.log({ perlinNoise: perlinNoise.address });
 
@@ -107,6 +113,15 @@ async function deploy() {
 
   console.log({ researchManager: researchManager.address });
 
+  const TroopCommands = await ethers.getContractFactory("TroopCommands");
+  troopCommands = await upgrades.deployProxy(TroopCommands, [
+    troopsManager.address,
+    cities.address,
+    calculator.address,
+    troops.address,
+    rng.address
+  ]) as any;
+  await troopCommands.deployed();
 
   console.log('saved deployed.json');
 
@@ -123,6 +138,8 @@ async function deploy() {
     Calculator: calculator.address,
     Researchs: researchs.address,
     ResearchManager: researchManager.address,
+    TroopCommands: troopCommands.address,
+    RNG: rng.address,
   }))
 
   console.log('Giving permissions.');
@@ -203,6 +220,10 @@ async function deploy() {
   tx = await resources.addMinter(researchManager.address, true, { gasLimit: 7000000 })
   await tx.wait(1)
   console.log(15);
+
+  tx = await troopsManager.setTroopCommands(troopCommands.address, { gasLimit: 7000000 })
+  await tx.wait(1)
+  console.log(16);
 
   console.log(done);
 }
