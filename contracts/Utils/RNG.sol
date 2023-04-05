@@ -9,6 +9,10 @@ contract RNG is UpgradeableGameContract {
 
     uint private randomizer;
 
+    function d1000(uint _input) external returns (uint) {
+        return dn(_input, 1000);
+    }
+
     function d100(uint _input) external returns (uint) {
         return dn(_input, 100);
     }

@@ -43,7 +43,7 @@ contract Calculator is ICalculator, UpgradeableGameContract {
             uint Capacity
         )
     {
-        (uint[] memory troops, uint[] memory amounts) = TroopsManager
+        (uint8[] memory troops, uint[] memory amounts) = TroopsManager
             .troopsOfCity(cityId);
         // add morale bonus
         return Troops.armyPower(troops, amounts);
@@ -87,7 +87,7 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     function plunderAmountPercentage(
         uint atkArmyPower,
         uint defArmyPower
-    ) public view returns (uint) {
+    ) public pure returns (uint) {
         if (atkArmyPower < defArmyPower) {
             return percent(atkArmyPower, defArmyPower, Precision) / 10;
         }
@@ -112,16 +112,28 @@ contract Calculator is ICalculator, UpgradeableGameContract {
     ) public pure returns (uint) {
         uint amount;
         if (atkArmyPower < defArmyPower) {
-            amount = percent(defArmyPower, atkArmyPower, Precision) / 10;
+            amount = percent(atkArmyPower, defArmyPower, Precision);
+            uint ratio = (defArmyPower * 120) / atkArmyPower;
+            if (defArmyPower / atkArmyPower >= 10) {
+                amount = 1000;
+            } else {
+                amount = (amount * ratio) / 1000;
+            }
+            // amount *= 3;
+            // amount /= 7;
         } else {
-            amount = percent(atkArmyPower, defArmyPower, Precision) / 10;
+            amount = percent(defArmyPower, atkArmyPower, Precision);
+            amount *= 2;
+            amount /= 10;
         }
-        if (draw) return (amount * 75) / 100;
+        // amount /= 10;
+
+        if (draw) return min((amount * 80) / 100, 1000);
 
         if (atkHasWon) {
             amount = amount / 2;
         }
-        return amount;
+        return min(amount, 1000);
     }
 
     /* 
@@ -132,23 +144,34 @@ contract Calculator is ICalculator, UpgradeableGameContract {
         uint defArmyPower,
         bool atkHasWon,
         bool draw
-    ) public view returns (uint) {
+    ) public pure returns (uint) {
         uint amount;
         if (atkArmyPower > defArmyPower) {
             amount = percent(defArmyPower, atkArmyPower, Precision);
+            uint ratio = (atkArmyPower * 100) / defArmyPower;
+            if (atkArmyPower / defArmyPower >= 10) {
+                amount = 1000;
+            } else {
+                amount = (amount * ratio) / 1000;
+            }
         } else {
             amount = percent(atkArmyPower, defArmyPower, Precision);
+            amount /= 10;
         }
-        amount /= 15;
-        if (draw) return amount * 2;
+        if (draw) return min(((amount * 800) / 1000), 1000);
 
         if (atkHasWon) {
-            amount *= 2;
             if (percent(defArmyPower, atkArmyPower, Precision) > 300) {
                 amount *= 2;
             }
+        } else {
+            amount = amount * 75 / 100;
         }
-        return amount;
+        return min(amount, 1000);
+    }
+
+    function min(uint a, uint b) internal pure returns (uint) {
+        return a > b ? b : a;
     }
 
     function calculateDistance(

@@ -27,9 +27,10 @@ struct TroopCost {
 
 struct Squad {
     uint8[] TroopIds;
+    uint ID;
     uint ControlledBy;
-    uint[] TroopAmounts;
     uint ActiveAfter;
+    uint[] TroopAmounts;
     bool Active;
     Coords Position;
     Purpose Purpose;

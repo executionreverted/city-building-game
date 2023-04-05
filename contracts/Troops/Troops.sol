@@ -27,7 +27,7 @@ contract Troops is UpgradeableGameContract {
     /* PRODUCTION troop */
 
     function armyPower(
-        uint[] memory troopIds,
+        uint8[] memory troopIds,
         uint[] memory amounts
     )
         external

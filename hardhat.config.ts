@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
-import "hardhat-gas-reporter";
+import "hardhat-gas-reporter"
 import "solidity-coverage";
 import "hardhat-contract-sizer";
 import "hardhat-abi-exporter";
@@ -9,7 +9,6 @@ import * as dotenv from "dotenv";
 import "@openzeppelin/hardhat-upgrades";
 import "hardhat-interface-generator";
 import "arb-shared-dependencies"
-import { BigNumber } from "ethers";
 dotenv.config();
 const deploymentAccount = process.env.PRIVATE_KEY
 const config: HardhatUserConfig = {
@@ -22,6 +21,10 @@ const config: HardhatUserConfig = {
       }
     }
   },
+  gasReporter: {
+    currency: 'USD',
+    gasPrice: 30
+  },
   abiExporter: {
     path: "./abi",
     runOnCompile: true
@@ -33,12 +36,12 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      gasPrice: 225000000000,
+      gasPrice: 25000000000,
       chainId: 1337,
       accounts: {
         accountsBalance: '1000000000000000000000000',
         count: 5
-      }
+      },
     },
     fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",

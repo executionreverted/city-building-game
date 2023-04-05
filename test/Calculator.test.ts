@@ -20,8 +20,8 @@ describe("Calculator",
         let city1 = 2;
         let city2 = 3;
         // simulation
-        const atkArmyPower = [1000, 1500, 2000, 3500, 4000];
-        const defArmyPower = [500, 1000, 2000, 5000, 6000];
+        const atkArmyPower = [1000, 1500, 2000, 3500, 4000, 4000, 50000, 3234, 6800];
+        const defArmyPower = [500, 1000, 2000, 5000, 6000, 400, 1233, 64353, 400];
 
         async function deployAll() {
             // console.log('Deploying contracts...');

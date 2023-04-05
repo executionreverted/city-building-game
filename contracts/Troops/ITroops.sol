@@ -7,7 +7,7 @@ interface ITroops {
     function troopInfo(uint256 troopId) external pure returns (Troop memory);
 
     function armyPower(
-        uint[] memory troopIds,
+        uint8[] memory troopIds,
         uint[] memory amounts
     )
         external

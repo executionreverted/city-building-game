@@ -1,7 +1,8 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Troops, TroopsManager } from "../typechain-types";
+import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, RNG, Trigonometry, TroopCommands, Troops, TroopsManager } from "../typechain-types";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import "hardhat-gas-reporter"
 
 describe("Troops", function () {
     let cities: Cities;
@@ -14,6 +15,8 @@ describe("Troops", function () {
     let buildings: Buildings;
     let troops: Troops;
     let troopsManager: TroopsManager;
+    let troopCommands: TroopCommands;
+    let rng: RNG
     const cityId = 2;
     const barracksId = 6;
 
@@ -76,10 +79,27 @@ describe("Troops", function () {
         troopsManager = await upgrades.deployProxy(TroopsManager, [cities.address, buildings.address, cityManager.address, resources.address, troops.address, gameWorld.address]) as any;
         await troopsManager.deployed();
 
+        const RNG = await ethers.getContractFactory("RNG");
+        rng = await upgrades.deployProxy(RNG, []) as any;
+        await rng.deployed();
+
+
 
         const Calculator = await ethers.getContractFactory("Calculator");
         calculator = await upgrades.deployProxy(Calculator, [troops.address, troopsManager.address]) as any;
         await calculator.deployed();
+
+
+        const TroopCommands = await ethers.getContractFactory("TroopCommands");
+        troopCommands = await upgrades.deployProxy(TroopCommands, [
+            troopsManager.address,
+            cities.address,
+            calculator.address,
+            troops.address,
+            rng.address
+        ]) as any;
+        await troopCommands.deployed();
+
 
         // grant owner the minter role
         await cities.grantRole(await cities.MINTER_ROLE(), gameWorld.address);
@@ -93,9 +113,7 @@ describe("Troops", function () {
         await troopsManager.setCalculator(calculator.address)
         await resources.addMinter(troopsManager.address, true)
         await resources.addMinter(cityManager.address, true)
-        return {
-            contract: cities, contract2: gameWorld
-        }
+        await troopsManager.setTroopCommands(troopCommands.address)
     }
 
     before(async function () {
@@ -110,14 +128,15 @@ describe("Troops", function () {
     it("Mint 1000 resources.", async function () {
         const [owner] = await ethers.getSigners();
 
-        await gameWorld.createCity(cityCoords, true, 1)
 
+        await gameWorld.createCity(cityCoords, true, 1)
+        await cityManager.updateCityPopulation(2, 1000)
         await resources.addMinter(owner.address, true)
         for (let i = 0; i < 5; i++) {
-            await resources.addResource(cityId, i, 1000)
+            await resources.addResource(cityId, i, 10000)
         }
         for (let i = 0; i < 4; i++) {
-            expect((await resources.cityResources(cityId, i)).eq(1000)).to.be.true
+            expect((await resources.cityResources(cityId, i)).eq(10000)).to.be.true
         }
     });
 
@@ -133,32 +152,30 @@ describe("Troops", function () {
         await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[0].add(1).toNumber());
         const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
         expect(barracksLvL.eq(1)).to.be.true
-
     })
 
-    it("Mint 1 soldier", async function () {
+    it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await cityManager.setTroopsManager(troopsManager.address)
         await resources.addMinter(owner.address, true)
         await resources.addMinter(troopsManager.address, true)
-        await troopsManager.recruitTroop(cityId, 0, 1)
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1)
+        await troopsManager.recruitTroop(cityId, 0, 100)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100)
     });
 
     it("Send squad to coords", async function () {
         const coordsToSend = { X: 1, Y: 2 }
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
-
-        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [1], 0)
-
+        const troopToSend = 50
+        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [troopToSend], 2)
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
         let squad = await troopsManager.squadsById(0)
         const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
         const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
 
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0, "soldier sent")
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100 - troopToSend, "soldier sent")
         expect(squad.Active).to.be.false
         expect(activeSquadsOfCity.length).to.equal(1)
         expect(squadsInPosition.length).to.equal(1)
@@ -172,29 +189,25 @@ describe("Troops", function () {
         await time.increase(distance.toNumber() + 1)
         squad = await troopsManager.squadsById(0)
         expect(squad.Active).to.be.true
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100 - troopToSend)
     });
-    it("Reposition squad to coords", async function () {
-        const oldCoords = { X: 1, Y: 2 }
-        const coordsToSend = { X: 1, Y: 3 }
+
+
+    it("Send squad 2 to coords", async function () {
+        const coordsToSend = { X: 1, Y: 3}
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
-
-        await troopsManager.repositionSquad(cityId, 0, coordsToSend)
-
+        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [50], 0)
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
-        let squad = await troopsManager.squadsById(0)
+        let squad = await troopsManager.squadsById(1)
         const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
         const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
-        const squadsInOldPosition = await troopsManager.squadsIdOnWorld(oldCoords)
 
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0, "soldier sent")
         expect(squad.Active).to.be.false
-        expect(activeSquadsOfCity.length).to.equal(1)
-        expect(squadsInOldPosition.length).to.equal(0)
+        expect(activeSquadsOfCity.length).to.equal(2)
         expect(squadsInPosition.length).to.equal(1)
-        expect(squadsInPosition[0].eq(0)).to.be.true;
+        expect(squadsInPosition[0].eq(1)).to.be.true;
         const distance = await calculator.timeBetweenTwoPoints(cityCoords, coordsToSend)
         // console.log("Distance in seconds: ", distance.toNumber());
         expect(resourceBalance.sub(resourceAfter).eq(distance.mul(5)))
@@ -202,26 +215,62 @@ describe("Troops", function () {
         expect(squad.Position.X.eq(coordsToSend.X)).to.be.true
         expect(squad.Position.Y.eq(coordsToSend.Y)).to.be.true
         await time.increase(distance.toNumber() + 1)
-        squad = await troopsManager.squadsById(0)
+        squad = await troopsManager.squadsById(1)
         expect(squad.Active).to.be.true
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(0)
     });
 
-    it("Get squad to city back", async function () {
-        const coordsToSend = ({ X: 1, Y: 2 })
-        const squadId = 0;
+    it("Attack to squad 2 with squad 1", async function () {
+        let squad1 = await troopsManager.squadsById(0)
+        let squad2 = await troopsManager.squadsById(1)
+        const coordsOfMySquad = { X: 1, Y: 2 }
+        const coordsToAttack = { X: 1, Y: 3 }
 
-        await troopsManager.callSquadBack(cityId, squadId)
-        let squad = await troopsManager.squadsById(0)
-        const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
-        const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
-        expect(activeSquadsOfCity.length).to.equal(0)
-        expect(squadsInPosition.length).to.equal(0)
-        // console.log("Distance in seconds: ", distance.toNumber());
-        expect(squad.Position.X.eq(0)).to.be.true
-        expect(squad.Position.Y.eq(0)).to.be.true
-        squad = await troopsManager.squadsById(0)
-        expect(!squad.Active).to.be.true
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(1)
-    });
+        for (let index = 0; index < squad1.TroopIds.length; index++) {
+            console.log(`squad1 has troop ${index}: ${squad1.TroopAmounts[index].toNumber()}`);
+        }
+        for (let index = 0; index < squad2.TroopIds.length; index++) {
+            console.log(`squad2 has troop ${index}: ${squad2.TroopAmounts[index].toNumber()}`);
+        }
+
+        let tx = await troopCommands.attack(0, 0, 1)
+        await tx.wait(1)
+        const txReceipt = await (cities.provider).getTransactionReceipt(tx.hash);
+        console.log(tx.hash);
+        let txGasUsed = txReceipt.cumulativeGasUsed
+        const gasCostEth = ethers.utils.formatEther(txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber());
+        console.log({
+            txGasUsed, gasUsed: txReceipt.gasUsed, gasPrice: txReceipt.effectiveGasPrice,
+            total: txReceipt.effectiveGasPrice.mul(txReceipt.gasUsed).toNumber(),
+            gasCostEth
+        });
+
+        squad1 = await troopsManager.squadsById(0)
+        squad2 = await troopsManager.squadsById(1)
+        for (let index = 0; index < squad1.TroopIds.length; index++) {
+            console.log(`end of fight squad1 has troop ${index}: ${squad1.TroopAmounts[index].toNumber()}`);
+        }
+        for (let index = 0; index < squad2.TroopIds.length; index++) {
+            console.log(`end of fight squad2 has troop ${index}: ${squad2.TroopAmounts[index].toNumber()}`);
+        }
+
+
+
+
+        console.log(
+            "squad of atk",
+            await troopsManager.squadsIdOnWorld(coordsOfMySquad)
+        );
+        console.log(
+            "squad of def",
+            await troopsManager.squadsIdOnWorld(coordsToAttack)
+        );
+
+        await time.increase(1000);
+        console.log("squad id 0", await (await troopsManager.squadsById(0)).TroopAmounts);
+        console.log("squad id 1", await (await troopsManager.squadsById(1)).TroopAmounts);
+        console.log("squad of my cities", await troopsManager.cityActiveSquads(cityId));
+
+    })
+
+
 });

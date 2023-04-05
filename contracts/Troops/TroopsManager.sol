@@ -13,7 +13,9 @@ import {IBuilding} from "../City/IBuildings.sol";
 import {ITroops} from "./ITroops.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {Troop, Squad, Purpose} from "./TroopsStructs.sol";
+import {ITroopCommands} from "./ITroopCommands.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import "hardhat/console.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
@@ -25,6 +27,7 @@ contract TroopsManager is UpgradeableGameContract {
     ITroops Troops;
     ICalculator Calculator;
     IGameWorld World;
+    ITroopCommands TroopCommands;
     uint8 constant MAX_MATERIAL_ID = 5;
     uint8 constant FOOD_PER_MINUTE = 5;
     uint8 constant MAX_SQUADS_ON_PLOT = 10;
@@ -47,6 +50,10 @@ contract TroopsManager is UpgradeableGameContract {
 
     function setCalculator(address _calc) external onlyOwner {
         Calculator = ICalculator(_calc);
+    }
+
+    function setTroopCommands(address _troopcmd) external onlyOwner {
+        TroopCommands = ITroopCommands(_troopcmd);
     }
 
     modifier onlyCityOwner(uint cityId) {
@@ -73,14 +80,14 @@ contract TroopsManager is UpgradeableGameContract {
 
     function troopsOfCity(
         uint cityId
-    ) external view returns (uint[] memory, uint[] memory) {
+    ) external view returns (uint8[] memory, uint[] memory) {
         Race race = CityManager.race(cityId);
         // race stuff... determine ids of troops by race
         uint i;
-        uint startTroop = 0 * uint(race);
-        uint endTroop = 1 * uint(race);
+        uint8 startTroop = 0 * uint8(race);
+        uint8 endTroop = 1 * uint8(race);
 
-        uint[] memory troopIds = new uint[](endTroop - startTroop);
+        uint8[] memory troopIds = new uint8[](endTroop - startTroop);
         uint[] memory amounts = new uint[](endTroop - startTroop);
 
         for (startTroop; startTroop < endTroop; ) {
@@ -230,6 +237,7 @@ contract TroopsManager is UpgradeableGameContract {
         );
 
         Squad memory newSquad = Squad({
+            ID: squadNonces,
             TroopIds: troopIds,
             TroopAmounts: troopAmounts,
             Position: coords,
@@ -297,6 +305,21 @@ contract TroopsManager is UpgradeableGameContract {
         SquadsIdOnWorld[newCoords.X][newCoords.Y].add(squadId);
         SquadsById[squadId].ActiveAfter = block.timestamp + timeBetweenCoords;
         // SquadsById[squadId].ActiveAfter = SquadsById[squadId].ActiveAfter + timeBetweenCoords;
+    }
+
+    function editSquad(Squad memory squad, bool destroy) external {
+        require(msg.sender == address(TroopCommands), "unauth");
+        if (destroy) {
+            console.log("destroy");
+            console.log(destroy, squad.ID);
+            SquadsIdOnWorld[squad.Position.X][squad.Position.Y].remove(
+                squad.ID
+            );
+            CityActiveSquads[squad.ControlledBy].remove(squad.ID);
+            delete SquadsById[squad.ID];
+        } else {
+            SquadsById[squad.ID] = squad;
+        }
     }
 
     function changePurpose(
