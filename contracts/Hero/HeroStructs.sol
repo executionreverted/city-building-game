@@ -12,7 +12,9 @@ struct Hero {
 
 struct Perk {
     uint ID;
-    PerkActionType Action;
+    uint[] ActionValues;
+    uint[] ActionValue2;
+    PerkActionType[] Action;
 }
 
 enum PerkActionType {

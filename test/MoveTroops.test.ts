@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Troops, TroopsManager } from "../typechain-types";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
-describe("Troops", function () {
+describe("MoveTroops", function () {
     let cities: Cities;
     let calculator: Calculator;
     let gameWorld: GameWorld;

@@ -19,6 +19,8 @@ import "hardhat/console.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
+    event Recruitment(uint cityId, uint troopId, uint amount);
+
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
     IBuilding Buildings;
@@ -132,6 +134,7 @@ contract TroopsManager is UpgradeableGameContract {
         require(_cityPopulation >= _population, "low population");
         CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
         CityTroops[cityId][troopId] += amount;
+        emit Recruitment(cityId, troopId, amount);
     }
 
     function recruitTroops(
@@ -157,6 +160,7 @@ contract TroopsManager is UpgradeableGameContract {
 
             _population += _troop.Population * amount;
             CityTroops[cityId][troopId] += amount;
+            emit Recruitment(cityId, troopId, amount);
             unchecked {
                 i++;
             }

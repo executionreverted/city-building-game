@@ -17,6 +17,12 @@ import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/util
 contract ResearchManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
 
+    event BeginResearch(
+        uint indexed cityId,
+        uint indexed researchId,
+        uint completionTime
+    );
+
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
     ICityManager CityManager;
@@ -97,6 +103,12 @@ contract ResearchManager is UpgradeableGameContract {
         CityResearchesValidAfter[cityId][researchId] =
             block.timestamp +
             _research.TimeRequired;
+
+        emit BeginResearch(
+            cityId,
+            researchId,
+            block.timestamp + _research.TimeRequired
+        );
     }
 
     function researchTime(

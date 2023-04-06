@@ -23,6 +23,8 @@ import "../Utils/IERC173.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 contract Cities is ImmutableERC721PermissionedMintable {
+    event CityCreated(uint indexed cityId, address indexed owner, Coords coords);
+
     // _mintNextToken(to);
     bytes32 constant version = keccak256("0.0.1");
 
@@ -60,6 +62,7 @@ contract Cities is ImmutableERC721PermissionedMintable {
                 Population: 50
             })
         );
+        emit CityCreated(id, to, _coords);
         return id;
     }
 

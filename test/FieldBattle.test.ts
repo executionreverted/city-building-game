@@ -4,7 +4,7 @@ import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Res
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 import "hardhat-gas-reporter"
 
-describe("Troops", function () {
+describe("FieldBattle", function () {
     let cities: Cities;
     let calculator: Calculator;
     let gameWorld: GameWorld;
@@ -108,6 +108,7 @@ describe("Troops", function () {
         await cityManager.setCities(cities.address)
         await cityManager.setBuilding(buildings.address)
         await cityManager.setResources(resources.address)
+        await cityManager.setTroopsManager(troopsManager.address)
         await troopsManager.setCalculator(calculator.address)
         await resources.addMinter(troopsManager.address, true)
         await resources.addMinter(cityManager.address, true)
@@ -128,7 +129,6 @@ describe("Troops", function () {
 
 
         await gameWorld.createCity(cityCoords, true, 1)
-        await cityManager.updateCityPopulation(2, 1000)
         await resources.addMinter(owner.address, true)
         for (let i = 0; i < 5; i++) {
             await resources.addResource(cityId, i, 10000)
@@ -157,15 +157,15 @@ describe("Troops", function () {
         await cityManager.setTroopsManager(troopsManager.address)
         await resources.addMinter(owner.address, true)
         await resources.addMinter(troopsManager.address, true)
-        await troopsManager.recruitTroop(cityId, 0, 100)
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100)
+        await troopsManager.recruitTroop(cityId, 0, 40)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40)
     });
 
     it("Send squad to coords", async function () {
         const coordsToSend = { X: 1, Y: 2 }
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
-        const troopToSend = 50
+        const troopToSend = 20
         await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [troopToSend], 2)
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
@@ -173,7 +173,7 @@ describe("Troops", function () {
         const activeSquadsOfCity = await troopsManager.cityActiveSquads(cityId)
         const squadsInPosition = await troopsManager.squadsIdOnWorld(coordsToSend)
 
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100 - troopToSend, "soldier sent")
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40 - troopToSend, "soldier sent")
         expect(squad.Active).to.be.false
         expect(activeSquadsOfCity.length).to.equal(1)
         expect(squadsInPosition.length).to.equal(1)
@@ -187,7 +187,7 @@ describe("Troops", function () {
         await time.increase(distance.toNumber() + 1)
         squad = await troopsManager.squadsById(0)
         expect(squad.Active).to.be.true
-        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(100 - troopToSend)
+        expect((await troopsManager.cityTroops(cityId, 0)).toNumber()).to.eq(40 - troopToSend)
     });
 
 
@@ -195,7 +195,7 @@ describe("Troops", function () {
         const coordsToSend = { X: 1, Y: 3 }
         const foodId = 4;
         let resourceBalance = await resources.cityResources(cityId, foodId)
-        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [50], 0)
+        await troopsManager.sendSquadTo(cityId, coordsToSend, [0], [20], 0)
         let resourceAfter = await resources.cityResources(cityId, foodId)
 
         let squad = await troopsManager.squadsById(1)

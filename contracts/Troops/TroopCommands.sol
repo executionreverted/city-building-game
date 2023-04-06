@@ -9,9 +9,17 @@ import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 import {ICities} from "../City/ICities.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {IRNG} from "../Utils/IRNG.sol";
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract TroopCommands is UpgradeableGameContract {
+    event PlotFight(
+        uint indexed attackerSquadId,
+        uint indexed victimSquadId,
+        uint result,
+        uint attackerCasualties,
+        uint defenderCasualties
+    );
+
     ITroopsManager TroopsManager;
     ICities Cities;
     ICalculator Calculator;
@@ -55,6 +63,7 @@ contract TroopCommands is UpgradeableGameContract {
         TroopsManager = ITroopsManager(_trmanager);
     }
 
+    // prevent atk to friendly squads
     function attack(uint squadId, Target target, uint targetSquadId) external {
         Squad memory squad = TroopsManager.squadsById(squadId);
         require(squad.Active, "cannot attack yet");
@@ -90,31 +99,31 @@ contract TroopCommands is UpgradeableGameContract {
         ) = fieldWarArmyPowerFormula(attacker, victim);
         // calculate attacker stats
 
-        console.log("powers:");
-        console.log(attackerArmyPower);
-        console.log(defenderArmyPower);
+        // console.log("powers:");
+        // console.log(attackerArmyPower);
+        // console.log(defenderArmyPower);
         uint atkWinChance = Calculator.attackerVictoryChance(
             attackerArmyPower,
             defenderArmyPower
         );
 
-        console.log("atkWinChance");
-        console.log(atkWinChance);
+        // console.log("atkWinChance");
+        // console.log(atkWinChance);
 
         uint defWinChance = Calculator.defenderVictoryChance(
             attackerArmyPower,
             defenderArmyPower
         );
         // roll random
-        console.log("defWinChance");
-        console.log(defWinChance);
+        // console.log("defWinChance");
+        // console.log(defWinChance);
 
         uint atkRoll = RNG.d1000(block.timestamp + atkWinChance);
         uint defRoll = RNG.d1000(block.timestamp + defWinChance + 1);
-        console.log("atkRoll");
-        console.log(atkRoll);
-        console.log("defRoll");
-        console.log(defRoll);
+        // console.log("atkRoll");
+        // console.log(atkRoll);
+        // console.log("defRoll");
+        // console.log(defRoll);
 
         if (atkRoll < atkWinChance && defRoll < defWinChance) {
             _result = 2;
@@ -128,8 +137,8 @@ contract TroopCommands is UpgradeableGameContract {
             _result = 2;
         }
 
-        console.log("_result");
-        console.log(_result);
+        // console.log("_result");
+        // console.log(_result);
 
         finalizeFieldWar(
             _result,
@@ -185,10 +194,10 @@ contract TroopCommands is UpgradeableGameContract {
             result == 0,
             result == 2
         );
-        console.log("atkCasualties");
-        console.log(atkCasualties);
-        console.log("defCasualties");
-        console.log(defCasualties);
+        // console.log("atkCasualties");
+        // console.log(atkCasualties);
+        // console.log("defCasualties");
+        // console.log(defCasualties);
         // kill atk troops
         bool attackerFullDead = true;
         bool defenderFullDead = true;
@@ -212,13 +221,20 @@ contract TroopCommands is UpgradeableGameContract {
             }
         }
 
-        console.log("attackerFullDead");
-        console.log(attackerFullDead);
-        console.log("defenderFullDead");
-        console.log(defenderFullDead);
+        // console.log("attackerFullDead");
+        // console.log(attackerFullDead);
+        // console.log("defenderFullDead");
+        // console.log(defenderFullDead);
         TroopsManager.editSquad(attacker, attackerFullDead);
         TroopsManager.editSquad(defender, defenderFullDead);
 
+        emit PlotFight(
+            attacker.ID,
+            defender.ID,
+            result,
+            atkCasualties,
+            defCasualties
+        );
         /* if (result == 0) {
             // atk side win
         } else if (result == 1) {

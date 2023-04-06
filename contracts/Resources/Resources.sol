@@ -15,6 +15,14 @@ contract Resources is UpgradeableGameContract {
     ICities Cities;
     IBuilding Buildings;
     ICityManager CityManager;
+
+    event ClaimResource(
+        uint indexed cityId,
+        Resource indexed resourceId,
+        uint amount
+    );
+    event ClaimTax(uint indexed cityId, uint amount);
+
     /* 
     [
     GOLD, 0
@@ -103,6 +111,8 @@ contract Resources is UpgradeableGameContract {
 
         LastClaims[cityId][uint(0)] = block.timestamp;
         CityResources[cityId][uint(0)] += amount;
+
+        emit ClaimTax(cityId, amount);
     }
 
     function claimableGold(uint cityId) public view returns (uint) {
@@ -141,6 +151,7 @@ contract Resources is UpgradeableGameContract {
             if (amount > limit) amount = limit;
             LastClaims[cityId][uint(resource)] = block.timestamp;
             CityResources[cityId][uint(resource)] += amount;
+            emit ClaimResource(cityId, resource, amount);
         } else return;
     }
 

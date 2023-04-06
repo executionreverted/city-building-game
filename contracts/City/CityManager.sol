@@ -14,19 +14,30 @@ import {ICityManager} from "./ICityManager.sol";
 import {Coords} from "../World/WorldStructs.sol";
 
 contract CityManager is ICityManager, UpgradeableGameContract {
+    event BuildingUpgraded(
+        uint indexed cityId,
+        uint indexed buildingId,
+        uint newTier,
+        uint when
+    );
+    event CityCoordsUpdate(uint indexed cityId, Coords coords);
+    event CityRaceUpdate(uint indexed cityId, Race race);
+    event CityAliveUpdate(uint indexed cityId, bool value);
+    event CityPopulationUpdate(uint indexed cityId, uint population);
+
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
     IBuilding Buildings;
     IResources Resources;
     mapping(uint => uint) PopulationClaimDates;
+    mapping(uint => uint[50]) BuildingLevelActivationTime;
     mapping(uint => City) public CityList;
     mapping(uint => Building[50]) BuildingLevels;
-    mapping(uint => uint[50]) BuildingLevelActivationTime;
-    uint[20] public RacePopulation;
     address GameWorld;
     address TroopsManager;
     uint constant MAX_MATERIAL_ID = 5;
     uint constant MAX_BUILDING_ID = 50;
+    uint[20] public RacePopulation;
 
     function initialize() external initializer {
         _initialize();
@@ -73,6 +84,16 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         TroopsManager = _troopsManager;
     }
 
+    modifier onlyGame() {
+        require(
+            msg.sender == (GameWorld) ||
+                msg.sender == address(Resources) ||
+                msg.sender == (TroopsManager),
+            "world"
+        );
+        _;
+    }
+
     modifier onlyCityOwner(uint cityId) {
         require(Cities.ownerOf(cityId) == msg.sender, "unauth");
         _;
@@ -100,40 +121,47 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         Resources.spendResources(cityId, _costs);
         BuildingLevels[cityId][buildingId].Tier++;
         uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];
+
+        // implement research and reductions
         BuildingLevelActivationTime[cityId][buildingId] = Deadline;
+
+        emit BuildingUpgraded(cityId, buildingId, currentTier + 1, Deadline);
         return true;
     }
 
     function updateCityCoords(
         uint cityId,
         Coords memory _param
-    ) external onlyCityOwner(cityId) returns (bool) {
+    ) external onlyGame returns (bool) {
         CityList[cityId].Coords = _param;
+        emit CityCoordsUpdate(cityId, _param);
         return true;
     }
 
     function updateCityRace(
         uint cityId,
         Race _param
-    ) external onlyCityOwner(cityId) returns (bool) {
+    ) external onlyGame returns (bool) {
         CityList[cityId].Race = _param;
         RacePopulation[uint(CityList[cityId].Race)]--;
         RacePopulation[uint(_param)]--;
+        emit CityRaceUpdate(cityId, _param);
         return true;
     }
 
     function updateCityAlive(
         uint cityId,
         bool _param
-    ) external onlyCityOwner(cityId) returns (bool) {
+    ) external onlyGame returns (bool) {
         CityList[cityId].Alive = _param;
+        emit CityAliveUpdate(cityId, _param);
         return true;
     }
 
     function updateCityPopulation(
         uint cityId,
         uint _param
-    ) external returns (bool) {
+    ) external onlyGame returns (bool) {
         CityList[cityId].Population = _param;
         return true;
     }
@@ -173,14 +201,6 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         return result;
     }
 
-    function claimResource(
-        uint cityId
-    ) external override onlyCityOwner(cityId) {}
-
-    function recruitTroops(
-        uint cityId
-    ) external override onlyCityOwner(cityId) {}
-
     function recruitPopulation(
         uint cityId
     ) external override onlyCityOwner(cityId) {
@@ -203,6 +223,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
             PopulationClaimDates[cityId] = block.timestamp + 1 days;
             CityList[cityId].Population = _city.Population + _recruitable;
         } else revert("0");
+
+        emit CityPopulationUpdate(cityId, _city.Population + _recruitable);
     }
 
     function citiesOf(address player) external view returns (City[] memory) {

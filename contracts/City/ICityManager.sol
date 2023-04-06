@@ -10,10 +10,6 @@ interface ICityManager {
         uint buildingId
     ) external returns (bool);
 
-    function claimResource(uint cityId) external;
-
-    function recruitTroops(uint cityId) external;
-
     function recruitPopulation(uint cityId) external;
 
     function setCity(uint id, City memory city) external;
