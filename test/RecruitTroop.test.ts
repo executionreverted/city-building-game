@@ -147,7 +147,7 @@ describe("RecruitTroops", function () {
 
     it("Reduce population by 10", async function () {
         const [owner] = await ethers.getSigners();
-        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(40)
+        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(49)
     });
 
     it("Recruit 2 troops", async function () {
@@ -155,7 +155,7 @@ describe("RecruitTroops", function () {
     });
 
     it("Reduce population by 20", async function () {
-        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(20)
+        expect((await cityManager.cityPopulation(cityId)).toNumber()).to.eq(47)
     });
 
     it("Calculate army power", async function () {

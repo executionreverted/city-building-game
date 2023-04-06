@@ -22,6 +22,11 @@ contract Resources is UpgradeableGameContract {
         uint amount
     );
     event ClaimTax(uint indexed cityId, uint amount);
+    event SpendResource(
+        uint indexed cityId,
+        Resource indexed resource,
+        uint amount
+    );
 
     /* 
     [
@@ -181,7 +186,7 @@ contract Resources is UpgradeableGameContract {
             if (amounts[i] > CityResources[cityId][uint(i)]) revert("exceeds");
 
             CityResources[cityId][uint(i)] -= amounts[i];
-
+            emit SpendResource(cityId, Resource(i), amounts[i]);
             unchecked {
                 i++;
             }
@@ -196,6 +201,7 @@ contract Resources is UpgradeableGameContract {
         if (amount >= CityResources[cityId][uint(resource)]) revert("exceeds");
 
         CityResources[cityId][uint(resource)] -= amount;
+        emit SpendResource(cityId, resource, amount);
     }
 
     function calculateHarvestableResource(

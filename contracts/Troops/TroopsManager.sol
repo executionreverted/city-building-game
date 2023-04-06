@@ -19,7 +19,14 @@ import "hardhat/console.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
-    event Recruitment(uint cityId, uint troopId, uint amount);
+    event Recruitment(uint indexed cityId, uint indexed troopId, uint amount);
+    event SquadRemoved(uint indexed troopId);
+    event SquadMovement(
+        uint indexed cityId,
+        uint indexed squadId,
+        Coords from,
+        Coords to
+    );
 
     bytes32 constant version = keccak256("0.0.1");
     ICities Cities;
@@ -254,6 +261,7 @@ contract TroopsManager is UpgradeableGameContract {
         SquadsById[squadNonces] = newSquad;
         SquadsIdOnWorld[coords.X][coords.Y].add(squadNonces);
         CityActiveSquads[cityId].add(squadNonces);
+        emit SquadMovement(cityId, squadNonces, coords, coords);
         squadNonces++;
     }
 
@@ -275,6 +283,7 @@ contract TroopsManager is UpgradeableGameContract {
         ].remove(squadId);
         CityActiveSquads[cityId].remove(squadId);
         delete SquadsById[squadId];
+        emit SquadRemoved(squadId);
     }
 
     function repositionSquad(
@@ -302,9 +311,8 @@ contract TroopsManager is UpgradeableGameContract {
             (timeBetweenCoords / 1 minutes) * FOOD_PER_MINUTE,
             Resource.FOOD
         );
-
+        emit SquadMovement(cityId, squadNonces, squad.Position, newCoords);
         SquadsIdOnWorld[squad.Position.X][squad.Position.Y].remove(squadId);
-
         SquadsById[squadId].Position = newCoords;
         SquadsIdOnWorld[newCoords.X][newCoords.Y].add(squadId);
         SquadsById[squadId].ActiveAfter = block.timestamp + timeBetweenCoords;
@@ -320,7 +328,10 @@ contract TroopsManager is UpgradeableGameContract {
                 squad.ID
             );
             CityActiveSquads[squad.ControlledBy].remove(squad.ID);
-            delete SquadsById[squad.ID];
+            SquadsById[squad.ID].Active = false;
+            SquadsById[squad.ID].ActiveAfter = 0;
+            // delete SquadsById[squad.ID];
+            emit SquadRemoved(squad.ID);
         } else {
             SquadsById[squad.ID] = squad;
         }
