@@ -15,7 +15,8 @@ import {ICalculator} from "../Core/ICalculator.sol";
 import {Troop, Squad, Purpose} from "./TroopsStructs.sol";
 import {ITroopCommands} from "./ITroopCommands.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
+import {ErrorNull, ErrorAlreadyGoingOn, ErrorExceeds, ErrorAssertion, ErrorBadTiming, ErrorUnauthorized} from "../Utils/Errors.sol";
 
 contract TroopsManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
@@ -66,7 +67,9 @@ contract TroopsManager is UpgradeableGameContract {
     }
 
     modifier onlyCityOwner(uint cityId) {
-        require(Cities.ownerOf(cityId) == msg.sender, "unauth");
+        if (Cities.ownerOf(cityId) != msg.sender) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         _;
     }
 
@@ -116,7 +119,9 @@ contract TroopsManager is UpgradeableGameContract {
         uint troopId,
         uint amount
     ) external onlyCityOwner(cityId) {
-        require(amount > 0, "0");
+        if (amount == 0) {
+            revert ErrorNull(amount);
+        }
         // check requirements, burn and set resource modifier
         Troop memory _troop = Troops.troopInfo(troopId);
         // int _modifier;
@@ -125,7 +130,12 @@ contract TroopsManager is UpgradeableGameContract {
 
         // MinBarracksLevel
         uint barracksLevel = CityManager.buildingLevel(cityId, BARRACKS_ID);
-        require(barracksLevel >= _troop.Cost.MinBarracksLevel, "low tier");
+        if (barracksLevel < _troop.Cost.MinBarracksLevel) {
+            revert ErrorAssertion(
+                barracksLevel < _troop.Cost.MinBarracksLevel,
+                false
+            );
+        }
         // check population
         uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
         for (uint i = 0; i < MAX_MATERIAL_ID; i++) {
@@ -138,7 +148,10 @@ contract TroopsManager is UpgradeableGameContract {
 
         _population += _troop.Population * amount;
 
-        require(_cityPopulation >= _population, "low population");
+        if (_population > _cityPopulation) {
+            revert ErrorExceeds(_cityPopulation, _population);
+        }
+
         CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
         CityTroops[cityId][troopId] += amount;
         emit Recruitment(cityId, troopId, amount);
@@ -149,13 +162,17 @@ contract TroopsManager is UpgradeableGameContract {
         uint8[] calldata troopIds,
         uint[] calldata amounts
     ) external onlyCityOwner(cityId) {
-        require(troopIds.length == amounts.length, "mismatch");
+        if (troopIds.length != amounts.length) {
+            revert ErrorAssertion(troopIds.length == amounts.length, false);
+        }
         uint _population;
         uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
         for (uint i = 0; i < amounts.length; ) {
             uint amount = amounts[i];
             uint troopId = troopIds[i];
-            require(amount > 0, "0");
+            if (amount == 0) {
+                revert ErrorNull(amount);
+            }
             // check requirements, burn and set resource modifier
             Troop memory _troop = Troops.troopInfo(troopId);
             // int _modifier;
@@ -174,7 +191,9 @@ contract TroopsManager is UpgradeableGameContract {
         }
 
         uint _cityPopulation = CityManager.cityPopulation(cityId);
-        require(_cityPopulation >= _population, "low population");
+        if (_cityPopulation < _population) {
+            revert ErrorExceeds(_cityPopulation, _population);
+        }
         Resources.spendResources(cityId, _costs);
         CityManager.updateCityPopulation(cityId, _cityPopulation - _population);
     }
@@ -184,8 +203,12 @@ contract TroopsManager is UpgradeableGameContract {
         uint troopId,
         uint amount
     ) internal returns (uint) {
-        require(amount > 0, "0");
-        require(CityTroops[cityId][troopId] >= amount, "not enough");
+        if (amount == 0) {
+            revert ErrorNull(amount);
+        }
+        if (CityTroops[cityId][troopId] < amount) {
+            revert ErrorExceeds(CityTroops[cityId][troopId], amount);
+        }
         CityTroops[cityId][troopId] -= amount;
         uint _population;
         Troop memory _troop = Troops.troopInfo(troopId);
@@ -198,7 +221,9 @@ contract TroopsManager is UpgradeableGameContract {
         uint[] calldata troopIds,
         uint[] calldata amounts
     ) external {
-        require(troopIds.length == amounts.length, "mismatch");
+        if (troopIds.length != amounts.length) {
+            revert ErrorAssertion(troopIds.length == amounts.length, false);
+        }
         uint population;
 
         for (uint i = 0; i < troopIds.length; i++) {
@@ -224,12 +249,20 @@ contract TroopsManager is UpgradeableGameContract {
         uint[] memory troopAmounts,
         Purpose purpose
     ) external onlyCityOwner(cityId) {
-        require(!hasDupes(troopIds), "has dupes");
-        require(troopIds.length == troopAmounts.length, "mismatch");
-        require(
-            SquadsIdOnWorld[coords.X][coords.Y].length() <= MAX_SQUADS_ON_PLOT,
-            "plot capacity reached"
-        );
+        if (hasDupes(troopIds)) {
+            revert ErrorAssertion(true, false);
+        }
+
+        if (troopIds.length != troopAmounts.length) {
+            revert ErrorAssertion(
+                troopIds.length == troopAmounts.length,
+                false
+            );
+        }
+        uint squadsOnThisPlot = SquadsIdOnWorld[coords.X][coords.Y].length();
+        if (squadsOnThisPlot >= MAX_SQUADS_ON_PLOT) {
+            revert ErrorExceeds(squadsOnThisPlot, MAX_SQUADS_ON_PLOT);
+        }
         // limit squads on a coordinate point
         checkTroops(cityId, troopIds, troopAmounts);
         reduceTroopsInTown(cityId, troopIds, troopAmounts);
@@ -269,7 +302,9 @@ contract TroopsManager is UpgradeableGameContract {
         uint cityId,
         uint squadId
     ) external onlyCityOwner(cityId) {
-        require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
+        if (!CityActiveSquads[cityId].contains(squadId)) {
+            revert ErrorNull(0);
+        }
         // todo check other stuff like return half road etc.
 
         for (uint i = 0; i < SquadsById[squadId].TroopIds.length; i++) {
@@ -293,13 +328,18 @@ contract TroopsManager is UpgradeableGameContract {
     ) external onlyCityOwner(cityId) {
         Squad memory squad = SquadsById[squadId];
 
-        require(CityActiveSquads[cityId].contains(squadId), "invalid squad");
-        require(block.timestamp >= squad.ActiveAfter, "not arrived yet");
-        require(
-            SquadsIdOnWorld[newCoords.X][newCoords.Y].length() <=
-                MAX_SQUADS_ON_PLOT,
-            "plot capacity reached"
-        );
+        if (!CityActiveSquads[cityId].contains(squadId)) {
+            revert ErrorNull(0);
+        }
+        if (block.timestamp < squad.ActiveAfter) {
+            revert ErrorBadTiming(block.timestamp, squad.ActiveAfter);
+        }
+
+        uint squadsInThisPlot = SquadsIdOnWorld[newCoords.X][newCoords.Y]
+            .length();
+        if (squadsInThisPlot >= MAX_SQUADS_ON_PLOT) {
+            revert ErrorExceeds(squadsInThisPlot, MAX_SQUADS_ON_PLOT);
+        }
         uint timeBetweenCoords = Calculator.timeBetweenTwoPoints(
             squad.Position,
             newCoords
@@ -320,10 +360,12 @@ contract TroopsManager is UpgradeableGameContract {
     }
 
     function editSquad(Squad memory squad, bool destroy) external {
-        require(msg.sender == address(TroopCommands), "unauth");
+        if(msg.sender != address(TroopCommands)) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         if (destroy) {
-            console.log("destroy");
-            console.log(destroy, squad.ID);
+            // console.log("destroy");
+            // console.log(destroy, squad.ID);
             SquadsIdOnWorld[squad.Position.X][squad.Position.Y].remove(
                 squad.ID
             );

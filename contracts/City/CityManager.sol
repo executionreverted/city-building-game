@@ -12,6 +12,7 @@ import {IResources} from "../Resources/IResources.sol";
 import {IBuilding} from "../City/IBuildings.sol";
 import {ICityManager} from "./ICityManager.sol";
 import {Coords} from "../World/WorldStructs.sol";
+import {ErrorNull, ErrorExceeds, ErrorAssertion, ErrorBadTiming, ErrorUnauthorized} from "../Utils/Errors.sol";
 
 contract CityManager is ICityManager, UpgradeableGameContract {
     event BuildingUpgraded(
@@ -43,13 +44,13 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         _initialize();
     }
 
-    function setCity(uint cityId, City memory _city) external {
-        require(
+    function setCity(uint cityId, City memory _city) external onlyGame {
+        /*   require(
             msg.sender == GameWorld ||
                 msg.sender == address(Cities) ||
                 msg.sender == address(TroopsManager),
             "!"
-        );
+        ); */
         CityList[cityId] = _city;
         RacePopulation[uint(_city.Race)]++;
         BuildingLevels[cityId][0].Tier = 1;
@@ -85,17 +86,21 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     }
 
     modifier onlyGame() {
-        require(
-            msg.sender == (GameWorld) ||
-                msg.sender == address(Resources) ||
-                msg.sender == (TroopsManager),
-            "world"
-        );
+        if (
+            msg.sender != address(Cities) &&
+            msg.sender != address(Resources) &&
+            msg.sender != (GameWorld) &&
+            msg.sender != (TroopsManager)
+        ) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         _;
     }
 
     modifier onlyCityOwner(uint cityId) {
-        require(Cities.ownerOf(cityId) == msg.sender, "unauth");
+        if (Cities.ownerOf(cityId) != msg.sender) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         _;
     }
 
@@ -103,14 +108,18 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint cityId,
         uint buildingId
     ) external onlyCityOwner(cityId) returns (bool) {
-        require(
-            block.timestamp >= BuildingLevelActivationTime[cityId][buildingId],
-            "upgrade in progress"
-        );
+        if (block.timestamp < BuildingLevelActivationTime[cityId][buildingId]) {
+            revert ErrorBadTiming(
+                BuildingLevelActivationTime[cityId][buildingId],
+                block.timestamp
+            );
+        }
 
         uint currentTier = BuildingLevels[cityId][buildingId].Tier;
         Building memory _building = Buildings.buildingInfo(buildingId);
-        require(_building.MaxTier > BuildingLevels[cityId][buildingId].Tier);
+        if (_building.MaxTier <= BuildingLevels[cityId][buildingId].Tier) {
+            revert ErrorExceeds(_building.MaxTier, currentTier);
+        }
 
         // calculate resources
         uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
@@ -205,11 +214,18 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint cityId
     ) external override onlyCityOwner(cityId) {
         uint _recruitable;
-        require(PopulationClaimDates[cityId] < block.timestamp, "early");
+        if (block.timestamp < PopulationClaimDates[cityId]) {
+            revert ErrorBadTiming(
+                PopulationClaimDates[cityId],
+                block.timestamp
+            );
+        }
         City memory _city = CityList[cityId];
         uint _townhallTier = BuildingLevels[cityId][0].Tier;
         uint _housingsTier = BuildingLevels[cityId][8].Tier;
-        require(_city.Alive, "dead");
+        if (!_city.Alive) {
+            revert ErrorAssertion(_city.Alive, false);
+        }
         // fetch townhall lvl & housing, give bonus daily population, 4 townhall & 7 housing
 
         _recruitable += _townhallTier;
@@ -222,7 +238,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         if (_recruitable > 0) {
             PopulationClaimDates[cityId] = block.timestamp + 1 days;
             CityList[cityId].Population = _city.Population + _recruitable;
-        } else revert("0");
+        } else revert ErrorNull(_recruitable);
 
         emit CityPopulationUpdate(cityId, _city.Population + _recruitable);
     }

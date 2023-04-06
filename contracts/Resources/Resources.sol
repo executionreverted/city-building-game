@@ -8,7 +8,7 @@ import {Resource} from "./ResourceEnums.sol";
 import {IBuilding} from "../City/IBuildings.sol";
 import {Building} from "../City/CityStructs.sol";
 import {IResources} from "./IResources.sol";
-import "hardhat/console.sol";
+import {ErrorNull, ErrorAlreadyGoingOn, ErrorExceeds, ErrorAssertion, ErrorBadTiming, ErrorUnauthorized} from "../Utils/Errors.sol";
 
 contract Resources is UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
@@ -84,7 +84,9 @@ contract Resources is UpgradeableGameContract {
 
     modifier onlyCityOwner(uint cityId) {
         address _owner = Cities.ownerOf(cityId);
-        require(_owner == msg.sender, "unauthorized");
+        if (_owner != msg.sender) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         _;
     }
 
@@ -111,7 +113,10 @@ contract Resources is UpgradeableGameContract {
     }
 
     function claimDailyTax(uint cityId) external onlyCityOwner(cityId) {
-        require(block.timestamp > LastClaims[cityId][0] + 23 hours, "early");
+        uint lastClaimDate = LastClaims[cityId][0] + 23 hours;
+        if (block.timestamp < lastClaimDate) {
+            revert ErrorBadTiming(lastClaimDate, block.timestamp);
+        }
         uint amount = claimableGold(cityId);
 
         LastClaims[cityId][uint(0)] = block.timestamp;
@@ -259,7 +264,9 @@ contract Resources is UpgradeableGameContract {
     ) public view returns (uint _rounds) {
         uint lastClaim = LastClaims[cityId][uint(resource)];
         uint mintTime = CityManager.mintTime(cityId);
-        require(mintTime > 0, "does not exist");
+        if (mintTime == 0) {
+            revert ErrorNull(mintTime);
+        }
         uint elapsed = block.timestamp -
             (lastClaim == 0 ? mintTime : lastClaim);
         _rounds = elapsed / PROD_CYCLE;

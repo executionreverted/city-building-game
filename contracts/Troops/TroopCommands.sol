@@ -10,6 +10,7 @@ import {ICities} from "../City/ICities.sol";
 import {ICalculator} from "../Core/ICalculator.sol";
 import {IRNG} from "../Utils/IRNG.sol";
 // import "hardhat/console.sol";
+import {ErrorNull, ErrorAlreadyGoingOn, ErrorExceeds, ErrorAssertion, ErrorBadTiming, ErrorUnauthorized} from "../Utils/Errors.sol";
 
 contract TroopCommands is UpgradeableGameContract {
     event PlotFight(
@@ -66,9 +67,13 @@ contract TroopCommands is UpgradeableGameContract {
     // prevent atk to friendly squads
     function attack(uint squadId, Target target, uint targetSquadId) external {
         Squad memory squad = TroopsManager.squadsById(squadId);
-        require(squad.Active, "cannot attack yet");
+        if (!squad.Active) {
+            revert ErrorAssertion(squad.Active, true);
+        }
         checkIfSquadOwned(squad);
-        require(squad.Purpose == Purpose.ATTACK, "purpose is not attack");
+        if (squad.Purpose != Purpose.ATTACK) {
+            revert ErrorAssertion(squad.Purpose != Purpose.ATTACK, false);
+        }
         // implement if target == enemy squad
         if (target == Target.SQUAD) {
             // attack stuff
@@ -82,7 +87,7 @@ contract TroopCommands is UpgradeableGameContract {
         // implement if target == plot content in this plot
         // npc fight, roll random enemy using plot seed
         else if (target == Target.PLOT_CONTENT) {} else {
-            revert("?");
+            revert ErrorNull(0);
         }
     }
 
@@ -91,7 +96,9 @@ contract TroopCommands is UpgradeableGameContract {
         Squad memory victim
     ) internal {
         checkIfTargetInRange(attacker.Position, victim.Position);
-        require(victim.Active, "squad is not here");
+        if (!victim.Active) {
+            revert ErrorAssertion(victim.Active, true);
+        }
         uint _result; // 0 ATK, 1 DEF, 2 DRAW
         (
             uint attackerArmyPower,
@@ -156,14 +163,18 @@ contract TroopCommands is UpgradeableGameContract {
         Coords memory c2
     ) public view returns (bool) {
         uint dist = Calculator.calculateDistance(c1, c2);
-        require(dist < ACTION_RANGE, "far");
+        if (dist > ACTION_RANGE) {
+            revert ErrorExceeds(dist, ACTION_RANGE);
+        }
         return true;
     }
 
     function checkIfSquadOwned(
         Squad memory squad
     ) internal view returns (bool) {
-        require(Cities.ownerOf(squad.ControlledBy) == msg.sender, "not owned");
+        if (Cities.ownerOf(squad.ControlledBy) != msg.sender) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         return true;
     }
 

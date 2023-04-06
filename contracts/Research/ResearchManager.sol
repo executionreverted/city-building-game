@@ -13,6 +13,7 @@ import {ICalculator} from "../Core/ICalculator.sol";
 import {IResearchs} from "./IResearchs.sol";
 import {Research} from "./ResearchStructs.sol";
 import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import {ErrorNull, ErrorAlreadyGoingOn, ErrorExceeds, ErrorAssertion, ErrorBadTiming, ErrorUnauthorized} from "../Utils/Errors.sol";
 
 contract ResearchManager is UpgradeableGameContract {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.UintSet;
@@ -69,7 +70,9 @@ contract ResearchManager is UpgradeableGameContract {
 
     modifier onlyCityOwner(uint cityId) {
         address _owner = Cities.ownerOf(cityId);
-        require(_owner == msg.sender, "unauthorized");
+        if (_owner != msg.sender) {
+            revert ErrorUnauthorized(msg.sender);
+        }
         _;
     }
 
@@ -78,10 +81,8 @@ contract ResearchManager is UpgradeableGameContract {
         uint researchId
     ) external onlyCityOwner(cityId) {
         // must be not researched
-        require(
-            CityResearchesValidAfter[cityId][researchId] == 0,
-            "already on"
-        );
+        if (CityResearchesValidAfter[cityId][researchId] != 0)
+            revert ErrorAlreadyGoingOn(researchId);
 
         // burn resources
         Research memory _research = Researchs.researchInfo(researchId);
@@ -89,10 +90,13 @@ contract ResearchManager is UpgradeableGameContract {
             cityId,
             RESEARCH_CENTER_ID
         );
-        require(
-            researchCenterTier >= _research.MinResearchCenterLevel,
-            "low tier"
-        );
+        if (researchCenterTier < _research.MinResearchCenterLevel) {
+            revert ErrorAssertion(
+                researchCenterTier < _research.MinResearchCenterLevel,
+                false
+            );
+        }
+        
         uint[] memory toBeBurn = new uint[](MAX_RESOURCE_ID);
         for (uint i = 0; i < MAX_RESOURCE_ID; i++) {
             toBeBurn[i] = _research.Cost[i];

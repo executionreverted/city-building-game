@@ -11,7 +11,7 @@ import {Resource} from "../Resources/ResourceEnums.sol";
 import {City} from "../City/CityStructs.sol";
 import {Race} from "../City/CityEnums.sol";
 import {World, Coords, Plot, PlotContentTypes} from "./WorldStructs.sol";
-import {InvalidWorldCoordinates} from "../Utils/Errors.sol";
+import {ErrorInvalidWorldCoordinates} from "../Utils/Errors.sol";
 import {UpgradeableGameContract} from "../Utils/UpgradeableGameContract.sol";
 
 contract GameWorld is Trigonometry, UpgradeableGameContract {
@@ -75,22 +75,22 @@ contract GameWorld is Trigonometry, UpgradeableGameContract {
     ) external returns (Coords memory _coords) {
         bool isEmpty = isPlotEmpty(coords);
         if ((!isEmpty && !pickClosest) || ((coords.X == 0 && coords.Y == 0)))
-            revert InvalidWorldCoordinates(coords.X, coords.Y);
+            revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
 
         if (coords.X > 0) {
             if (coords.X - 100 > WorldState.LastXPositive)
-                revert InvalidWorldCoordinates(coords.X, coords.Y);
+                revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         } else {
             if (coords.X + 100 < WorldState.LastXNegative)
-                revert InvalidWorldCoordinates(coords.X, coords.Y);
+                revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         }
 
         if (coords.Y > 0) {
             if (coords.Y - 100 > WorldState.LastYPositive)
-                revert InvalidWorldCoordinates(coords.X, coords.Y);
+                revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         } else {
             if (coords.Y + 100 < WorldState.LastYNegative)
-                revert InvalidWorldCoordinates(coords.X, coords.Y);
+                revert ErrorInvalidWorldCoordinates(coords.X, coords.Y);
         }
 
         _coords = getNextCity(coords, true);

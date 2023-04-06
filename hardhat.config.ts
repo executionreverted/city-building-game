@@ -23,7 +23,9 @@ const config: HardhatUserConfig = {
   },
   gasReporter: {
     currency: 'USD',
-    gasPrice: 30
+    gasPrice: 30,
+    enabled:true,
+    outputFile: "./gas-reporter.txt"
   },
   abiExporter: {
     path: "./abi",
@@ -36,7 +38,7 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      gasPrice: 25000000000,
+      gasPrice: 875000000,
       chainId: 1337,
       accounts: {
         accountsBalance: '1000000000000000000000000',
