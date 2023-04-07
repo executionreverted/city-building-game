@@ -338,6 +338,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Walls() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        _baseBuilding.UtilityValues = new uint[](_baseBuilding.MaxTier);
+        _baseBuilding.UtilityValues[0] = 5; // means at tier 1, it will have value of 5% for whatever it does
+        _baseBuilding.UtilityValues[1] = 7;
+        _baseBuilding.UtilityValues[2] = 9;
+        _baseBuilding.UtilityValues[3] = 11;
+        _baseBuilding.UtilityValues[4] = 15;
+
         uint[] memory timeRequired = new uint[](5);
         timeRequired[0] = 2 minutes;
         timeRequired[1] = 30 minutes;
