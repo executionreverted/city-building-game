@@ -17,6 +17,9 @@ struct City {
 struct Building {
     uint Tier;
     uint MaxTier;
+    uint BaseTime;
+    uint Coefficient;
+    uint CoefficientRatio;
     uint[] UpgradeTime;
     uint[] UtilityValues;
     uint[100] Cost;

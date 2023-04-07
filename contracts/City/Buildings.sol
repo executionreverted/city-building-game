@@ -39,8 +39,18 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         if (buildingId == 12) return Hatchery();
         if (buildingId == 13) return WorldBossPortal();
         if (buildingId == 14) return Walls();
-
         revert("not implemented");
+    }
+
+    function calculateUpgradeTime(
+        uint tier,
+        uint base,
+        uint coeff,
+        uint coeffPerc
+    ) internal pure returns (uint) {
+        // base point * ( cofficient1 * coefficient perc * (level * level-1))
+
+        return base + (((coeff * (coeffPerc)) / 100) * (tier * tier - 1));
     }
 
     /* [
@@ -55,12 +65,13 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Forest() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+        uint[] memory timeRequired = new uint[](_baseBuilding.MaxTier);
+        for (uint i = 1; i < timeRequired.length; i++) {
+            timeRequired[i] = calculateUpgradeTime(i, _baseBuilding.BaseTime, _baseBuilding.Coefficient, _baseBuilding.CoefficientRatio);
+        }
         _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
         _baseBuilding.Cost = generateCostArray();
         _baseBuilding.Cost[0] = 100;
@@ -68,7 +79,6 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         _baseBuilding.Cost[2] = 100;
         _baseBuilding.Cost[3] = 100;
         _baseBuilding.Cost[4] = 100;
-
         return _baseBuilding;
     }
 

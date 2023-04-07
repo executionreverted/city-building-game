@@ -1,9 +1,8 @@
 import { ethers, upgrades } from "hardhat";
 import { expect } from "chai";
-import { Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Troops, TroopsManager } from "../typechain-types";
+import { Buildings, Calculator, Cities, CityManager, GameWorld, PerlinNoise, Resources, Trigonometry, Troops, TroopsManager } from "../typechain-types";
 import { CoordsStruct } from "../typechain-types/contracts/Core/Calculator";
 import * as fs from 'fs'
-import { Buildings } from "../typechain-types/contracts/City/Building.sol";
 describe("Calculator",
     function () {
         let cities: Cities;
@@ -131,5 +130,9 @@ describe("Calculator",
 
                 expect(defenderWinChance.add(attackerWinChance).eq(1000)).to.be.true
             }
+        });
+
+        it("Building times", async function () {
+            console.log(await (await buildings.buildingInfo(1)).UpgradeTime);
         });
     });
