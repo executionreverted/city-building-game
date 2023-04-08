@@ -20,6 +20,7 @@ struct Building {
     uint BaseTime;
     uint Coefficient;
     uint CoefficientRatio;
+    uint RequiredResearchID;
     uint[] UpgradeTime;
     uint[] UtilityValues;
     uint[100] Cost;

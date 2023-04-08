@@ -65,6 +65,7 @@ contract Buildings is IBuilding, UpgradeableGameContract {
 
     function Forest() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
+        _baseBuilding.RequiredResearchID = 1;
         _baseBuilding.BaseTime = 13;
         _baseBuilding.Coefficient = 10;
         _baseBuilding.CoefficientRatio = 70; // 0,7
