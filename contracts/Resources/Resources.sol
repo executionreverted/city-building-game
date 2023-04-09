@@ -186,10 +186,9 @@ contract Resources is UpgradeableGameContract {
         _claimCityGold(cityId);
         for (uint i = 0; i < MAX_RESOURCE_ID; ) {
             _claimSingle(cityId, Resource(i), limits[uint(i)]);
-
             if (amounts[i] == 0) continue;
-            if (amounts[i] > CityResources[cityId][uint(i)]) revert("exceeds");
-
+            if (amounts[i] > CityResources[cityId][uint(i)])
+                revert ErrorExceeds(amounts[i], CityResources[cityId][uint(i)]);
             CityResources[cityId][uint(i)] -= amounts[i];
             emit SpendResource(cityId, Resource(i), amounts[i]);
             unchecked {
@@ -224,34 +223,23 @@ contract Resources is UpgradeableGameContract {
         } else if (resource == Resource.STONE) {
             buildingLvl = CityManager.buildingLevel(cityId, 4);
         }
-        uint productionAmount = productionRate(cityId, resource);
+        uint productionAmount = productionRate(cityId, buildingLvl, resource);
         uint rounds = getRoundsSince(cityId, resource);
-        if (buildingLvl == 0 || rounds == 0) return 0;
         uint produced = rounds * productionAmount;
         return produced;
     }
 
     function productionRate(
         uint cityId,
+        uint buildingLvl,
         Resource resource
     ) public view returns (uint) {
-        uint buildingLvl;
-        if (resource == Resource.WOOD) {
-            buildingLvl = CityManager.buildingLevel(cityId, 1);
-        } else if (resource == Resource.FOOD) {
-            buildingLvl = CityManager.buildingLevel(cityId, 2);
-        } else if (resource == Resource.IRON) {
-            buildingLvl = CityManager.buildingLevel(cityId, 3);
-        } else if (resource == Resource.STONE) {
-            buildingLvl = CityManager.buildingLevel(cityId, 4);
-        }
         if (buildingLvl == 0) return 0;
         uint production = BaseProductions[uint(resource)] +
             ((BaseProductions[uint(resource)] * (buildingLvl - 1) * 50) / 100);
-
-        if (CityResourceModifiers[cityId][uint(resource)] > int(production)) {
+        /*  if (CityResourceModifiers[cityId][uint(resource)] > int(production)) {
             return 0;
-        }
+        } */
         return
             uint(
                 int(production) + CityResourceModifiers[cityId][uint(resource)]

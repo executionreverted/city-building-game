@@ -23,5 +23,24 @@ struct Building {
     uint RequiredResearchID;
     uint[] UpgradeTime;
     uint[] UtilityValues;
-    uint[100] Cost;
+    BaseCosts BaseCosts;
+    uint[][] Cost;
+}
+
+struct BaseCosts {
+    uint BaseGold;
+    uint BaseGoldCoefficient1; 
+    uint BaseGoldCoefficient2;
+    uint BaseWood;
+    uint BaseWoodCoefficient1; 
+    uint BaseWoodCoefficient2;
+    uint BaseStone;
+    uint BaseStoneCoefficient1; 
+    uint BaseStoneCoefficient2;
+    uint BaseIron;
+    uint BaseIronCoefficient1; 
+    uint BaseIronCoefficient2;
+    uint BaseFood;
+    uint BaseFoodCoefficient1; 
+    uint BaseFoodCoefficient2;
 }

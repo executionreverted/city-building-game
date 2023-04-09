@@ -7,6 +7,7 @@ import {Building} from "./CityStructs.sol";
 
 contract Buildings is IBuilding, UpgradeableGameContract {
     bytes32 constant version = keccak256("0.0.1");
+    uint constant MAX_RESOURCE_ID = 5;
 
     function initialize() external initializer {
         _initialize();
@@ -42,7 +43,7 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         revert("not implemented");
     }
 
-    function calculateUpgradeTime(
+    function calculateValue(
         uint tier,
         uint base,
         uint coeff,
@@ -66,76 +67,131 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     function Forest() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
         _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
         _baseBuilding.BaseTime = 13;
         _baseBuilding.Coefficient = 10;
         _baseBuilding.CoefficientRatio = 70; // 0,7
-        uint[] memory timeRequired = new uint[](_baseBuilding.MaxTier);
-        for (uint i = 1; i < timeRequired.length; i++) {
-            timeRequired[i] = calculateUpgradeTime(i, _baseBuilding.BaseTime, _baseBuilding.Coefficient, _baseBuilding.CoefficientRatio);
-        }
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
+
         return _baseBuilding;
     }
 
     function Farms() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Mines() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Quarry() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -143,95 +199,165 @@ contract Buildings is IBuilding, UpgradeableGameContract {
     /* UTILITY BUILDINGS */
     function TownHall() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Warehouse() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Barracks() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Workshop() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Housing() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -242,19 +368,33 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -265,19 +405,33 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -288,38 +442,66 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
     function Hatchery() internal pure returns (Building memory _baseBuilding) {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -330,19 +512,33 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         returns (Building memory _baseBuilding)
     {
         _baseBuilding.MaxTier = 5;
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        _baseBuilding.RequiredResearchID = 1;
+
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
@@ -355,31 +551,49 @@ contract Buildings is IBuilding, UpgradeableGameContract {
         _baseBuilding.UtilityValues[2] = 9;
         _baseBuilding.UtilityValues[3] = 11;
         _baseBuilding.UtilityValues[4] = 15;
+        _baseBuilding.RequiredResearchID = 1;
 
-        uint[] memory timeRequired = new uint[](5);
-        timeRequired[0] = 2 minutes;
-        timeRequired[1] = 30 minutes;
-        timeRequired[2] = 3 hours;
-        timeRequired[3] = 8 hours;
-        timeRequired[4] = 24 hours;
-        _baseBuilding.UpgradeTime = generateTimeArray(timeRequired);
-        _baseBuilding.Cost = generateCostArray();
-        _baseBuilding.Cost[0] = 100;
-        _baseBuilding.Cost[1] = 100;
-        _baseBuilding.Cost[2] = 100;
-        _baseBuilding.Cost[3] = 100;
-        _baseBuilding.Cost[4] = 100;
+        // building time values
+        _baseBuilding.BaseTime = 13;
+        _baseBuilding.Coefficient = 10;
+        _baseBuilding.CoefficientRatio = 70; // 0,7
+
+        // building resource cost values
+        _baseBuilding.BaseCosts.BaseGold = 20;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseGoldCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseWood = 15;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient1 = 50;
+        _baseBuilding.BaseCosts.BaseWoodCoefficient2 = 40;
+        _baseBuilding.BaseCosts.BaseStone = 20;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseStoneCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseIron = 20;
+        _baseBuilding.BaseCosts.BaseIronCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseIronCoefficient2 = 60;
+        _baseBuilding.BaseCosts.BaseFood = 20;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient1 = 55;
+        _baseBuilding.BaseCosts.BaseFoodCoefficient2 = 60;
+
+        _baseBuilding = enterResourceCost(_baseBuilding);
+
+        _baseBuilding = enterTimeCost(_baseBuilding);
 
         return _baseBuilding;
     }
 
-    function generateCostArray()
-        internal
-        pure
-        returns (uint[100] memory _return)
-    {}
+    function generateCostArray(
+        uint maxTier
+    ) internal pure returns (uint[][] memory) {
+        uint[][] memory _tierArray = new uint[][](maxTier);
+        for (uint i = 0; i < _tierArray.length; i++) {
+            _tierArray[i] = new uint[](MAX_RESOURCE_ID);
+        }
 
-    function generateTimeArray(
+        return _tierArray;
+    }
+
+    /*    function generateTimeArray(
         uint[] memory timeRequiredByTiers
     ) internal pure returns (uint[] memory) {
         uint[] memory _return = new uint[](timeRequiredByTiers.length);
@@ -390,5 +604,70 @@ contract Buildings is IBuilding, UpgradeableGameContract {
             }
         }
         return _return;
+    } */
+
+    function enterResourceCost(
+        Building memory _baseBuilding
+    ) internal pure returns (Building memory) {
+        uint len = _baseBuilding.MaxTier + 1;
+        _baseBuilding.Cost = generateCostArray(len);
+        for (uint i = 1; i < len; ) {
+            _baseBuilding.Cost[i][0] = calculateValue(
+                i,
+                _baseBuilding.BaseCosts.BaseGold,
+                _baseBuilding.BaseCosts.BaseGoldCoefficient1,
+                _baseBuilding.BaseCosts.BaseGoldCoefficient2
+            );
+            _baseBuilding.Cost[i][1] = calculateValue(
+                i,
+                _baseBuilding.BaseCosts.BaseWood,
+                _baseBuilding.BaseCosts.BaseWoodCoefficient1,
+                _baseBuilding.BaseCosts.BaseWoodCoefficient2
+            );
+            _baseBuilding.Cost[i][2] = calculateValue(
+                i,
+                _baseBuilding.BaseCosts.BaseStone,
+                _baseBuilding.BaseCosts.BaseStoneCoefficient1,
+                _baseBuilding.BaseCosts.BaseStoneCoefficient2
+            );
+            _baseBuilding.Cost[i][3] = calculateValue(
+                i,
+                _baseBuilding.BaseCosts.BaseIron,
+                _baseBuilding.BaseCosts.BaseIronCoefficient1,
+                _baseBuilding.BaseCosts.BaseIronCoefficient2
+            );
+            _baseBuilding.Cost[i][4] = calculateValue(
+                i,
+                _baseBuilding.BaseCosts.BaseFood,
+                _baseBuilding.BaseCosts.BaseFoodCoefficient1,
+                _baseBuilding.BaseCosts.BaseFoodCoefficient2
+            );
+            unchecked {
+                i++;
+            }
+        }
+        return _baseBuilding;
+    }
+
+    function enterTimeCost(
+        Building memory _baseBuilding
+    ) internal pure returns (Building memory) {
+        // uint len = _baseBuilding.MaxTier + 1;
+        uint[] memory timeRequired = new uint[](_baseBuilding.MaxTier);
+        for (uint i = 1; i <= timeRequired.length; ) {
+            timeRequired[i - 1] =
+                calculateValue(
+                    i,
+                    _baseBuilding.BaseTime,
+                    _baseBuilding.Coefficient,
+                    _baseBuilding.CoefficientRatio
+                ) *
+                1 minutes;
+            unchecked {
+                i++;
+            }
+        }
+        _baseBuilding.UpgradeTime = timeRequired;
+        return _baseBuilding;
     }
 }

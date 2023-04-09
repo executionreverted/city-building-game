@@ -178,10 +178,10 @@ describe("Resources", function () {
         const cityId = 2;
         await resources.addMinter(owner.address, true)
 
-        const prodAmount = await resources.productionRate(cityId, 1)
-        const prodAmount2 = await resources.productionRate(cityId, 2)
-        const prodAmount3 = await resources.productionRate(cityId, 3)
-        const prodAmount4 = await resources.productionRate(cityId, 4)
+        const prodAmount = await resources.productionRate(cityId, 1, 1)
+        const prodAmount2 = await resources.productionRate(cityId, 1, 2)
+        const prodAmount3 = await resources.productionRate(cityId, 1, 3)
+        const prodAmount4 = await resources.productionRate(cityId, 1, 4)
 
         expect(prodAmount).to.equal(amount)
         expect(prodAmount2).to.equal(amount)
@@ -190,8 +190,8 @@ describe("Resources", function () {
 
         await resources.updateModifier(cityId, 1, -1)
         await resources.updateModifier(cityId, 2, 5)
-        let newProdAmt1 = await resources.productionRate(cityId, 1);
-        let newProdAmt2 = await resources.productionRate(cityId, 2);
+        let newProdAmt1 = await resources.productionRate(cityId, 1, 1);
+        let newProdAmt2 = await resources.productionRate(cityId, 1, 2);
         expect(newProdAmt1.toNumber(), "does not decreaes").to.eq(99)
         expect(newProdAmt2.toNumber(), "does not increase").to.eq(105)
     });

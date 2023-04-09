@@ -124,9 +124,8 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         // calculate resources
         uint[] memory _costs = new uint[](MAX_MATERIAL_ID);
         for (uint i = 0; i < MAX_MATERIAL_ID; i++) {
-            _costs[i] = _building.Cost[i];
+            _costs[i] = _building.Cost[currentTier + 1][i];
         }
-
         Resources.spendResources(cityId, _costs);
         BuildingLevels[cityId][buildingId].Tier++;
         uint Deadline = block.timestamp + _building.UpgradeTime[currentTier];
@@ -188,6 +187,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
         uint buildingId
     ) external view returns (uint result) {
         result = BuildingLevels[cityId][buildingId].Tier;
+        if (result == 0) return result;
         if (block.timestamp < BuildingLevelActivationTime[cityId][buildingId]) {
             result -= 1;
         }

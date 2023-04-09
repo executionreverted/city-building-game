@@ -134,5 +134,6 @@ describe("Calculator",
 
         it("Building times", async function () {
             console.log(await (await buildings.buildingInfo(1)).UpgradeTime);
+            console.log(await (await buildings.buildingInfo(1)).Cost);
         });
     });

@@ -139,7 +139,21 @@ describe("FieldBattle", function () {
     });
 
     it("Upgrade barracks", async function () {
+        console.log('1');
+        console.log("City  Blaances before upgrade: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
         await cityManager.upgradeBuilding(cityId, barracksId)
+        console.log('2');
+        console.log("City Blaances after upgrade: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
         let hasError
         try {
             await cityManager.upgradeBuilding(cityId, barracksId)
