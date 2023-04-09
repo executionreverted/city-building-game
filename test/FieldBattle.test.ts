@@ -124,7 +124,7 @@ describe("FieldBattle", function () {
         expect(await cities.hasRole(await cities.MINTER_ROLE(), gameWorld.address)).to.equal(true);
     });
 
-    it("Mint 1000 resources.", async function () {
+    it("Mint 10000 resources.", async function () {
         const [owner] = await ethers.getSigners();
 
 
@@ -166,6 +166,61 @@ describe("FieldBattle", function () {
         expect(barracksLvL.eq(1)).to.be.true
     })
 
+    it("Upgrade barracks again", async function () {
+        console.log('1');
+        console.log("City  Blaances before upgrade2: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
+        await cityManager.upgradeBuilding(cityId, barracksId)
+        console.log('2');
+        console.log("City Blaances after upgrade2: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
+        let hasError
+        try {
+            await cityManager.upgradeBuilding(cityId, barracksId)
+        } catch (error) {
+            hasError = true
+        }
+        expect(hasError).to.be.true
+        await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[1].add(1).toNumber());
+        const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
+        expect(barracksLvL.eq(2)).to.be.true
+    })
+
+    it("Upgrade barracks again again", async function () {
+        console.log('1');
+        console.log("City  Blaances before upgrade2: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
+        await cityManager.upgradeBuilding(cityId, barracksId)
+        console.log('2');
+        console.log("City Blaances after upgrade2: ");
+        for (let index = 0; index < 5; index++) {
+            console.log(
+                await resources.CityResources(cityId, index)
+            );
+        }
+        let hasError
+        try {
+            await cityManager.upgradeBuilding(cityId, barracksId)
+        } catch (error) {
+            hasError = true
+        }
+        expect(hasError).to.be.true
+        await time.increase(await (await buildings.buildingInfo(barracksId)).UpgradeTime[2].add(1).toNumber());
+        const barracksLvL = await cityManager.buildingLevel(cityId, barracksId)
+        expect(barracksLvL.eq(3)).to.be.true
+    })
     it("Mint 100 soldier", async function () {
         const [owner] = await ethers.getSigners();
         await cityManager.setTroopsManager(troopsManager.address)
