@@ -38,6 +38,7 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     address TroopsManager;
     uint constant MAX_MATERIAL_ID = 5;
     uint constant MAX_BUILDING_ID = 50;
+    uint constant POPULATION_CAP_PER_TOWNHALL_TIER = 100;
     uint[20] public RacePopulation;
 
     function initialize() external initializer {
@@ -213,34 +214,44 @@ contract CityManager is ICityManager, UpgradeableGameContract {
     function recruitPopulation(
         uint cityId
     ) external override onlyCityOwner(cityId) {
-        uint _recruitable;
-        if (block.timestamp < PopulationClaimDates[cityId]) {
-            revert ErrorBadTiming(
-                PopulationClaimDates[cityId],
-                block.timestamp
-            );
-        }
         City memory _city = CityList[cityId];
-        uint _townhallTier = BuildingLevels[cityId][0].Tier;
-        uint _housingsTier = BuildingLevels[cityId][8].Tier;
         if (!_city.Alive) {
             revert ErrorAssertion(_city.Alive, false);
         }
-        // fetch townhall lvl & housing, give bonus daily population, 4 townhall & 7 housing
-
-        _recruitable += _townhallTier;
-        _recruitable += _housingsTier * 2;
-
-        if (_city.Population + _recruitable >= _townhallTier * 75) {
-            _recruitable = (_townhallTier * 50) - _city.Population;
-        }
-
+        uint _recruitable = calculateRecruitable(cityId);
         if (_recruitable > 0) {
             PopulationClaimDates[cityId] = block.timestamp + 1 days;
             CityList[cityId].Population = _city.Population + _recruitable;
         } else revert ErrorNull(_recruitable);
-
         emit CityPopulationUpdate(cityId, _city.Population + _recruitable);
+    }
+
+    function calculateRecruitable(uint cityId) public view returns (uint) {
+        if (block.timestamp < PopulationClaimDates[cityId]) {
+            /* revert ErrorBadTiming(
+                PopulationClaimDates[cityId],
+                block.timestamp
+            ); */
+            return 0;
+        }
+
+        uint _recruitable;
+        City memory _city = CityList[cityId];
+
+        uint _townhallTier = BuildingLevels[cityId][0].Tier;
+        uint _housingsTier = BuildingLevels[cityId][8].Tier;
+        // fetch townhall lvl & housing, give bonus daily population, 4 townhall & 7 housing
+        _recruitable += _townhallTier;
+        _recruitable += _housingsTier * 2;
+        uint cap = _townhallTier * POPULATION_CAP_PER_TOWNHALL_TIER;
+        if (_city.Population + _recruitable >= cap) {
+            if (_city.Population <= cap) {
+                _recruitable = cap - _city.Population;
+            } else {
+                _recruitable = 0;
+            }
+        }
+        return _recruitable;
     }
 
     function citiesOf(address player) external view returns (City[] memory) {

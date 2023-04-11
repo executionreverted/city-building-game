@@ -342,7 +342,10 @@ describe("Cities", function () {
 
   it("Should claim population.", async function () {
 
+    console.log(await cityManager.calculateRecruitable(2));
+    
     await cityManager.recruitPopulation(2, { from: owner.address })
+    console.log(await cityManager.calculateRecruitable(2));
     expect((await cityManager.city(2)).Population.toNumber()).to.equal(51);
   });
 
