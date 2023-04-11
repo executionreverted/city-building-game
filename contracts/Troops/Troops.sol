@@ -61,6 +61,7 @@ contract Troops is UpgradeableGameContract {
         _baseTroop.Hp = 10;
         _baseTroop.Capacity = 10;
         _baseTroop.Cost.FoodCostMultiplier = 1;
+        _baseTroop.Cost.RequiredResearch = 1;
         _baseTroop.Cost.ResourceCost = generateCostArray();
         _baseTroop.Cost.ResourceCost[0] = 100; // GOLD,
         _baseTroop.Cost.ResourceCost[1] = 100; //  WOOD
